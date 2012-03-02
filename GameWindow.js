@@ -19,7 +19,11 @@
 	 * Defines a number of pre-defined profiles associated with special
 	 * configuration of widgets.
 	 * 
-	 * Depends on nodeGame-client and JSUS.
+	 * Depends on nodegame-client. 
+	 * GameWindow.Table and GameWindow.List just depend on NDDB and JSUS.
+	 * 
+	 * Widgets can have custom dependencies, which are checked internally 
+	 * by the GameWindow engine.
 	 * 
 	 */
 	
@@ -31,10 +35,8 @@
 	var GameMsg = node.GameMsg;
 	var GameMsgGenerator = node.GameMsgGenerator;
 	
-	
-	var Document = node.window.Document;
-	
-	GameWindow.prototype = new Document();
+	var DOM = JSUS.get('DOM');
+	GameWindow.prototype = DOM;
 	GameWindow.prototype.constructor = GameWindow;
 	
 	// The widgets container
@@ -58,8 +60,6 @@
 		else {
 			node.log('nodeWindow: nodeGame not found', 'ERR');
 		}
-		
-		Document.call(this);
 		
 		this.frame = null; // contains an iframe 
 		this.mainframe = 'mainframe';
@@ -415,12 +415,9 @@
 		return true;
 	};
 	
-	
-	// @TODO: use the prototype chain instead
-	// Overriding Document.write and Document.writeln
-	GameWindow.prototype._write = Document.prototype.write;
-	GameWindow.prototype._writeln = Document.prototype.writeln;
-	
+	// Overriding Document.write and DOM.writeln and DOM.write
+	GameWindow.prototype._write = DOM.write;
+	GameWindow.prototype._writeln = DOM.writeln;
 	/**
 	 * Appends a text string, an HTML node or element inside
 	 * the specified root element. 
@@ -790,6 +787,9 @@
 	 * Expose nodeGame to the global object
 	 */	
 	node.window = new GameWindow();
-	node.window.Document = Document; // Restoring Document constructor
 	
-})(window.node);
+})(
+	// GameWindow works only in the browser environment. The reference 
+	// to the node.js module object is for testing purpose only
+	('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
