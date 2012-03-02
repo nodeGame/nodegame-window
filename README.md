@@ -1,23 +1,19 @@
 # nodegame-window: GameWindow
 
-GameWindow provides a handy API to interface nodeGame with the browser
-window.
+GameWindow provides a handy API to interface nodeGame with the browser window.
 
 ---
 
-Creates a custom root element inside the HTML page, and insert an
-iframe element inside it.
+Creates a custom root element inside the HTML page, and insert an iframe element inside it.
 
-Dynamic content can be loaded inside the iframe without losing the
-javascript state inside the page.
+Dynamic content can be loaded inside the iframe without losing the javascript state inside the page.
 
-Loads and unloads special javascript/HTML snippets, called widgets,
-in the page.
+Loads and unloads special javascript/HTML snippets, called widgets, in the page.
 
-Defines a number of pre-defined profiles associated with special
-configuration of widgets.
+Defines a number of pre-defined profiles associated with special configuration of widgets.
 
-Depends on nodeGame-client and JSUS.
+Depends on nodeGame-client and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
+Widgets can have custom dependencies, which are checked internally by the GameWindow engine.
 
 ## Usage
 
