@@ -726,7 +726,7 @@
 	GameWindow.prototype.addStateSelector = function (root, id) {
 		if (!root) return;
 		var stateSelector = this.getStateSelector(id);
-		return stateSelector;
+		return root.appendChild(stateSelector);
 	};
 	
 	/**
