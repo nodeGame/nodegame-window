@@ -148,6 +148,11 @@
 			this.addWidget('Wall');
 			//this.addWidget('GameTable');
 	
+			// Add default CSS
+			if (node.conf.host) {
+				this.addCSS(document.body, node.conf.host + '/monitor.css');
+			}
+			
 			break;
 		
 			
@@ -162,7 +167,13 @@
 			node.game.doneb = this.addWidget('DoneButton', this.header);
 			node.game.sd 	= this.addWidget('StateDisplay', this.header);
 
-		    this.addWidget('WaitScreen');
+			this.addWidget('WaitScreen');
+		    
+			// Add default CSS
+			if (node.conf.host) {
+				this.addCSS(document.body, node.conf.host + '/player.css');
+			}
+			
 		    
 			break;
 		}
