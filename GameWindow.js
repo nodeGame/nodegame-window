@@ -156,7 +156,11 @@
 			//var maincss		= this.addCSS(this.root, 'style.css');
 			this.header 	= this.generateHeader();
 		    var mainframe 	= this.addIFrame(this.root,'mainframe');
-		   
+		    
+			node.game.vs 	= this.addWidget('VisualState', this.header);
+			node.game.timer = this.addWidget('VisualTimer', this.header);
+			node.game.doneb = this.addWidget('DoneButton', this.header);
+			node.game.sd 	= this.addWidget('StateDisplay', this.header);
 
 		    this.addWidget('WaitScreen');
 		    
