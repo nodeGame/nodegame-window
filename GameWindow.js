@@ -270,7 +270,7 @@
     	}
 			
 		this.areLoading--;
-		//console.log('ARE LOADING: ' + this.areLoading);
+		console.log('ARE LOADING: ' + this.areLoading);
 		if (this.areLoading === 0) {
 			this.state = GameState.iss.LOADED;
 			node.emit('WINDOW_LOADED');
@@ -715,6 +715,37 @@
 		var actionSelector = this.getActionSelector(id);
 		return root.appendChild(actionSelector);
 	};
+	
+	/**
+	 * Creates an HTML select element with all the predefined targets
+	 * (HI,TXT,DATA, etc.) as options and returns it.
+	 * 
+	 * *not yet implemented
+	 * 
+	 * @see GameWindow.addActionSelector
+	 * 
+	 */
+	GameWindow.prototype.getTargetSelector = function (id) {
+		var targetSelector = document.createElement('select');
+		if ('undefined' !== typeof id ) {
+			targetSelector.id = id;
+		}
+		this.populateSelect(targetSelector, node.targets);
+		return targetSelector;
+	};
+	
+	/**
+	 * Appends a Target Selector element to the specified root element.
+	 * 
+	 * @see GameWindow.getTargetSelector
+	 * 
+	 */
+	GameWindow.prototype.addTargetSelector = function (root, id) {
+		if (!root) return;
+		var targetSelector = this.getTargetSelector(id);
+		return root.appendChild(targetSelector);
+	};
+	
 	
 	/**
 	 * @experimental
