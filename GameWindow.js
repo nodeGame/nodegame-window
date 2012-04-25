@@ -150,7 +150,7 @@
 	
 			// Add default CSS
 			if (node.conf.host) {
-				this.addCSS(document.body, node.conf.host + '/monitor.css');
+				this.addCSS(document.body, node.conf.host + '/stylesheets/monitor.css');
 			}
 			
 			break;
@@ -171,7 +171,7 @@
 		    
 			// Add default CSS
 			if (node.conf.host) {
-				this.addCSS(document.body, node.conf.host + '/player.css');
+				this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 			}
 			
 		    
