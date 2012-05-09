@@ -51,6 +51,11 @@
 	 * 
 	 */
 	function GameWindow() {
+		var that = this;
+		
+		if ('undefined' === typeof window) {
+			throw new Error('nodeWindow: no DOM found. Are we in a browser? Aborting.');
+		}
 		
 		if ('undefined' !== typeof node) {
 			node.log('nodeWindow: loading...');
@@ -63,13 +68,14 @@
 		
 		this.frame = null; // contains an iframe 
 		this.mainframe = 'mainframe';
-		this.root = this.generateRandomRoot();
+		this.root = null;
 		
+		window.onload = function(){
+			that.root = that.generateRandomRoot();
+		};
 		
 		this.state = GameState.iss.LOADED;
 		this.areLoading = 0; 
-		
-		var that = this;
 		
 		var listeners = function() {
 			
