@@ -70,12 +70,10 @@
 		this.mainframe = 'mainframe';
 		this.root = null;
 		
-		window.onload = function(){
-			that.root = that.generateRandomRoot();
-		};
 		
 		this.state = GameState.iss.LOADED;
 		this.areLoading = 0; 
+		
 		
 		var listeners = function() {
 			
@@ -135,6 +133,9 @@
 	 */
 	GameWindow.prototype.setup = function (type){
 	
+		if (!this.root) {
+			this.root = generateRandomRoot();
+		}
 		
 		switch (type) {
 		
@@ -276,7 +277,7 @@
     	}
 			
 		this.areLoading--;
-		//console.log('ARE LOADING: ' + this.areLoading);
+		console.log('ARE LOADING: ' + this.areLoading);
 		if (this.areLoading === 0) {
 			this.state = GameState.iss.LOADED;
 			node.emit('WINDOW_LOADED');
@@ -321,12 +322,12 @@
 		
 		var w = JSUS.getNestedValue(w_str, this.widgets);
 		
+		node.log('nodeWindow: registering gadget ' + w.name + ' v.' +  w.version);
+		
 		if (!w) {
 			node.log('Widget ' + w_str + ' not found.', 'ERR');
 			return;
 		}
-		
-		node.log('nodeWindow: registering gadget ' + w.name + ' v.' +  w.version);
 		
 		if (! this.checkDependencies(w)) return false;
 		
@@ -542,7 +543,8 @@
 			this.addElement('body', document);
 			root = document.body;
 		}
-		return this.addElement('div', root, id);
+		this.root = this.addElement('div', root, id);
+		return this.root;
 	};
 	
 	/**
