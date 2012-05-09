@@ -322,12 +322,12 @@
 		
 		var w = JSUS.getNestedValue(w_str, this.widgets);
 		
-		node.log('nodeWindow: registering gadget ' + w.name + ' v.' +  w.version);
-		
 		if (!w) {
 			node.log('Widget ' + w_str + ' not found.', 'ERR');
 			return;
 		}
+		
+		node.log('nodeWindow: registering gadget ' + w.name + ' v.' +  w.version);
 		
 		if (! this.checkDependencies(w)) return false;
 		
