@@ -134,7 +134,7 @@
 	GameWindow.prototype.setup = function (type){
 	
 		if (!this.root) {
-			this.root = generateRandomRoot();
+			this.root = this.generateRandomRoot();
 		}
 		
 		switch (type) {
