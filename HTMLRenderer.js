@@ -56,7 +56,7 @@
 		  });
 		  
 		  this.tm.addTrigger(function (el) { 
-			  if (el.content.parse && el.content.parse instanceof Function) {
+			  if (el.content && el.content.parse && el.content.parse instanceof Function) {
 				  var html = el.content.parse();
 				  if (JSUS.isElement(html) || JSUS.isNode(html)) {
 					  return html;
