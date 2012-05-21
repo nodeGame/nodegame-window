@@ -134,7 +134,7 @@
 	GameWindow.prototype.setup = function (type){
 	
 		if (!this.root) {
-			this.root = this.generateRandomRoot();
+			this.root = this.generateNodeGameRoot();
 		}
 		
 		switch (type) {
@@ -161,7 +161,6 @@
 			}
 			
 			break;
-		
 			
 		case 'PLAYER':
 			
@@ -523,8 +522,8 @@
 	};
 	
 	/**
-	 * Creates a div element with a global random unique id 
-	 * and in tries to append it in the following order to:
+	 * Creates a div element with the given id and 
+	 * tries to append it in the following order to:
 	 * 
 	 * 		- the specified root element
 	 * 		- the body element
@@ -535,9 +534,10 @@
 	 * 
 	 * Returns the newly created root element.
 	 * 
+	 * @api private
+	 * 
 	 */
-	GameWindow.prototype.generateRandomRoot = function (root) {
-		var id = this.generateUniqueId();
+	GameWindow.prototype._generateRoot = function (root, id) {
 		var root = root || document.body || document.lastElementChild;
 		if (!root) {
 			this.addElement('body', document);
@@ -546,6 +546,29 @@
 		this.root = this.addElement('div', root, id);
 		return this.root;
 	};
+	
+	
+	/**
+	 * Creates a div element with id 'nodegame' and returns it.
+	 * 
+	 * @see GameWindow._generateRoot()
+	 * 
+	 */
+	GameWindow.prototype.generateNodeGameRoot = function (root) {
+		return this._generateRoot(root, 'nodegame');
+	
+	/**
+	 * Creates a div element with id 'nodegame' and returns it.
+	 * 
+	 * @see GameWindow._generateRoot()
+	 * 
+	 */
+	GameWindow.prototype.generateRandomRoot = function (root, id) {
+		return this._generateRoot(root, this.generateUniqueId());
+	};
+	
+
+	
 	
 	/**
 	 * Creates and adds a container div with id 'gn_header' to 
