@@ -556,6 +556,7 @@
 	 */
 	GameWindow.prototype.generateNodeGameRoot = function (root) {
 		return this._generateRoot(root, 'nodegame');
+	};
 	
 	/**
 	 * Creates a div element with id 'nodegame' and returns it.
