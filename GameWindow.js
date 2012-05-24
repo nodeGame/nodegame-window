@@ -74,6 +74,13 @@
 		this.state = GameState.iss.LOADED;
 		this.areLoading = 0; 
 		
+		this.textOnLeave = "If you refresh or leave the page the game may be interrupted for you and other players.";
+		
+		
+		this.promptOnleave();
+		// Analyzes node.conf.window, if existing
+		this.init();
+		
 		
 		var listeners = function() {
 			
@@ -126,6 +133,124 @@
 			
 		}();
 	};
+	
+	/**
+	 * Set global variables based on local configuration.
+	 * 
+	 * If no configuration object is passed, it reads 
+	 * node.conf.window
+	 * 
+	 * Defaults:
+	 * 
+	 * 		- promptOnleave TRUE
+	 * 		- captures ESC key
+	 * 
+	 */
+	GameWindow.prototype.init = function(options) {
+		options = options || {};
+		if ('undefined' !== typeof node.conf && 
+				'undefined' !== typeof node.conf.window) {
+				options = node.conf.window; 
+		}
+
+		if ('undefined' !== typeof options.textOnLeave) {
+			this.textOnLeave = options.textOnLeave;
+		}
+
+		if ('undefined' !== typeof options.promptOnleave) {
+			if (options.promptOnleave) {
+				this.promptOnleave();
+			}
+			else {
+				this.restoreOnleave();
+			}
+		}
+		else {
+			// By default always prompt on leave
+			this.promptOnleave();
+			
+		}
+		
+		if ('undefined' !== typeof options.noEscape) {
+			if (options.noEscape) {
+				this.noEscape();
+			}
+			  else {
+				this.restoreEscape();
+			}
+		}
+		else {
+			// By default captures the ESC key
+			this.noEscape();
+		}
+		
+	};
+	
+	/**
+	 * Binds the ESC key to a function that always returns FALSE.
+	 * 
+	 * This prevents socket.io to break the connection with the
+	 * server.
+	 * 
+	 */
+	GameWindow.prototype.noEscape = function (windowObj) {
+		windowObj = windowObj || window;
+		windowObj.document.onkeydown = function(e) {
+			var keyCode = (window.event) ? event.keyCode : e.keyCode;
+			if (keyCode === 27) {
+				return false;
+			}
+		}; 
+	};
+	
+	/**
+	 * Removes the the listener on the ESC key.
+	 * 
+	 * @see GameWindow.noEscape()
+	 */
+	GameWindow.prototype.restoreEscape = function (windowObj) {
+		windowObj = windowObj || window;
+		windowObj.document.onkeydown = null;
+	};
+	
+	
+	
+	/**
+	 * Captures the onbeforeunload event, and warns the user
+	 * that leaving the page may halt the game.
+	 * 
+	 * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+	 * 
+	 */
+	GameWindow.prototype.promptOnleave = function (windowObj, text) {
+		windowObj = windowObj || window;
+		text = ('undefined' === typeof text) ? this.onLeaveText : text; 
+		windowObj.onbeforeunload = function(e) {	  
+			  e = e || window.event;
+			  // For IE<8 and Firefox prior to version 4
+			  if (e) {
+			    e.returnValue = text;
+			  }
+			  // For Chrome, Safari, IE8+ and Opera 12+
+			  return text;
+		};
+		
+		return 'mamma';
+	};
+	
+	/**
+	 * Removes the onbeforeunload event listener.
+	 * 
+	 * @see GameWindow.promptOnleave
+	 * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+	 * 
+	 */
+	GameWindow.prototype.restoreOnleave = function (windowObj) {
+		windowObj = windowObj || window;
+		windowObj.onbeforeunload = null;
+	};
+	
+	
 	
 	/**
 	 * Setups the page with a predefined configuration of widgets.
