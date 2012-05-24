@@ -42,6 +42,16 @@
 	// The widgets container
 	GameWindow.prototype.widgets = {};
 	
+	
+	// Configuration object
+	GameWindow.defaults = {};
+	
+	// Default settings
+	GameWindow.defaults.textOnleave = "If you refresh or leave the page the game may be interrupted for you and other players.";
+	GameWindow.defaults.promptOnleave = true;
+	GameWindow.defaults.noEscape = true;
+	
+	
 	/**
 	 * The constructor performs the following operations:
 	 * 
@@ -70,14 +80,11 @@
 		this.mainframe = 'mainframe';
 		this.root = null;
 		
+		this.conf = {};
 		
 		this.state = GameState.iss.LOADED;
 		this.areLoading = 0; 
 		
-		this.textOnLeave = "If you refresh or leave the page the game may be interrupted for you and other players.";
-		
-		
-		this.promptOnleave();
 		// Analyzes node.conf.window, if existing
 		this.init();
 		
@@ -153,35 +160,23 @@
 				options = node.conf.window; 
 		}
 
-		if ('undefined' !== typeof options.textOnLeave) {
-			this.textOnLeave = options.textOnLeave;
-		}
+		this.conf = JSUS.merge(GameWindow.defaults, options);
+		
 
-		if ('undefined' !== typeof options.promptOnleave) {
-			if (options.promptOnleave) {
-				this.promptOnleave();
-			}
-			else {
-				this.restoreOnleave();
-			}
-		}
-		else {
-			// By default always prompt on leave
+		console.log(this.conf);
+		
+		if (this.conf.promptOnleave) {
 			this.promptOnleave();
-			
+		}
+		else if (this.conf.promptOnleave === false) {
+			this.restoreOnleave();
 		}
 		
-		if ('undefined' !== typeof options.noEscape) {
-			if (options.noEscape) {
-				this.noEscape();
-			}
-			  else {
-				this.restoreEscape();
-			}
-		}
-		else {
-			// By default captures the ESC key
+		if (this.conf.noEscape) {
 			this.noEscape();
+		}
+		else if (this.conf.noEscape === false){
+			this.restoreEscape();
 		}
 		
 	};
@@ -234,8 +229,6 @@
 			  // For Chrome, Safari, IE8+ and Opera 12+
 			  return text;
 		};
-		
-		return 'mamma';
 	};
 	
 	/**
