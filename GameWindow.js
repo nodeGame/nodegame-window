@@ -190,6 +190,7 @@
 	 */
 	GameWindow.prototype.noEscape = function (windowObj) {
 		windowObj = windowObj || window;
+		console.log(windowObj);
 		windowObj.document.onkeydown = function(e) {
 			var keyCode = (window.event) ? event.keyCode : e.keyCode;
 			if (keyCode === 27) {
@@ -303,6 +304,11 @@
 		}
 		
 		this.frame = window.frames[this.mainframe]; // there is no document yet
+		if (this.conf.noEscape) {
+			// Captures the ESC key also in the iframe
+			//this.noEscape(this.frame);
+		}
+		
 	};
 	
 
@@ -327,7 +333,7 @@
 			el = document.body || document.lastElementChild;
 		}
 		return 	el;
-	}
+	};
 	
 	/**
 	 * Returns the document element of the iframe of the game.
@@ -367,6 +373,13 @@
 	
 		// Then update the frame location
 		window.frames[frame].location = url;
+		
+		if (this.conf.noEscape) {
+			console.log('Tralalalalalal');
+			// Captures the ESC key also in the iframe
+			this.noEscape(window.frames[frame].window);
+		}
+		
 		// Adding a reference to nodeGame also in the iframe
 		window.frames[frame].window.node = node;
 //		console.log('the frame just as it is');
@@ -431,7 +444,7 @@
 					if (JSUS.in_array(i, ['onclick', 'onfocus', 'onblur', 'onchange', 'onsubmit', 'onload', 'onunload', 'onmouseover'])) {
 						w.getRoot()[i] = function() {
 							options[i].call(w);
-						}
+						};
 					}
 				}			
 			};
@@ -497,8 +510,8 @@
 		
 		
 		// Init default values
-		var root = root || this.root;
-		var options = options || {};
+		root = root || this.root;
+		options = options || {};
 		
 
 		// Check if it is a object (new gadget)
@@ -530,7 +543,7 @@
 		var errMsg = function (w, d) {
 			var name = w.name || w.id;// || w.toString();
 			node.log(d + ' not found. ' + name + ' cannot be loaded.', 'ERR');
-		}
+		};
 		
 		var parents = [window, node, node.window.widgets, node.window];
 		
@@ -541,7 +554,7 @@
 				for (var i=0; i<parents.length; i++) {
 					if (JSUS.getNestedValue(lib, parents[i])) {
 						var found = true;
-						break
+						break;
 					}
 				}
 				if (!found) {	
