@@ -155,9 +155,10 @@
 	 */
 	GameWindow.prototype.init = function(options) {
 		options = options || {};
-		if ('undefined' !== typeof node.conf && 
+		if (!options && 
+				'undefined' !== typeof node.conf && 
 				'undefined' !== typeof node.conf.window) {
-				options = node.conf.window; 
+					options = node.conf.window; 
 		}
 
 		this.conf = JSUS.merge(GameWindow.defaults, options);
@@ -297,6 +298,8 @@
 		    
 			// Add default CSS
 			if (node.conf.host) {
+				console.log('--------------------------');
+				console.log(this.conf);
 				this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 			}
 			
@@ -305,28 +308,15 @@
 		}
 		
 		this.frame = window.frames[this.mainframe]; // there is no document yet
+		var initPage = this.getBlankPage();
 		if (this.conf.noEscape) {
-			// Captures the ESC key also in the iframe
-//			console.log('JJJJJ');
-//			console.log($('#mainframe').contents());
-//			
-//			$('#mainframe').contents().onkeydown = function(e) {
-//				var keyCode = (window.event) ? event.keyCode : e.keyCode;
-//				if (keyCode === 27) {
-//					return false;
-//				}
-//			};
-//			
-//			this.noEscape(this.frame);
-//			
-//			$('#mainframe').contents().keypress(function(e) {
-//			    alert(e.which);
-//			    return false;
-//			});
-
-			
+			// TODO: inject the no escape code here
+			// not working
+			//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
 		}
 		
+		window.frames[this.mainframe].src = initPage;
+
 	};
 	
 
@@ -386,16 +376,19 @@
  		// First add the onload event listener
 		var iframe = document.getElementById(frame);
 		iframe.onload = function () {
+			if (that.conf.noEscape) {
+				
+				// TODO: inject the no escape code here
+				
+				//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
+				//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
+			}
 			that.updateStatus(func, frame);
 		};
 	
 		// Then update the frame location
 		window.frames[frame].location = url;
 		
-		if (this.conf.noEscape) {
-			// Captures the ESC key also in the iframe
-			//this.noEscape(window.frames[frame].window);
-		}
 		
 		// Adding a reference to nodeGame also in the iframe
 		window.frames[frame].window.node = node;
@@ -1007,7 +1000,7 @@
 		}
 		return id;
 	};
-		
+	
 	//Expose nodeGame to the global object
 	node.window = new GameWindow();
 	if ('undefined' !== typeof window) window.W = node.window;
