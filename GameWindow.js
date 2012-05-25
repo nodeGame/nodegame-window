@@ -47,7 +47,6 @@
 	GameWindow.defaults = {};
 	
 	// Default settings
-	GameWindow.defaults.textOnleave = "If you refresh or leave the page the game may be interrupted for you and other players.";
 	GameWindow.defaults.promptOnleave = true;
 	GameWindow.defaults.noEscape = true;
 	
@@ -85,11 +84,15 @@
 		this.state = GameState.iss.LOADED;
 		this.areLoading = 0; 
 		
-		// Analyzes node.conf.window, if existing
+		// Init default behavior
 		this.init();
 		
 		
 		var listeners = function() {
+			
+			node.on('NODEGAME_GAME_CREATED', function() {
+				that.init(node.conf.window);
+			});
 			
 			node.on('HIDE', function(id) {
 				var el = that.getElementById(id);
@@ -144,9 +147,6 @@
 	/**
 	 * Set global variables based on local configuration.
 	 * 
-	 * If no configuration object is passed, it reads 
-	 * node.conf.window
-	 * 
 	 * Defaults:
 	 * 
 	 * 		- promptOnleave TRUE
@@ -155,12 +155,6 @@
 	 */
 	GameWindow.prototype.init = function(options) {
 		options = options || {};
-		if (!options && 
-				'undefined' !== typeof node.conf && 
-				'undefined' !== typeof node.conf.window) {
-					options = node.conf.window; 
-		}
-
 		this.conf = JSUS.merge(GameWindow.defaults, options);
 		
 		if (this.conf.promptOnleave) {
@@ -217,7 +211,7 @@
 	 */
 	GameWindow.prototype.promptOnleave = function (windowObj, text) {
 		windowObj = windowObj || window;
-		text = ('undefined' === typeof text) ? this.onLeaveText : text; 
+		text = ('undefined' === typeof text) ? this.conf.textOnleave : text; 
 		windowObj.onbeforeunload = function(e) {	  
 			  e = e || window.event;
 			  // For IE<8 and Firefox prior to version 4
@@ -293,8 +287,6 @@
 		    
 			// Add default CSS
 			if (node.conf.host) {
-				console.log('--------------------------');
-				console.log(this.conf);
 				this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 			}
 			
