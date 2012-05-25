@@ -188,12 +188,7 @@
 	 */
 	GameWindow.prototype.noEscape = function (windowObj) {
 		windowObj = windowObj || window;
-		console.log(windowObj);
-		console.log(arguments.callee);
 		windowObj.document.onkeydown = function(e) {
-			
-			console.log('HEEERE');
-			
 			var keyCode = (window.event) ? event.keyCode : e.keyCode;
 			if (keyCode === 27) {
 				return false;
