@@ -162,9 +162,6 @@
 
 		this.conf = JSUS.merge(GameWindow.defaults, options);
 		
-
-		console.log(this.conf);
-		
 		if (this.conf.promptOnleave) {
 			this.promptOnleave();
 		}
@@ -191,7 +188,11 @@
 	GameWindow.prototype.noEscape = function (windowObj) {
 		windowObj = windowObj || window;
 		console.log(windowObj);
+		console.log(arguments.callee);
 		windowObj.document.onkeydown = function(e) {
+			
+			console.log('HEEERE');
+			
 			var keyCode = (window.event) ? event.keyCode : e.keyCode;
 			if (keyCode === 27) {
 				return false;
@@ -306,7 +307,24 @@
 		this.frame = window.frames[this.mainframe]; // there is no document yet
 		if (this.conf.noEscape) {
 			// Captures the ESC key also in the iframe
-			//this.noEscape(this.frame);
+//			console.log('JJJJJ');
+//			console.log($('#mainframe').contents());
+//			
+//			$('#mainframe').contents().onkeydown = function(e) {
+//				var keyCode = (window.event) ? event.keyCode : e.keyCode;
+//				if (keyCode === 27) {
+//					return false;
+//				}
+//			};
+//			
+//			this.noEscape(this.frame);
+//			
+//			$('#mainframe').contents().keypress(function(e) {
+//			    alert(e.which);
+//			    return false;
+//			});
+
+			
 		}
 		
 	};
@@ -375,9 +393,8 @@
 		window.frames[frame].location = url;
 		
 		if (this.conf.noEscape) {
-			console.log('Tralalalalalal');
 			// Captures the ESC key also in the iframe
-			this.noEscape(window.frames[frame].window);
+			//this.noEscape(window.frames[frame].window);
 		}
 		
 		// Adding a reference to nodeGame also in the iframe
@@ -990,11 +1007,10 @@
 		}
 		return id;
 	};
-	
-	/**
-	 * Expose nodeGame to the global object
-	 */	
+		
+	//Expose nodeGame to the global object
 	node.window = new GameWindow();
+	if ('undefined' !== typeof window) window.W = node.window;
 	
 })(
 	// GameWindow works only in the browser environment. The reference 
