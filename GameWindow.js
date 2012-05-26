@@ -289,20 +289,21 @@
 			if (node.conf.host) {
 				this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 			}
+		
+			this.frame = window.frames[this.mainframe]; // there is no document yet
+			var initPage = this.getBlankPage();
+			if (this.conf.noEscape) {
+				// TODO: inject the no escape code here
+				// not working
+				//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
+			}
 			
+			window.frames[this.mainframe].src = initPage;
 		    
 			break;
 		}
 		
-		this.frame = window.frames[this.mainframe]; // there is no document yet
-		var initPage = this.getBlankPage();
-		if (this.conf.noEscape) {
-			// TODO: inject the no escape code here
-			// not working
-			//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
-		}
 		
-		window.frames[this.mainframe].src = initPage;
 
 	};
 	
