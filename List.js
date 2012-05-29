@@ -7,10 +7,10 @@
 	var Entity = node.window.HTMLRenderer.Entity;
 	
 	/*!
-	 * 
-	 * List: handle list operation
-	 * 
-	 */
+	* 
+	* List: handle list operation
+	* 
+	*/
 	
 	exports.List = List;
 	
@@ -18,7 +18,7 @@
 	List.prototype.constructor = List;	
 	
 	function List (options, data) {
-		var options = options || {};
+		options = options || {};
 		this.options = options;
 		
 		NDDB.call(this, options, data); 
@@ -28,14 +28,14 @@
 		this.DL = null;
 		this.auto_update = this.options.auto_update || false;
 		this.htmlRenderer = null; 
-	    this.lifo = false;
+		this.lifo = false;
 		
-	    this.init(this.options);
-	  };
-	  
-	  // TODO: improve init
-	 List.prototype.init = function (options) {
-		var options = options || this.options;
+		this.init(this.options);
+	}
+	
+	// TODO: improve init
+	List.prototype.init = function (options) {
+		options = options || this.options;
 		
 		this.FIRST_LEVEL = options.first_level || 'dl';
 		this.SECOND_LEVEL = options.second_level || 'dt';
@@ -45,7 +45,7 @@
 		this.last_dd = 0;
 		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
 																		: this.auto_update;
-	    
+		
 		var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
 		
 		this.globalCompare = function (o1, o2) {
@@ -72,13 +72,13 @@
 			}
 			return 0;
 		}; 
-	    
+		
 		
 		this.DL = options.list || document.createElement(this.FIRST_LEVEL);
 		this.DL.id = options.id || this.id;
 		if (options.className) {
-	    	this.DL.className = options.className;
-	    }
+			this.DL.className = options.className;
+		}
 		if (this.options.title) {
 			this.DL.appendChild(document.createTextNode(options.title));
 		}
@@ -86,7 +86,7 @@
 		// was
 		//this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});
 		this.htmlRenderer = new HTMLRenderer({render: options.render});
-	  };
+	};
 	
 	List.prototype._add = function (node) {
 		if (!node) return;
@@ -101,7 +101,7 @@
 	List.prototype.addDT = function (elem, dt) {
 		if ('undefined' === typeof elem) return;
 		this.last_dt++;
-		var dt = ('undefined' !== typeof dt) ? dt: this.last_dt;  
+		dt = ('undefined' !== typeof dt) ? dt: this.last_dt;  
 		this.last_dd = 0;
 		var node = new Node({dt: dt, content: elem});
 		return this._add(node);
@@ -109,8 +109,8 @@
 	
 	List.prototype.addDD = function (elem, dt, dd) {
 		if ('undefined' === typeof elem) return;
-		var dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
-		var dd = ('undefined' !== typeof dd) ? dd: this.last_dd++;
+		dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
+		dd = ('undefined' !== typeof dd) ? dd: this.last_dd++;
 		var node = new Node({dt: dt, dd: dd, content: elem});
 		return this._add(node);
 	};
@@ -156,12 +156,13 @@
 		
 		for (var i=0; i<this.db.length; i++) {
 			var el = this.db[i];
+			var node;
 			if ('undefined' === typeof el.dd) {
-				var node = appendDT.call(this);
+				node = appendDT.call(this);
 				//console.log('just created dt');
 			}
 			else {
-				var node = appendDD.call(this);
+				node = appendDD.call(this);
 			}
 //			console.log('This is the el')
 //			console.log(el);
@@ -188,19 +189,19 @@
 //		return item;
 //	};
 	
-	  // Cell Class
-	  Node.prototype = new Entity();
-	  Node.prototype.constructor = Node;
-	  
-	  function Node (node) {
-		  Entity.call(this, node);
-		  this.dt = ('undefined' !== typeof node.dt) ? node.dt : null;
-		  if ('undefined' !== typeof node.dd) {
-			  this.dd = node.dd;
-		  }
-	  };
+	// Cell Class
+	Node.prototype = new Entity();
+	Node.prototype.constructor = Node;
+	
+	function Node (node) {
+		Entity.call(this, node);
+		this.dt = ('undefined' !== typeof node.dt) ? node.dt : null;
+		if ('undefined' !== typeof node.dd) {
+			this.dd = node.dd;
+		}
+	}
 	
 })(
-	('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports
-  , ('undefined' !== typeof node) ? node : module.parent.exports
+	('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
+	('undefined' !== typeof node) ? node : module.parent.exports
 );
