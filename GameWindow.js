@@ -274,7 +274,6 @@
 			
 		case 'PLAYER':
 			
-			//var maincss		= this.addCSS(this.root, 'style.css');
 			this.header 	= this.generateHeader();
 		    var mainframe 	= this.addIFrame(this.root,'mainframe');
 		    
