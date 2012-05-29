@@ -1,9 +1,9 @@
 (function(exports) {
 	
 	/*!
-	 * Canvas
-	 * 
-	 */ 
+	* Canvas
+	* 
+	*/ 
 	
 	exports.Canvas = Canvas;
 	
@@ -21,7 +21,7 @@
 		
 //		console.log(canvas.width);
 //		console.log(canvas.height);		
-	};
+	}
 	
 	Canvas.prototype = {
 				
