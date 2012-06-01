@@ -369,7 +369,7 @@
 		//console.log(this.db.length);
 		
 		// BODY
-		if (this.size() !== 0) {
+		if (this.length) {
 			var TBODY = document.createElement('tbody');
 
 			this.sort(['y','x']); // z to add first
