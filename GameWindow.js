@@ -252,7 +252,7 @@
 		case 'MONITOR':
 			
 			// TODO: Check this
-			node.node.removeListener('in.STATE');
+			node.removeListener('in.STATE');
 			
 			this.addWidget('NextPreviousState');
 			this.addWidget('GameSummary');

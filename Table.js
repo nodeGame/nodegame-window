@@ -16,7 +16,7 @@
 	var HTMLRenderer = node.window.HTMLRenderer;
 	var Entity = node.window.HTMLRenderer.Entity;
 	
-	Table.prototype = new NDDB();
+	Table.prototype = JSUS.clone(NDDB.prototype);
 	Table.prototype.constructor = Table;	
 	
 	Table.H = ['x','y','z'];
@@ -26,8 +26,6 @@
 	
 	function Table (options, data) {
 		options = options || {};
-
-		NDDB.call(this, options, data);  
 		
 		Table.log = options.log || Table.log;
 		this.defaultDim1 = options.defaultDim1 || 'x';
@@ -53,19 +51,27 @@
 		this.left = [];
 		this.right = [];
 		
-		this.htmlRenderer = null; 
 		
-		this.init(this.options);
+		NDDB.call(this, options, data);  
+		
+		// From NDDB
+		this.options = this.__options;
 	}
   
 	// TODO: improve init
 	Table.prototype.init = function (options) {
+		NDDB.prototype.init.call(this, options);
+		
 		options = options || this.options;
-		this.table.id = options.id || this.id;
+		if ('undefined' !== typeof options.id) {
+			
+			this.table.id = options.id;
+			this.id = options.id;
+		}
 		if (options.className) {
 			this.table.className = options.className;
 		}
-	this.initRenderer(options.render);
+		this.initRenderer(options.render);
 	};
 	
 	Table.prototype.initRenderer = function(options) {
@@ -442,8 +448,9 @@
   
   
 	Table.prototype.clear = function (confirm) {
-		var result = Table.prototype.__proto__.clear.call(this, confirm);
-		this.resetPointers();
+		if (NDDB.prototype.clear.call(this, confirm)) {
+			this.resetPointers();
+		}
 	};
   
   // Cell Class
