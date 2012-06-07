@@ -406,7 +406,7 @@
     	}
 			
 		this.areLoading--;
-		console.log('ARE LOADING: ' + this.areLoading);
+		//console.log('ARE LOADING: ' + this.areLoading);
 		if (this.areLoading === 0) {
 			this.state = GameState.iss.LOADED;
 			node.emit('WINDOW_LOADED');
