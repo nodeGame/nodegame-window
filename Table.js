@@ -31,7 +31,7 @@
 	
 	Table.log = node.log;
 	
-	function Table (options, data) {
+	function Table (options, data, parent) {
 		options = options || {};
 		
 		Table.log = options.log || Table.log;
@@ -59,7 +59,7 @@
 		this.right = [];
 		
 		
-		NDDB.call(this, options, data);  
+		NDDB.call(this, options, data, parent);  
 		
 		// From NDDB
 		this.options = this.__options;
