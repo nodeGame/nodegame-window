@@ -1,4 +1,4 @@
-(function (node) {
+(function (window, node) {
 	
 	/**
 	 * 
@@ -20,7 +20,7 @@
 	 * configuration of widgets.
 	 * 
 	 * Depends on nodegame-client. 
-	 * GameWindow.Table and GameWindow.List just depend on NDDB and JSUS.
+	 * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
 	 * 
 	 * Widgets can have custom dependencies, which are checked internally 
 	 * by the GameWindow engine.
@@ -66,14 +66,15 @@
 			throw new Error('nodeWindow: no DOM found. Are we in a browser? Aborting.');
 		}
 		
-		if ('undefined' !== typeof node) {
-			node.log('nodeWindow: loading...');
-			var gsc = node.gsc || null;
-			var game = node.game || null;
-		}
-		else {
+		if ('undefined' === typeof node) {
 			node.log('nodeWindow: nodeGame not found', 'ERR');
 		}
+		
+		node.log('nodeWindow: loading...');
+		var gsc = node.gsc || null;
+		var game = node.game || null;
+		
+		
 		
 		this.frame = null; // contains an iframe 
 		this.mainframe = 'mainframe';
@@ -996,5 +997,6 @@
 })(
 	// GameWindow works only in the browser environment. The reference 
 	// to the node.js module object is for testing purpose only
+	('undefined' !== typeof window) ? window : module.parent.exports.window,
 	('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );

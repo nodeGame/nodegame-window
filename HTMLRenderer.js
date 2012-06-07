@@ -1,5 +1,6 @@
-(function(exports, node){
+(function(exports, window, node){
 	
+	var document = window.document;
 	var JSUS = node.JSUS;
 
 	var TriggerManager = node.TriggerManager;
@@ -99,6 +100,7 @@
 	}
 	
 })(
-	('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
-	('undefined' !== typeof node) ? node : module.parent.exports
+	('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
+	('undefined' !== typeof window) ? window : module.parent.exports.window, // window
+	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );

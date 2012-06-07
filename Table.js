@@ -1,4 +1,9 @@
-(function(exports, node){
+(function(exports, window, node) {
+	
+//	console.log('---------')
+//	console.log(node.window);
+	
+	var document = window.document;
 	
 	/*!
 	* 
@@ -16,7 +21,9 @@
 	var HTMLRenderer = node.window.HTMLRenderer;
 	var Entity = node.window.HTMLRenderer.Entity;
 	
+	
 	Table.prototype = JSUS.clone(NDDB.prototype);
+	//Table.prototype = new NDDB();
 	Table.prototype.constructor = Table;	
 	
 	Table.H = ['x','y','z'];
@@ -239,7 +246,7 @@
 			cell[dims[0]] = i; // i always defined
 			cell[dims[1]] = (j) ? y+j : y;
 			cell[dims[2]] = (h) ? z+h : z;
-			cell['content'] = content;	
+			cell.content = content;	
 			//Table.log(cell);
 			this.insert(new Cell(cell));
 			this.updatePointer(dims[0],cell[dims[0]]);
@@ -350,10 +357,11 @@
 			}
 		}
 		
-		var TABLE = this.table;
+		var TABLE = this.table,
+			TR, 
+			TD,
+			i;
 		
-		var TR;
-		var TD;
 		// HEADER
 		if (this.header && this.header.length > 0) {
 			var THEAD = document.createElement('thead');
@@ -396,7 +404,7 @@
 					old_x = f.x - 1; // must start exactly from the first
 					
 					// Insert left header, if any
-					if (this.left && this.left.length > 0) {
+					if (this.left && this.left.length) {
 						TD = document.createElement('td');
 						//TD.className = this.missing;
 						TR.appendChild(fromCell2TD.call(this, this.left[old_left]));
@@ -465,6 +473,7 @@
 	}
   
 })(
-	('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
-	('undefined' !== typeof node) ? node : module.parent.exports
+	('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
+	('undefined' !== typeof window) ? window : module.parent.exports.window, // window
+	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );
