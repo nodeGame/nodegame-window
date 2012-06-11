@@ -281,7 +281,7 @@
 		    
 			node.game.vs 	= this.addWidget('VisualState', this.header);
 			node.game.timer = this.addWidget('VisualTimer', this.header);
-			node.game.doneb = this.addWidget('DoneButton', this.header);
+			//node.game.doneb = this.addWidget('DoneButton', this.header);
 			node.game.sd 	= this.addWidget('StateDisplay', this.header);
 
 			this.addWidget('WaitScreen');
