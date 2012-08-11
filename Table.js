@@ -94,17 +94,7 @@
 				}
 				return tbl.parse();
 			}
-		}, 2);
-		
-//		if (!(options instanceof Array)) {
-//			options = [options];
-//		}
-//		for (var i=0; i< options.length; i++) {
-//			this.htmlRenderer.addRenderer(options[i]);
-//		}
-		
-		
-		
+		}, 2);		
 	};
   
 	// TODO: make it 3D

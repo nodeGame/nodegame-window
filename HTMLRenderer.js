@@ -83,8 +83,8 @@ HTMLRenderer.prototype.init = function (options) {
 		this.tm.returnAt = options.returnAt;
 	}
 	
-	if (options.render) {
-		this.tm.initTriggers(options.render);
+	if (options.pipeline) {
+		this.tm.initTriggers(options.pipeline);
 	}
 };
 
