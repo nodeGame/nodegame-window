@@ -245,7 +245,8 @@
 	GameWindow.prototype.setup = function (type){
 	
 		if (!this.root) {
-			this.root = this.generateNodeGameRoot();
+			this.root = document.body;
+			//this.root = this.generateNodeGameRoot();
 		}
 		
 		switch (type) {

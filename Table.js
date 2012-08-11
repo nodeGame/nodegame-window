@@ -81,8 +81,9 @@
 		this.initRenderer(options.render);
 	};
 	
-	Table.prototype.initRenderer = function(options) {
-		this.htmlRenderer = new HTMLRenderer();	
+	Table.prototype.initRenderer = function (options) {
+		options = options || {};
+		this.htmlRenderer = new HTMLRenderer(options);
 		this.htmlRenderer.addRenderer(function(el) {
 			if ('object' === typeof el.content) {
 				var tbl = new Table();
@@ -94,14 +95,16 @@
 				return tbl.parse();
 			}
 		}, 2);
-		if (options) {
-			if (!(options instanceof Array)) {
-				options = [options];
-			}
-			for (var i=0; i< options.length; i++) {
-				this.htmlRenderer.addRenderer(options[i]);
-			}
-		}
+		
+//		if (!(options instanceof Array)) {
+//			options = [options];
+//		}
+//		for (var i=0; i< options.length; i++) {
+//			this.htmlRenderer.addRenderer(options[i]);
+//		}
+		
+		
+		
 	};
   
 	// TODO: make it 3D

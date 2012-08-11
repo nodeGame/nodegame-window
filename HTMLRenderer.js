@@ -1,103 +1,233 @@
+/**
+ * # HTMLRenderer
+ * 
+ * Renders javascript objects into HTML following a pipeline
+ * of decorator functions.
+ * 
+ * The default pipeline always looks for a `content` property and 
+ * performs the following operations:
+ * 
+ * - if it is already an HTML element, returns it;
+ * - if it contains a  #parse() method, tries to invoke it to 
+ * 	generate HTML;
+ * - if it is an object, tries to render it as a table of 
+ *   key:value pairs; 
+ * - finally, creates an HTML text node with it and returns it
+ * 
+ * 
+ * Depends on the nodegame-client add-on TriggerManager
+ * 
+ */
+
 (function(exports, window, node){
 	
-	var document = window.document;
-	var JSUS = node.JSUS;
+// ## Global scope	
+	
+var document = window.document,
+	JSUS = node.JSUS;
 
-	var TriggerManager = node.TriggerManager;
-	/*!
-	* 
-	* HTMLRenderer: renders objects to HTML according to a series
-	* of criteria.
-	* 
-	*/
+var TriggerManager = node.TriggerManager;
+
+exports.HTMLRenderer = HTMLRenderer;
+exports.HTMLRenderer.Entity = Entity;
+
+/**
+ * ## HTMLRenderer constructor
+ * 
+ * Creates a new instance of HTMLRenderer
+ * 
+ * @param {object} options A configuration object
+ */
+function HTMLRenderer (options) {
 	
-	exports.HTMLRenderer = HTMLRenderer;
-	exports.HTMLRenderer.Entity = Entity;
+// ## Public properties
+
+// ### TriggerManager.options	
+	this.options = options || {};
+// ### HTMLRenderer.tm
+// TriggerManager instance	
+	this.tm = new TriggerManager();
 	
-	function HTMLRenderer (options) {
-		this.options = options = options || {};
-		this.tm = new TriggerManager();
-		this.init(this.options);
+	this.init(this.options);
+}
+
+//## HTMLRenderer methods
+
+/**
+ * ### HTMLRenderer.init
+ * 
+ * Configures the HTMLRenderer instance
+ * 
+ * Takes the configuration as an input parameter or 
+ * recycles the settings in `this.options`.
+ * 
+ * The configuration object is of the type
+ * 
+ * 	var options = {
+ * 		returnAt: 'first', // or 'last'
+ * 		render: [ myFunc,
+ * 				  myFunc2 
+ * 		],
+ * 	} 
+ * 	 
+ * @param {object} options Optional. Configuration object
+ * 
+ */
+HTMLRenderer.prototype.init = function (options) {
+	options = options || this.options;
+	this.options = options;
+	
+	this.reset();
+	
+	if (options.returnAt) {
+		this.tm.returnAt = options.returnAt;
 	}
 	
-	HTMLRenderer.prototype.init = function(options) {
-		if (options) {
-			if (options.render) {
-				options.triggers = options.render;
+	if (options.render) {
+		this.tm.initTriggers(options.render);
+	}
+};
+
+
+
+/**
+ * ### HTMLRenderer.reset
+ * 
+ * Deletes all registered render function and restores the default 
+ * pipeline 
+ * 
+ */
+HTMLRenderer.prototype.reset = function () {
+	this.clear(true);
+	this.addDefaultPipeline();
+};
+
+/**
+ * ### HTMLRenderer.addDefaultPipeline
+ * 
+ * Registers the set of default render functions
+ * 
+ */
+HTMLRenderer.prototype.addDefaultPipeline = function() {
+	this.tm.addTrigger(function(el){
+		return document.createTextNode(el.content);
+	});
+	
+	this.tm.addTrigger(function (el) {
+		if (!el) return;
+		if (el.content && 'object' === typeof el.content) {
+			var div = document.createElement('div');
+			for (var key in el.content) {
+				if (el.content.hasOwnProperty(key)) {
+					var str = key + ':\t' + el.content[key];
+					div.appendChild(document.createTextNode(str));
+					div.appendChild(document.createElement('br'));
+				}
 			}
-			this.options = options;
+			return div;
 		}
-		this.resetRender();
-	};
+	});
 	
-	/**
-	* Delete existing render functions and add two 
-	* standards. By default objects are displayed in
-	* a HTMLRenderer of key: values.
-	*/
-	HTMLRenderer.prototype.resetRender = function () {
-		this.tm.clear(true);
-		
-		this.tm.addTrigger(function(el){
-			return document.createTextNode(el.content);
-		});
-		
-		this.tm.addTrigger(function (el) { 
-			if ('object' === typeof el.content) {
-				var div = document.createElement('div');
-				for (var key in el.content) {
-					if (el.content.hasOwnProperty(key)) {
-						var str = key + ':\t' + el.content[key];
-						div.appendChild(document.createTextNode(str));
-						div.appendChild(document.createElement('br'));
-					}
-				}
-				return div;
+	this.tm.addTrigger(function (el) { 
+		if (!el) return;
+		if (el.content && el.content.parse && 'function' === typeof el.content.parse) {
+			var html = el.content.parse();
+			if (JSUS.isElement(html) || JSUS.isNode(html)) {
+				return html;
 			}
-		});
-		
-		this.tm.addTrigger(function (el) { 
-			if (el.content && el.content.parse && 'function' === typeof el.content.parse) {
-				var html = el.content.parse();
-				if (JSUS.isElement(html) || JSUS.isNode(html)) {
-					return html;
-				}
-			}
-		});	
-		
-		this.tm.addTrigger(function (el) { 
-			if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
-				return el.content;
-			}
-		});
-	};
+		}
+	});	
 	
-	HTMLRenderer.prototype.clear = function (clear) {
-		return this.tm.clear(clear);
-	};
+	this.tm.addTrigger(function (el) { 
+		if (!el) return;
+		if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
+			return el.content;
+		}
+	});
+}
 
-	HTMLRenderer.prototype.addRenderer = function (renderer, pos) {
-		return this.tm.addTrigger(renderer, pos);
-	};
-	
-	HTMLRenderer.prototype.removeRenderer = function (renderer) {
-		return this.tm.removeTrigger(renderer);
-	};
-	
-	HTMLRenderer.prototype.render = function (o) {
-		return this.tm.pullTriggers(o);
-	};
-	
-	HTMLRenderer.prototype.size = function () {
-		return this.tm.size();
-	};
-	
-	// Abstract HTML Entity reprentation
-	function Entity (e) {
-		e = e || {};
-		this.content = ('undefined' !== typeof e.content) ? e.content : '';
-		this.className = ('undefined' !== typeof e.style) ? e.style : null;
-	}
+
+/**
+ * ### HTMLRenderer.clear
+ * 
+ * Deletes all registered render functions
+ * 
+ * @param {boolean} clear TRUE, to confirm the clearing
+ * @return {boolean} TRUE, if clearing is successful
+ */
+HTMLRenderer.prototype.clear = function (clear) {
+	return this.tm.clear(clear);
+};
+
+/**
+ * ### HTMLRenderer.addRenderer
+ * 
+ * Registers a new render function
+ * 
+ * @param {function} renderer The function to add
+ * @param {number} pos Optional. The position of the renderer in the pipeline
+ * @return {boolean} TRUE, if insertion is successful
+ */	  
+HTMLRenderer.prototype.addRenderer = function (renderer, pos) {
+	return this.tm.addTrigger(renderer, pos);
+};
+
+/**
+ * ### HTMLRenderer.removeRenderer
+ * 
+ * Removes a render function from the pipeline
+ * 
+ * @param {function} renderer The function to remove
+ * @return {boolean} TRUE, if removal is successful
+ */	  
+HTMLRenderer.prototype.removeRenderer = function (renderer) {
+	return this.tm.removeTrigger(renderer);
+};
+
+/**
+ * ### HTMLRenderer.render
+ * 
+ * Runs the pipeline of render functions on a target object
+ * 
+ * @param {object} o The target object
+ * @return {object} The target object after exiting the pipeline
+ * 
+ * @see TriggerManager.pullTriggers
+ */	
+HTMLRenderer.prototype.render = function (o) {
+	return this.tm.pullTriggers(o);
+};
+
+/**
+ * ### HTMLRenderer.size
+ * 
+ * Counts the number of render functions in the pipeline
+ * 
+ * @return {number} The number of render functions in the pipeline
+ */
+HTMLRenderer.prototype.size = function () {
+	return this.tm.triggers.length;
+};
+
+/**
+ * # Entity
+ * 
+ * Abstract representation of an HTML entity
+ * 
+ */ 
+
+/**
+ * ## Entity constructor
+ * 
+ * Creates a new instace of Entity
+ * 
+ * @param {object} The object to transform in entity
+ */
+function Entity (e) {
+	e = e || {};
+	this.content = ('undefined' !== typeof e.content) ? e.content : '';
+	this.className = ('undefined' !== typeof e.style) ? e.style : null;
+}
 	
 })(
 	('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
