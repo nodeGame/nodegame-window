@@ -21,7 +21,7 @@ TODO
 
 ## Build
 
-You can create a custom nodegame-window build using the make.js file in the bin directory
+You can create a custom nodegame-window build using the make.js file in the bin directory.
 
 ```javascript
 node make.js build -a // Full build, about 20Kb minified
