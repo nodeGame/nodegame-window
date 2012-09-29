@@ -10,15 +10,52 @@ Loads and unloads special javascript/HTML snippets, called widgets, in the page.
 
 Defines a number of predefined profiles associated with special configuration of widgets.
 
-Depends on nodeGameclient and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
-Widgets can have custom dependencies, which are checked internally by the GameWindow engine.
-
-Depends on nodegame-client. GameWindow.Table and GameWindow.List just depend on NDDB and JSUS.
+Depends on nodeGame-client and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
 Widgets can have custom dependencies, which are checked internally by the GameWindow engine.
 
 ## Usage
 
 TODO
+
+##
+
+## Build
+
+You can create a custom nodegame-window build using the make.js file in the bin directory
+
+```javascript
+node make.js build -a // Full build, about 20Kb minified
+node make.js build -B // Bare (minimal) build, about 8Kb minified
+```
+
+## Make help
+
+  Usage: make.js [options] [command]
+
+    Commands:
+
+      clean 
+      Removes all files from build folder
+    
+      build [options] [options]
+      Creates a nodegame-window custom build
+
+    Options:
+
+      -h, --help     output usage information
+      -V, --version  output the version number
+
+  Usage: build [options] [options]
+
+  Options:
+
+    -h, --help           output usage information
+    -B, --bare           bare naked nodegame-window (only core)
+    -a, --all            full build of nodegame-window (default)
+    -C, --clean          clean build directory
+    -A, --analyse        analyse build
+    -o, --output <file>  output file (without .js)
+
 
 ## License
 
