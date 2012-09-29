@@ -27,7 +27,7 @@ function build(options) {
 		out = path.basename(out, '.js');
 	}
 	
-	console.log('Building nodegame-window v.' + version + ' with:');
+	console.log('Building nodegame-window v.' + version);
 
 	// Defining variables
 
