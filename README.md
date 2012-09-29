@@ -46,16 +46,16 @@ node make.js build -B // Bare (minimal) build, about 8Kb minified
       -V, --version  output the version number
 
 
-  Usage: build [options] [options]
+    Usage: build [options] [options]
 
-  Options:
+    Options:
 
-    -h, --help           output usage information
-    -B, --bare           bare naked nodegame-window (only core)
-    -a, --all            full build of nodegame-window (default)
-    -C, --clean          clean build directory
-    -A, --analyse        analyse build
-    -o, --output <file>  output file (without .js)
+      -h, --help           output usage information
+      -B, --bare           bare naked nodegame-window (only core)
+      -a, --all            full build of nodegame-window (default)
+      -C, --clean          clean build directory
+      -A, --analyse        analyse build
+      -o, --output <file>  output file (without .js)
 
 
 ## License
