@@ -27,6 +27,7 @@
     "url": "https://github.com/nodeGame/nodegame-window.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "postinstall": "node bin/make.js build"
   }
 }
