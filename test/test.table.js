@@ -21,13 +21,13 @@ var node = require('./../node_modules/nodegame-client');
 module.exports.node = node;
 
 // Requiring and exporting GameWindow and HTMLRenderer
-var	GameWindow = require('./../GameWindow.js'),
-	HTMLRenderer = require('./../HTMLRenderer.js').HTMLRenderer;
+var	GameWindow = require('./../lib/GameWindow.js'),
+	HTMLRenderer = require('./../lib/HTMLRenderer.js').HTMLRenderer;
 
 node.window.HTMLRenderer = HTMLRenderer;
 
 // TABLE    
-var Table = require('./../Table.js').Table;
+var Table = require('./../lib/Table.js').Table;
 
 var clients = ['a','b','c','d'];
 var states = [1,2,3,4];
