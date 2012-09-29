@@ -840,7 +840,7 @@
 			pl.forEach( function(p) {
 				opt = document.createElement('option');
 				opt.value = p.id;
-				opt.appendChild(document.createTextNode(p.name));
+				opt.appendChild(document.createTextNode(p.name || p.id));
 				toSelector.appendChild(opt);
 			});
 		}
