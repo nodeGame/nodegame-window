@@ -33,11 +33,15 @@ function build(options) {
 
 	var rootDir = path.resolve(__dirname, '..') + '/',
 		distDir = rootDir + 'build/',
-		libDir = rootDir + 'lib/';
+		libDir = rootDir + 'lib/',
+		listDir = rootDir + 'listeners/';
 	
 	
 	// CREATING build array
-	var files = [libDir + "GameWindow.js"];
+	var files = [
+	             libDir + "GameWindow.js",
+	             listDir + "listeners.js",
+	];
 	            
 	if (!options.bare) {
 		files = files.concat([
