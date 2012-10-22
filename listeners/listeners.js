@@ -6,7 +6,7 @@
 		console.log('nodegame-window: node object not found.');
 		return false;
 	}
-	if (!window)
+	if (!window) {
 		node.err('window object not found.', 'nodegame-window');
 		return false;
 	}
