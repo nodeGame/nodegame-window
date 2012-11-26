@@ -1,16 +1,15 @@
 {
   "name": "nodegame-window",
   "description": "Provides a handy API to interface nodeGame with the browser window, and to load nodeGame widgets.",
-  "version": "0.4.0",
+  "version": "0.3.2",
   "keywords": [ "nodegame", "window", "browser", "widgets" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
     { "type": "MIT" }
   ],
   "dependencies": {
-    "nodegame-client": ">= 0.2.6",
-    "JSUS": ">= 0.5.2",
-    "NDDB": ">= 0.3.1",
+    "JSUS": ">= 0.6.1",
+    "NDDB": ">= 0.4.1",
     "commander": "1.0.0",
     "docker": "0.1.3",
     "smoosh": "0.3.2"
