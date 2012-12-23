@@ -51,22 +51,28 @@ program
 		build(options);
 });
 
-//program
-//	.command('doc')
-//	.description('Builds documentation files')
-//	.action(function(){
-//		console.log('Building documentation for nodegame-window v.' + version);
-//		// http://nodejs.org/api.html#_child_processes
-//		var dockerDir = J.resolveModuleDir('docker');
-//		var command = dockerDir + 'docker -i ' + rootDir + ' index.js init.node.js nodeGame.js lib/ addons/ -o ' + rootDir + 'docs/';
-//		var child = exec(command, function (error, stdout, stderr) {
-//			util.print(stdout);
-//			util.print(stderr);
-//			if (error !== null) {
-//				console.log('build error: ' + error);
-//			}
-//		});
-//});
+program
+	.command('doc')
+	.description('Builds documentation files')
+	.action(function(){
+		console.log('Building documentation for nodegame-window v.' + version);
+		// http://nodejs.org/api.html#_child_processes
+		try{
+			var dockerDir = J.resolveModuleDir('docker');
+		}
+		catch(e) {
+			console.log('module Docker not found. Cannot build doc. Do \'npm install doc\' to fix it.');
+			return false;
+		}
+		var command = dockerDir + 'docker -i ' + rootDir + ' index.js lib/ listeners/ -o ' + rootDir + 'docs/';
+		var child = exec(command, function (error, stdout, stderr) {
+			util.print(stdout);
+			util.print(stderr);
+			if (error !== null) {
+				console.log('build error: ' + error);
+			}
+		});
+});
 
 //Parsing options
 program.parse(process.argv);
