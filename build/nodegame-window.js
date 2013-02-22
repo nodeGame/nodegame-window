@@ -83,6 +83,8 @@ function GameWindow() {
 	
 	this.state = node.is.LOADED;
 	this.areLoading = 0; 
+
+	this.cache = {};  // cache for loaded iframes
 	
 	// Init default behavior
 	this.init();
@@ -226,7 +228,7 @@ GameWindow.prototype.setup = function (type){
 
 
 /**
- * ## GameWindow.load
+ * ### GameWindow.load
  * 
  * Loads content from an uri (remote or local) into the iframe, 
  * and after it is loaded executes the callback function. 
@@ -244,14 +246,14 @@ GameWindow.prototype.setup = function (type){
  */
 GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, frame) {
 	if (!uri) return;
-	frame =  frame || this.mainframe;
+	frame = frame || this.mainframe;
 	
 	this.state = node.is.LOADING;
 	this.areLoading++; // keep track of nested call to loadFrame
 	
-	var that = this;	
+	var that = this;
 			
-	// First add the onload event listener
+	// First add the onload event listener (not called when frame is loaded from cache):
 	var iframe = document.getElementById(frame);
 	iframe.onload = function () {
 		if (that.conf.noEscape) {
@@ -261,11 +263,36 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
 			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
+
+		if(!(uri in that.cache)) {
+			// Store frame in cache:
+			var frameNode = document.getElementById(frame);
+			var frameDocumentElement =
+				(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+				.documentElement;
+			that.cache[uri] = frameDocumentElement.innerHTML;
+			//console.log("DEBUG: Stored as '"+uri+"':\n" + frameDocumentElement.innerHTML);
+		}
+
 		that.updateStatus(func, frame);
 	};
 
-	// Then update the frame location
-	window.frames[frame].location = uri;
+	// Cache lookup:
+	if(uri in this.cache) {
+		// Load frame from cache:
+		var frameNode = document.getElementById(frame);
+		var frameDocumentElement =
+			(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+			.documentElement;
+		frameDocumentElement.innerHTML = that.cache[uri];
+		//console.log("DEBUG: Loaded from '"+uri+"':\n" + that.cache[uri]);
+		
+		// Update status (onload isn't called!):
+		this.updateStatus(func, frame);
+	} else {
+		// Update the frame location:
+		window.frames[frame].location = uri;
+	}
 	
 	
 	// Adding a reference to nodeGame also in the iframe
@@ -826,6 +853,7 @@ if ('undefined' !== typeof window) window.W = node.window;
 	('undefined' !== typeof window) ? window : module.parent.exports.window,
 	('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
 // ## Game incoming listeners
 // Incoming listeners are fired in response to incoming messages
 (function (node, window) {
