@@ -228,6 +228,68 @@ GameWindow.prototype.setup = function (type){
 
 
 /**
+ * ### GameWindow.preCache
+ *
+ * Loads the HTML content of the given URIs into the cache.
+ *
+ * @param {array} uris The URIs to cache
+ * @param {function} callback The function to call once the caching is done
+ *
+ */
+GameWindow.prototype.preCache = function(uris, callback) {
+	// Don't preload if no URIs are given:
+	if (!uris || !uris.length) {
+		if(callback) callback();
+		return;
+	}
+
+	var that = this;
+
+	// Keep count of loaded URIs:
+	var loadedCount = 0;
+
+	for (var uriIdx = 0; uriIdx < uris.length; ++uriIdx) {
+		var currentUri = uris[uriIdx];
+
+		console.log('DEBUG: Caching "' + currentUri + '"...');
+
+		// Create an invisible internal frame for the current URI:
+		var iframe = document.createElement('iframe');
+		iframe.style.visibility = 'hidden';
+		var iframeName = 'tmp_iframe_' + uriIdx;
+		iframe.id = iframeName;
+		iframe.name = iframeName;
+		document.body.appendChild(iframe);
+
+		// Register the onload handler:
+		iframe.onload = (function(uri, thisIframe) {
+			return function() {
+				// Store the contents in the cache:
+				var frameDocumentElement =
+					(thisIframe.contentDocument ? thisIframe.contentDocument : thisIframe.contentWindow.document)
+					.documentElement;
+				that.cache[uri] = frameDocumentElement.innerHTML;
+
+				// Remove the internal frame:
+				document.body.removeChild(thisIframe);
+
+				// Increment loaded URIs counter:
+				++ loadedCount;
+				if (loadedCount >= uris.length) {
+					// All requested URIs have been loaded at this point.
+					console.log('DEBUG: preCache done!');
+					if (callback) setTimeout(function() {callback();}, 3000);
+				}
+			};
+		})(currentUri, iframe);
+
+		// Start loading the page:
+		window.frames[iframeName].location = currentUri;
+	}
+};
+
+
+/**
  * ### GameWindow.load
  * 
  * Loads content from an uri (remote or local) into the iframe, 
@@ -247,15 +309,21 @@ GameWindow.prototype.setup = function (type){
 GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, frame) {
 	if (!uri) return;
 	frame = frame || this.mainframe;
+
+	// Get the Internal Frame object:
+	var iframe = document.getElementById(frame);
+	// Query readiness (so we know whether onload is going to be called):
+	var frameReady = iframe.contentWindow.document.readyState;
+	// ...reduce it to a boolean:
+	frameReady = (frameReady === 'interactive' || frameReady === 'complete');
 	
 	this.state = node.is.LOADING;
 	this.areLoading++; // keep track of nested call to loadFrame
 	
 	var that = this;
 			
-	// First add the onload event listener (not called when frame is loaded from cache):
-	var iframe = document.getElementById(frame);
-	iframe.onload = function () {
+	// First add the onload event listener:
+	iframe.onload = function() {
 		if (that.conf.noEscape) {
 			
 			// TODO: inject the no escape code here
@@ -264,32 +332,51 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
 
-		if(!(uri in that.cache)) {
+		if (!(uri in that.cache)) {
 			// Store frame in cache:
 			var frameNode = document.getElementById(frame);
 			var frameDocumentElement =
 				(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
 				.documentElement;
 			that.cache[uri] = frameDocumentElement.innerHTML;
-			//console.log("DEBUG: Stored as '"+uri+"':\n" + frameDocumentElement.innerHTML);
+			console.log("DEBUG: Stored as '"+uri+"'");
+		}
+		else {
+			// Load frame from cache:
+			var frameNode = document.getElementById(frame);
+			var frameDocumentElement =
+				(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+				.documentElement;
+			frameDocumentElement.innerHTML = that.cache[uri];
+			console.log("DEBUG: Loaded in onload from '"+uri+"'");
 		}
 
+		console.log("DEBUG: Calling updateStatus from onload...");
 		that.updateStatus(func, frame);
 	};
 
 	// Cache lookup:
-	if(uri in this.cache) {
-		// Load frame from cache:
-		var frameNode = document.getElementById(frame);
-		var frameDocumentElement =
-			(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
-			.documentElement;
-		frameDocumentElement.innerHTML = that.cache[uri];
-		//console.log("DEBUG: Loaded from '"+uri+"':\n" + that.cache[uri]);
-		
-		// Update status (onload isn't called!):
-		this.updateStatus(func, frame);
-	} else {
+	if (uri in this.cache) {
+		// Load iframe contents at this point only if the iframe is already "ready"
+		// (see definition of frameReady), otherwise the contents would be cleared
+		// once the iframe becomes ready.  In that case, onload handles the
+		// filling of the contents.
+		if (frameReady) {
+			// Load frame from cache:
+			var frameNode = document.getElementById(frame);
+			var frameDocumentElement =
+				(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+				.documentElement;
+			frameDocumentElement.innerHTML = that.cache[uri];
+			console.log("DEBUG: Loaded in loadFrame from '"+uri+"'");
+			
+			// Update status (onload isn't called if frame was already ready):
+			console.log("DEBUG: Calling updateStatus from loadFrame...");
+			this.updateStatus(func, frame);
+		}
+	}
+	else {
+		console.log('DEBUG: URI "' + uri + '" WAS NOT CACHED!');
 		// Update the frame location:
 		window.frames[frame].location = uri;
 	}
@@ -322,7 +409,10 @@ GameWindow.prototype.updateStatus = function(func, frame) {
 	}
 		
 	this.areLoading--;
-	//console.log('ARE LOADING: ' + this.areLoading);
+
+	// DEBUG
+	if(this.areLoading < 0) console.log('DEBUG: W.areLoading = ' + this.areLoading);
+
 	if (this.areLoading === 0) {
 		this.state = node.is.LOADED;
 		node.emit('WINDOW_LOADED');
