@@ -105,7 +105,7 @@ function GameWindow() {
 	// Libraries to be loaded for every frame and for specific frames.
 	// globalLibs holds an array of strings with the path of the libraries,
 	// frameLibs is a map from URIs to arrays like in globalLibs.
-	this.globalLibs = ['js/disable_right.js'];  // TEST
+	this.globalLibs = ['js/disable_right.js'];
 	this.frameLibs = {};
 
 	// Init default behavior
@@ -280,7 +280,7 @@ GameWindow.prototype.injectLibraries = function (frameNode, libs) {
  * ### GameWindow.initLibs
  *
  * Specify which libraries should be loaded automatically in the iframes.
- * This method must be called before any calls to GameWindow.load .
+ * This method must be called before any calls to GameWindow.load and GameWindow.preCache .
  *
  * @param {array} globalLibs Array of strings describing library paths that
  *    should be loaded in every iframe.
@@ -332,12 +332,17 @@ GameWindow.prototype.preCache = function(uris, callback) {
 		// Register the onload handler:
 		iframe.onload = (function(uri, thisIframe) {
 			return function() {
-				// Store the contents in the cache:
 				var frameDocumentElement =
 					(thisIframe.contentDocument ? thisIframe.contentDocument : thisIframe.contentWindow.document)
 					.documentElement;
+
+				// Inject libraries:
+				that.injectLibraries(thisIframe, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
+				//console.log("DEBUG: After injection: " + frameDocumentElement.innerHTML);
+
+				// Store the contents in the cache:
 				that.cache[uri] = { contents: frameDocumentElement.innerHTML,
-				                    libsInjected: false,
+				                    libsInjected: true,
 				                    cacheOnClose: false };
 
 				// Remove the internal frame:
@@ -455,6 +460,7 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			
 	// Add the onload event listener:
 	iframe.onload = function() {
+		console.log("DEBUG: onload");
 		if (that.conf.noEscape) {
 			
 			// TODO: inject the no escape code here
@@ -500,6 +506,8 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 		// filling of the contents.
 		// TODO: Fix code duplication between here and onload function.
 		if (frameReady) {
+			console.log("DEBUG: frameReady");
+
 			// Load frame from cache:
 			frameNode = document.getElementById(frame);
 			frameDocumentElement =
