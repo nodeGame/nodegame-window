@@ -24,6 +24,24 @@
       <div class="heading h2">
         <a href="#gamewindow-constructor">GameWindow constructor</a>
       </div>
+      <div class="heading h3">
+        <a href="#gamewindow.state">GameWindow.state</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.areloading">GameWindow.areLoading</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.cache">GameWindow.cache</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.currenturis">GameWindow.currentURIs</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.globallibs">GameWindow.globalLibs</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.framelibs">GameWindow.frameLibs</a>
+      </div>
       <div class="heading h2">
         <a href="#gamewindow-methods">GameWindow methods</a>
       </div>
@@ -32,6 +50,9 @@
       </div>
       <div class="heading h3">
         <a href="#gamewindow.getelementbyid">GameWindow.getElementById</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.getelementsbytagname">GameWindow.getElementsByTagName</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.setup">GameWindow.setup</a>
@@ -49,6 +70,9 @@
         <a href="#gamewindow.load">GameWindow.load</a>
       </div>
       <div class="heading h3">
+        <a href="#gamewindow.updatestatus">GameWindow.updateStatus</a>
+      </div>
+      <div class="heading h3">
         <a href="#gamewindow.write">GameWindow.write</a>
       </div>
       <div class="heading h3">
@@ -56,6 +80,9 @@
       </div>
       <div class="heading h3">
         <a href="#gamewindow.toggleinputs">GameWindow.toggleInputs</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamewindow.addstandardrecipients">GameWindow.addStandardRecipients</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.noescape">GameWindow.noEscape</a>
@@ -195,22 +222,51 @@ by the GameWindow engine.</p>
   <span class="k">this</span><span class="p">.</span><span class="nx">mainframe</span> <span class="o">=</span> <span class="s1">&#39;mainframe&#39;</span><span class="p">;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
   
-  <span class="k">this</span><span class="p">.</span><span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span>
-  
-  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> </pre></div>
+  <span class="k">this</span><span class="p">.</span><span class="nx">conf</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+<div class="pilwrap" id="gamewindow.state">
+  <h3>
+    <a href="#gamewindow.state" class="pilcrow">&#182;</a>
+    GameWindow.state
+  </h3>
 </div>
-<p>Cache for loaded iframes.  Every entry is a field with the URI as the key
-and an object as a value with the fields
- - 'contents' (a string describing the innerHTML or null if not cached),
- - 'libsInjected' (a bool saying whether the given libraries have already been
-   inserted into the page),
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">is</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="gamewindow.areloading">
+  <h3>
+    <a href="#gamewindow.areloading" class="pilcrow">&#182;</a>
+    GameWindow.areLoading
+  </h3>
+</div>
+
+
+<p>Counts the number of frames currently being loaded    </p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> </pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="gamewindow.cache">
+  <h3>
+    <a href="#gamewindow.cache" class="pilcrow">&#182;</a>
+    GameWindow.cache
+  </h3>
+</div>
+
+
+<p>Cache for loaded iframes</p>
+
+<p>Maps URI to a cache object with the following properties: <br />
+ - <code>contents</code> (a string describing the innerHTML or null if not cached),
  - optionally 'cacheOnClose' (a bool telling whether to cache the frame when
    it is replaced by a new one).</p>
         </td>
@@ -219,36 +275,56 @@ and an object as a value with the fields
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+<div class="pilwrap" id="gamewindow.currenturis">
+  <h3>
+    <a href="#gamewindow.currenturis" class="pilcrow">&#182;</a>
+    GameWindow.currentURIs
+  </h3>
 </div>
-<p>Currently loaded URIs in the internal frames.  Fields are frame names (e.g. 'mainframe'),
-values are the URIs they are showing.</p>
+
+
+<p>Currently loaded URIs in the internal frames</p>
+
+<p>Maps frame names (e.g. 'mainframe') to the URIs they are showing.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">currentURIs</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">currentURIs</span> <span class="o">=</span> <span class="p">{};</span>
+
+  </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+<div class="pilwrap" id="gamewindow.globallibs">
+  <h3>
+    <a href="#gamewindow.globallibs" class="pilcrow">&#182;</a>
+    GameWindow.globalLibs
+  </h3>
 </div>
-<p>Libraries to be loaded for every frame and for specific frames.
-globalLibs holds an array of strings with the path of the libraries,
-frameLibs is a map from URIs to arrays like in globalLibs.</p>
+
+
+<p>Array of strings with the path of the libraries to be loaded in every frame</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">globalLibs</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+  </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+<div class="pilwrap" id="gamewindow.framelibs">
+  <h3>
+    <a href="#gamewindow.framelibs" class="pilcrow">&#182;</a>
+    GameWindow.frameLibs
+  </h3>
 </div>
-<p>Init default behavior</p>
+
+
+<p>Like <code>GameWindow.frameLibs</code>, but contains libraries to be loaded only
+in specific frames</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
   
 <span class="p">};</span></pre></div>
         </td>
@@ -355,15 +431,19 @@ and then into the rest of the page.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.getelementsbytagname">
+  <h3>
+    <a href="#gamewindow.getelementsbytagname" class="pilcrow">&#182;</a>
+    GameWindow.getElementsByTagName
+  </h3>
 </div>
-<div class="dox">
-  <div class="summary"><p>Returns a collection of elements with the tag name equal to @tag . 
-Looks first into the iframe and then into the rest of the page.</p>
+
   </div>
-  <div class="body">
+  <div class="body"><p>Returns a list of elements with the given tag name </p>
+
+<p>Looks first into the iframe and then into the rest of the page.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
@@ -381,7 +461,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>@TODO: Should that be more similar to GameWindow.getElementById</p>
         </td>
@@ -421,7 +501,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>this.root = this.generateNodeGameRoot();</p>
         </td>
@@ -445,7 +525,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Add default CSS</p>
         </td>
@@ -462,7 +542,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>var maincss        = this.addCSS(this.root, 'style.css');</p>
         </td>
@@ -476,7 +556,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>node.game.doneb = node.widgets.append('DoneButton', this.header);</p>
         </td>
@@ -489,7 +569,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Add default CSS</p>
         </td>
@@ -505,7 +585,7 @@ Looks first into the iframe and then into the rest of the page.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
 </div>
 <p>TODO: inject the no escape code here
 not working
@@ -532,7 +612,11 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
 </div>
 
   </div>
-  <div class="body"><p>Injects <script src="..."> lines into given iframe object, one for every given library.</p>
+  <div class="body"><p>Injects scripts into the iframe</p>
+
+<p>First removes all old injected script tags.
+Then injects <code>&lt;script class="injectedlib" src="..."&gt;</code> lines into given
+iframe object, one for every given library.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -544,7 +628,7 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">libs</span>
       <span class="dox_type">array</span>
-      <span>An array of strings giving the "src" attribute for the <script>
+      <span>An array of strings giving the "src" attribute for the <code>&lt;script&gt;</code>
                     lines to insert</span>
     </div>
   </div>
@@ -556,11 +640,35 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
 
   <span class="kd">var</span> <span class="nx">headNode</span> <span class="o">=</span> <span class="nx">contentDocument</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
   <span class="kd">var</span> <span class="nx">scriptNode</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">libIdx</span><span class="p">,</span> <span class="nx">lib</span><span class="p">;</span>
-
-  <span class="k">for</span> <span class="p">(</span><span class="nx">libIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">libIdx</span> <span class="o">&lt;</span> <span class="nx">libs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">libIdx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">tagIdx</span><span class="p">,</span> <span class="nx">tag</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">libIdx</span><span class="p">,</span> <span class="nx">lib</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+</div>
+<p>Remove old tags:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">oldTags</span> <span class="o">=</span> <span class="nx">contentDocument</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="s1">&#39;injectedlib&#39;</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">tagIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">tagIdx</span> <span class="o">&lt;</span> <span class="nx">oldTags</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">tagIdx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tag</span> <span class="o">=</span> <span class="nx">oldTags</span><span class="p">[</span><span class="nx">tagIdx</span><span class="p">];</span>
+    <span class="nx">tag</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
+  <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>Inject new tags:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">for</span> <span class="p">(</span><span class="nx">libIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">libIdx</span> <span class="o">&lt;</span> <span class="nx">libs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">libIdx</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">lib</span> <span class="o">=</span> <span class="nx">libs</span><span class="p">[</span><span class="nx">libIdx</span><span class="p">];</span>
     <span class="nx">scriptNode</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+    <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;injectedlib&#39;</span><span class="p">;</span>
     <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">lib</span><span class="p">;</span>
     <span class="nx">headNode</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">scriptNode</span><span class="p">);</span>
   <span class="p">}</span>
@@ -578,15 +686,16 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
 </div>
 
   </div>
-  <div class="body"><p>Specify which libraries should be loaded automatically in the iframes.
-This method must be called before any calls to GameWindow.load and GameWindow.preCache .</p>
+  <div class="body"><p>Specifies the libraries to be loaded automatically in the iframes</p>
+
+<p>This method must be called before any calls to GameWindow.load and GameWindow.preCache .</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">globalLibs</span>
       <span class="dox_type">array</span>
-      <span>Array of strings describing library paths that
+      <span>Array of strings describing absolute library paths that
    should be loaded in every iframe.</span>
     </div>
     <div class="dox_tag_detail">
@@ -616,7 +725,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
 </div>
 
   </div>
-  <div class="body"><p>Loads the HTML content of the given URIs into the cache.</p>
+  <div class="body"><p>Loads the HTML content of the given URIs into the cache</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -639,7 +748,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Don't preload if no URIs are given:</p>
         </td>
@@ -654,7 +763,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Keep count of loaded URIs:</p>
         </td>
@@ -667,7 +776,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>console.log('DEBUG: Caching "' + currentUri + '"...');</p>
         </td>
@@ -677,7 +786,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Create an invisible internal frame for the current URI:</p>
         </td>
@@ -692,7 +801,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Register the onload handler:</p>
         </td>
@@ -706,39 +815,18 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
-</div>
-<p>Inject libraries:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">thisIframe</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
-</div>
-<p>console.log("DEBUG: After injection: " + frameDocumentElement.innerHTML);</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Store the contents in the cache:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">contents</span><span class="o">:</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">,</span>
-                            <span class="nx">libsInjected</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                             <span class="nx">cacheOnClose</span><span class="o">:</span> <span class="kc">false</span> <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
 </div>
 <p>Remove the internal frame:</p>
         </td>
@@ -748,7 +836,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
 </div>
 <p>Increment loaded URIs counter:</p>
         </td>
@@ -759,7 +847,7 @@ This method must be called before any calls to GameWindow.load and GameWindow.pr
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+  <a class="pilcrow" href="#section-36" id="section-36">&#182;</a>
 </div>
 <p>All requested URIs have been loaded at this point.
 console.log('DEBUG: preCache done!');</p>
@@ -773,7 +861,7 @@ console.log('DEBUG: preCache done!');</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-35" id="section-35">&#182;</a>
+  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
 </div>
 <p>Start loading the page:</p>
         </td>
@@ -839,7 +927,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-37" id="section-37">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>Default options:</p>
         </td>
@@ -852,7 +940,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>Get options:</p>
         </td>
@@ -882,7 +970,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Get the internal frame object:</p>
         </td>
@@ -894,7 +982,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Query readiness (so we know whether onload is going to be called):</p>
         </td>
@@ -904,7 +992,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>...reduce it to a boolean:</p>
         </td>
@@ -914,7 +1002,7 @@ content is coming from another domain.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>If the last frame requested to be cached on closing, do that:</p>
         </td>
@@ -925,37 +1013,25 @@ content is coming from another domain.</p>
       <span class="p">(</span><span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentDocument</span> <span class="o">?</span> <span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentDocument</span> <span class="o">:</span> <span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">)</span>
       <span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">lastURI</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
-</div>
-<p>The libraries were injected into the contents in the last W.loadFrame call
-and the contents were stored to the cache right now, so we can set the
-libsInjected flag:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">lastURI</span><span class="p">].</span><span class="nx">libsInjected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">lastURI</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
   <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Create entry for this URI in cache object and store cacheOnClose flag:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">))</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">contents</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">libsInjected</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">cacheOnClose</span><span class="o">:</span> <span class="kc">false</span> <span class="p">};</span>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">))</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">contents</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">cacheOnClose</span><span class="o">:</span> <span class="kc">false</span> <span class="p">};</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">cacheOnClose</span> <span class="o">=</span> <span class="nx">storeCacheLater</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Update frame's currently showing URI:</p>
         </td>
@@ -971,7 +1047,7 @@ libsInjected flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Add the onload event listener:</p>
         </td>
@@ -983,7 +1059,7 @@ libsInjected flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>TODO: inject the no escape code here</p>
         </td>
@@ -993,7 +1069,7 @@ libsInjected flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
 that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');</p>
@@ -1011,7 +1087,7 @@ that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noesc
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Load frame from cache:</p>
         </td>
@@ -1021,7 +1097,7 @@ that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noesc
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>console.log("DEBUG: Loaded in onload from '"+uri+"'");</p>
         </td>
@@ -1031,20 +1107,18 @@ that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noesc
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>Inject libraries:
 console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">libsInjected</span> <span class="o">||</span> <span class="o">!</span><span class="nx">loadCache</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
 </div>
 <p>console.log("DEBUG: After injection: " + frameDocumentElement.innerHTML);</p>
         </td>
@@ -1054,18 +1128,17 @@ console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Store frame in cache:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
-      <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">libsInjected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>console.log("DEBUG: Stored as '"+uri+"'");</p>
         </td>
@@ -1075,7 +1148,7 @@ console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>console.log("DEBUG: Calling updateStatus from onload...");</p>
         </td>
@@ -1086,7 +1159,7 @@ console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Cache lookup:</p>
         </td>
@@ -1096,7 +1169,7 @@ console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Load iframe contents at this point only if the iframe is already "ready"
 (see definition of frameReady), otherwise the contents would be cleared
@@ -1110,7 +1183,7 @@ TODO: Fix code duplication between here and onload function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
 </div>
 <p>Load frame from cache:</p>
         </td>
@@ -1125,7 +1198,7 @@ TODO: Fix code duplication between here and onload function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-59" id="section-59">&#182;</a>
+  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
 </div>
 <p>console.log("DEBUG: Loaded in loadFrame from '"+uri+"'");</p>
         </td>
@@ -1135,26 +1208,11 @@ TODO: Fix code duplication between here and onload function.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-60" id="section-60">&#182;</a>
+  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
 </div>
 <p>Inject libraries:</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">libsInjected</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-61" id="section-61">&#182;</a>
-</div>
-<p>Store changes in cache:</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">storeCacheNow</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">frameDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">libsInjected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
       </pre></div>
         </td>
       </tr>
@@ -1219,16 +1277,52 @@ Update the frame location:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>  
           
-<span class="p">};</span>
+<span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.updatestatus">
+  <h3>
+    <a href="#gamewindow.updatestatus" class="pilcrow">&#182;</a>
+    GameWindow.updateStatus
+  </h3>
+</div>
 
+  </div>
+  <div class="body"><p>Cleans up the window state after an iframe has been loaded</p>
 
-<span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateStatus</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span></pre></div>
+<p>The methods performs the following operations:</p>
+
+<ul>
+<li>executes a given callback function, </li>
+<li>decrements the counter of loading iframes</li>
+<li>set the window state as loaded (eventually)</li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">A</span>
+      <span class="dox_type">function</span>
+      <span>callback function</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">object</span>
+      <span>iframe of reference</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateStatus</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">frame</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
 </div>
 <p>Update the reference to the frame obj</p>
         </td>
@@ -1241,7 +1335,7 @@ Update the frame location:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
 </div>
 <p>node.log('Frame Loaded correctly!');</p>
         </td>
@@ -1263,7 +1357,7 @@ Update the frame location:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates and adds a container div with id 'gn_header' to 
@@ -1289,7 +1383,7 @@ and creates a new one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-69" id="section-69">&#182;</a>
+  <a class="pilcrow" href="#section-70" id="section-70">&#182;</a>
 </div>
 <p>Overriding Document.write and DOM.writeln and DOM.write</p>
         </td>
@@ -1414,7 +1508,7 @@ property is toggled. (i.e. false means enable, true means disable) </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
 </div>
 <p>If op is defined do that
 Otherwise toggle</p>
@@ -1437,7 +1531,7 @@ Otherwise toggle</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates a div element with the given id and 
@@ -1478,7 +1572,7 @@ to the document, and then appends the div element to it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates a div element with id 'nodegame' and returns it.</p>
@@ -1503,7 +1597,7 @@ to the document, and then appends the div element to it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates a div element with id 'nodegame' and returns it.</p>
@@ -1528,7 +1622,7 @@ to the document, and then appends the div element to it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
 </div>
 <p>Useful</p>
         </td>
@@ -1538,7 +1632,7 @@ to the document, and then appends the div element to it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates an HTML button element that will emit the specified
@@ -1561,7 +1655,7 @@ nodeGame event when clicked and returns it.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-79" id="section-79">&#182;</a>
+  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Adds an EventButton to the specified root element.</p>
@@ -1587,7 +1681,7 @@ in the current screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-80" id="section-80">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 
 <div class="highlight"><pre><code>    <span class="n">var</span> <span class="n">root</span> <span class="o">=</span> <span class="n">root</span> <span class="o">||</span> <span class="n">this</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">body</span><span class="p">;</span>
@@ -1606,7 +1700,7 @@ in the current screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
 <p>Useful API</p>
         </td>
@@ -1616,7 +1710,7 @@ in the current screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
+  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates an HTML select element already populated with the 
@@ -1655,7 +1749,7 @@ of the data of other players.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-83" id="section-83">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Appends a RecipientSelector element to the specified root element.</p>
@@ -1688,20 +1782,28 @@ of the data of other players.</p>
         </td>
       </tr>
       <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.addstandardrecipients">
+  <h2>
+    <a href="#gamewindow.addstandardrecipients" class="pilcrow">&#182;</a>
+    GameWindow.addStandardRecipients
+  </h2>
 </div>
-<div class="dox">
-  <div class="summary"><p>Adds an ALL and a SERVER option to a specified select element.</p>
+
   </div>
-  <div class="body">
+  <div class="body"><p>Adds an ALL and a SERVER option to a specified select element.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">toSelector</span>
+      <span class="dox_type">object</span>
+      <span>An HTML <code>&lt;select&gt;</code> element </span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.populateRecipientSelector
-
   </span>
     </div>
   </div>
@@ -1725,7 +1827,7 @@ of the data of other players.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-85" id="section-85">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Adds all the players from a specified playerList object to a given
@@ -1756,7 +1858,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
 </div>
 <p>check if it is a DB or a PlayerList object</p>
         </td>
@@ -1774,7 +1876,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates an HTML select element with all the predefined actions
@@ -1805,7 +1907,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Appends an ActionSelector element to the specified root element.</p>
@@ -1832,7 +1934,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-89" id="section-89">&#182;</a>
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Creates an HTML select element with all the predefined targets
@@ -1863,7 +1965,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Appends a Target Selector element to the specified root element.</p>
@@ -1890,7 +1992,7 @@ select element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>@experimental</p>
@@ -1917,7 +2019,7 @@ show all the available states of a game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>@experimental</p>
@@ -1944,7 +2046,7 @@ show all the available states of a game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
 </div>
 <p>Do we need it?</p>
         </td>
@@ -1954,7 +2056,7 @@ show all the available states of a game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Overrides JSUS.DOM.generateUniqueId</p>
@@ -1980,7 +2082,7 @@ show all the available states of a game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
 </div>
 <p>Where to place them?</p>
         </td>
@@ -2103,7 +2205,7 @@ that leaving the page may halt the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
 </div>
 <p>For IE&lt;8 and Firefox prior to version 4</p>
         </td>
@@ -2115,7 +2217,7 @@ that leaving the page may halt the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-100" id="section-100">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>For Chrome, Safari, IE8+ and Opera 12+</p>
         </td>
@@ -2166,7 +2268,7 @@ that leaving the page may halt the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Do we need these?</p>
         </td>
@@ -2176,7 +2278,7 @@ that leaving the page may halt the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Returns the screen of the game, i.e. the innermost element
@@ -2210,7 +2312,7 @@ inside which to display content. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Returns the document element of the iframe of the game.</p>
@@ -2229,7 +2331,7 @@ inside which to display content. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>Expose nodeGame to the global object</p>
         </td>
@@ -2242,7 +2344,7 @@ inside which to display content. </p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference 
 to the node.js module object is for testing purpose only</p>
