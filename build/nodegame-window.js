@@ -264,6 +264,72 @@ GameWindow.prototype.setup = function (type){
 
 
 /**
+ * ### removeLibraries
+ *
+ * Removes injected scripts from iframe
+ *
+ * Takes out all the script tags with the className "injectedlib"
+ * that were inserted by GameWindow.injectLibraries.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ *
+ * @see GameWindow.injectLibraries
+ * 
+ * @api private
+ */
+function removeLibraries (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var scriptNodes, scriptNodeIdx, scriptNode;
+
+	scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		scriptNode = scriptNodes[scriptNodeIdx];
+		scriptNode.parentNode.removeChild(scriptNode);
+	}
+}
+
+
+/**
+ * ### reloadScripts
+ *
+ * Reloads all script nodes in iframe
+ *
+ * Deletes and reinserts all the script tags, effectively reloading the scripts.
+ * The placement of the tags can change, but the order is kept.
+ * 
+ * @param {object} frameNode The node object of the iframe
+ * 
+ * @api private
+ */
+function reloadScripts (frameNode) {
+	var contentDocument = frameNode.contentDocument ? frameNode.contentDocument
+	                                                : frameNode.contentWindow.document;
+
+	var headNode = contentDocument.getElementsByTagName('head')[0];
+	var tag, scriptNodes, scriptNodeIdx, scriptNode;
+	var attrIdx, attr;
+
+	scriptNodes = contentDocument.getElementsByTagName('script');
+	for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length; ++scriptNodeIdx) {
+		// Remove tag:
+		tag = scriptNodes[scriptNodeIdx];
+		tag.parentNode.removeChild(tag);
+
+		// Reinsert tag for reloading:
+		scriptNode = document.createElement('script');
+		if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+		for (attrIdx = 0; attrIdx < tag.attributes.length; ++attrIdx) {
+			attr = tag.attributes[attrIdx];
+			scriptNode.setAttribute(attr.name) = attr.value;
+		}
+		headNode.appendChild(scriptNode);
+	}
+}
+
+
+/**
  * ### GameWindow.injectLibraries
  * 
  * Injects scripts into the iframe
@@ -283,17 +349,8 @@ GameWindow.prototype.injectLibraries = function (frameNode, libs) {
 
 	var headNode = contentDocument.getElementsByTagName('head')[0];
 	var scriptNode;
-	var tagIdx, tag;
 	var libIdx, lib;
 
-	// Remove old tags:
-	var oldTags = contentDocument.getElementsByClassName('injectedlib');
-	for (tagIdx = 0; tagIdx < oldTags.length; ++tagIdx) {
-		tag = oldTags[tagIdx];
-		tag.parentNode.removeChild(tag);
-	}
-
-	// Inject new tags:
 	for (libIdx = 0; libIdx < libs.length; ++libIdx) {
 		lib = libs[libIdx];
 		scriptNode = document.createElement('script');
@@ -311,14 +368,14 @@ GameWindow.prototype.injectLibraries = function (frameNode, libs) {
  * 
  * This method must be called before any calls to GameWindow.load and GameWindow.preCache .
  *
- * @param {array} globalLibs Array of strings describing library paths that
+ * @param {array} globalLibs Array of strings describing absolute library paths that
  *    should be loaded in every iframe.
  * @param {object} frameLibs Map from URIs to string arrays (as above) specifying
  *    libraries that should only be loaded for iframes displaying the given URI.
  *    This must not contain any elements that are also in globalLibs.
  *
  */
-GameWindow.prototype.initLibs = function(globalLibs, frameLibs) {
+GameWindow.prototype.initLibs = function (globalLibs, frameLibs) {
 	this.globalLibs = globalLibs || [];
 	this.frameLibs = frameLibs || {};
 }
@@ -498,11 +555,12 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//console.log("DEBUG: Loaded in onload from '"+uri+"'");
 		}
 
-		// Inject libraries:
-		//console.log("DEBUG: Before injection: " + frameDocumentElement.innerHTML);
+		// (Re-)Inject libraries and reload scripts:
+		removeLibraries(frameNode);
+		if (loadCache && that.cache[uri].contents !== null) {
+			reloadScripts(frameNode);
+		}
 		that.injectLibraries(frameNode, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
-		that.injectLibraries(frameNode, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
-		//console.log("DEBUG: After injection: " + frameDocumentElement.innerHTML);
 
 		if (storeCacheNow) {
 			// Store frame in cache:
@@ -531,7 +589,9 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			frameDocumentElement.innerHTML = that.cache[uri].contents;
 			//console.log("DEBUG: Loaded in loadFrame from '"+uri+"'");
 
-			// Inject libraries:
+			// (Re-)Inject libraries and reload scripts:
+			removeLibraries(frameNode);
+			reloadScripts(frameNode);
 			that.injectLibraries(frameNode, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
 			
 			// Update status (onload isn't called if frame was already ready):
