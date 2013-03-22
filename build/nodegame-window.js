@@ -407,8 +407,6 @@ GameWindow.prototype.preCache = function(uris, callback) {
 	for (var uriIdx = 0; uriIdx < uris.length; ++uriIdx) {
 		var currentUri = uris[uriIdx];
 
-		//console.log('DEBUG: Caching "' + currentUri + '"...');
-
 		// Create an invisible internal frame for the current URI:
 		var iframe = document.createElement('iframe');
 		iframe.style.visibility = 'hidden';
@@ -435,7 +433,6 @@ GameWindow.prototype.preCache = function(uris, callback) {
 				++ loadedCount;
 				if (loadedCount >= uris.length) {
 					// All requested URIs have been loaded at this point.
-					//console.log('DEBUG: preCache done!');
 					if (callback) callback();
 				}
 			};
@@ -445,6 +442,50 @@ GameWindow.prototype.preCache = function(uris, callback) {
 		window.frames[iframeName].location = currentUri;
 	}
 };
+
+
+/**
+ * ### handleFrameLoad
+ *
+ * Handles iframe contents loading
+ *
+ * A helper method of GameWindow.load .
+ * Puts cached contents into the iframe or caches new contents if requested.
+ * Handles reloading of script tags and injected libraries.
+ * Must be called with `this` set to GameWindow instance.
+ *
+ * @param {uri} uri URI to load
+ * @param {string} frame ID of GameWindow's frame
+ * @param {bool} loadCache whether to load from cache
+ * @param {bool} storeCache whether to store to cache
+ *
+ * @see GameWindow.load
+ *
+ * @api private
+ */
+function handleFrameLoad (uri, frame, loadCache, storeCache) {
+	var frameNode = document.getElementById(frame);
+	var frameDocumentElement =
+		(frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
+		.documentElement;
+
+	if (loadCache) {
+		// Load frame from cache:
+		frameDocumentElement.innerHTML = this.cache[uri].contents;
+	}
+
+	// (Re-)Inject libraries and reload scripts:
+	removeLibraries(frameNode);
+	if (loadCache) {
+		reloadScripts(frameNode);
+	}
+	injectLibraries(frameNode, this.globalLibs.concat(uri in this.frameLibs ? this.frameLibs[uri] : []));
+
+	if (storeCache) {
+		// Store frame in cache:
+		this.cache[uri].contents = frameDocumentElement.innerHTML;
+	}
+}
 
 
 /**
@@ -528,6 +569,9 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 	if(!(uri in this.cache)) this.cache[uri] = { contents: null, cacheOnClose: false };
 	this.cache[uri].cacheOnClose = storeCacheLater;
 
+	// Disable loadCache if contents aren't cached:
+	if(this.cache[uri].contents === null) loadCache = false;
+
 	// Update frame's currently showing URI:
 	this.currentURIs[frame] = uri;
 	
@@ -546,63 +590,26 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
 			//that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
 		}
 
-		frameNode = document.getElementById(frame);
-		frameDocumentElement =
-		  (frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
-		  .documentElement;
+		handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);
 
-		if (loadCache && that.cache[uri].contents !== null) {
-			// Load frame from cache:
-			frameDocumentElement.innerHTML = that.cache[uri].contents;
-			//console.log("DEBUG: Loaded in onload from '"+uri+"'");
-		}
-
-		// (Re-)Inject libraries and reload scripts:
-		removeLibraries(frameNode);
-		if (loadCache && that.cache[uri].contents !== null) {
-			reloadScripts(frameNode);
-		}
-		injectLibraries(frameNode, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
-
-		if (storeCacheNow) {
-			// Store frame in cache:
-			that.cache[uri].contents = frameDocumentElement.innerHTML;
-			//console.log("DEBUG: Stored as '"+uri+"'");
-		}
-
-		//console.log("DEBUG: Calling updateStatus from onload...");
 		that.updateStatus(func, frame);
 	};
 
 	// Cache lookup:
-	if (loadCache && this.cache[uri].contents !== null) {
+	if (loadCache) {
 		// Load iframe contents at this point only if the iframe is already "ready"
 		// (see definition of frameReady), otherwise the contents would be cleared
-		// once the iframe becomes ready.  In that case, iframe.onload will handle the
+		// once the iframe becomes ready.  In that case, iframe.onload handles the
 		// filling of the contents.
 		// TODO: Fix code duplication between here and onload function.
 		if (frameReady) {
-			// Load frame from cache:
-			frameNode = document.getElementById(frame);
-			frameDocumentElement =
-			  (frameNode.contentDocument ? frameNode.contentDocument : frameNode.contentWindow.document)
-			  .documentElement;
-
-			frameDocumentElement.innerHTML = that.cache[uri].contents;
-			//console.log("DEBUG: Loaded in loadFrame from '"+uri+"'");
-
-			// (Re-)Inject libraries and reload scripts:
-			removeLibraries(frameNode);
-			reloadScripts(frameNode);
-			injectLibraries(frameNode, that.globalLibs.concat(uri in that.frameLibs ? that.frameLibs[uri] : []));
+			handleFrameLoad.call(this, uri, frame, loadCache, storeCacheNow);
 			
 			// Update status (onload isn't called if frame was already ready):
-			//console.log("DEBUG: Calling updateStatus from loadFrame...");
 			this.updateStatus(func, frame);
 		}
 	}
 	else {
-		//console.log('DEBUG: URI "' + uri + '" WAS NOT CACHED!');
 		// Update the frame location:
 		window.frames[frame].location = uri;
 	}
