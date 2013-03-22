@@ -64,7 +64,7 @@
         <a href="#reloadscripts">reloadScripts</a>
       </div>
       <div class="heading h3">
-        <a href="#gamewindow.injectlibraries">GameWindow.injectLibraries</a>
+        <a href="#injectlibraries">injectLibraries</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.initlibs">GameWindow.initLibs</a>
@@ -621,7 +621,7 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
   <div class="body"><p>Removes injected scripts from iframe</p>
 
 <p>Takes out all the script tags with the className "injectedlib"
-that were inserted by GameWindow.injectLibraries.</p>
+that were inserted by injectLibraries.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -632,7 +632,7 @@ that were inserted by GameWindow.injectLibraries.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameWindow.injectLibraries
+      <span class="dox_type">injectLibraries
 </span>
     </div>
     <div class="dox_tag_title">API</div>
@@ -732,10 +732,10 @@ The placement of the tags can change, but the order is kept.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamewindow.injectlibraries">
+<div class="pilwrap" id="injectlibraries">
   <h3>
-    <a href="#gamewindow.injectlibraries" class="pilcrow">&#182;</a>
-    GameWindow.injectLibraries
+    <a href="#injectlibraries" class="pilcrow">&#182;</a>
+    injectLibraries
   </h3>
 </div>
 
@@ -759,10 +759,16 @@ iframe object, one for every given library.</p>
       <span>An array of strings giving the "src" attribute for the <code>&lt;script&gt;</code>
                     lines to insert</span>
     </div>
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+
+</span>
+    </span>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">injectLibraries</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">libs</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">injectLibraries</span> <span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">libs</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">contentDocument</span> <span class="o">=</span> <span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentDocument</span> <span class="o">?</span> <span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentDocument</span>
                                                   <span class="o">:</span> <span class="nx">frameNode</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
 
@@ -793,7 +799,7 @@ iframe object, one for every given library.</p>
   </div>
   <div class="body"><p>Specifies the libraries to be loaded automatically in the iframes</p>
 
-<p>This method must be called before any calls to GameWindow.load and GameWindow.preCache .</p>
+<p>This method must be called before any calls to GameWindow.load .</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -1220,7 +1226,7 @@ that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noesc
     <span class="k">if</span> <span class="p">(</span><span class="nx">loadCache</span> <span class="o">&amp;&amp;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">contents</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">reloadScripts</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
+    <span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">storeCacheNow</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
@@ -1314,7 +1320,7 @@ TODO: Fix code duplication between here and onload function.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>      <span class="nx">removeLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">);</span>
       <span class="nx">reloadScripts</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">);</span>
-      <span class="nx">that</span><span class="p">.</span><span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
+      <span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">frameNode</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">uri</span> <span class="k">in</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
       </pre></div>
         </td>
       </tr>
