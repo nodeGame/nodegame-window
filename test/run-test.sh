@@ -13,10 +13,19 @@ echo "Running multibuild in nodegame-client"
 (cd ../node_modules/nodegame-client/ && node bin/make.js multibuild) || exit 3
 
 echo "Starting server"
-node server.js || exit 4 &
-server_pid=$!
+{
+    node server.js &
+    server_pid=$!
+} || exit 4
 
-echo "Running mocha-phantomjs test (TODO)"
+# Wait for the server to initialize:
+sleep 3
+
+echo "Running mocha-phantomjs test"
+mocha-phantomjs ../node_modules/testergame/index.html || {
+    kill $server_pid
+    exit 5
+}
 
 echo "Stopping server"
 kill $server_pid || exit 6

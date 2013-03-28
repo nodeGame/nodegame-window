@@ -8,7 +8,7 @@ var options = {
 		//confDir: './conf',
 		servernode: function (servernode) {
 			servernode.verbosity = 100;
-			servernode.gamesDirs.push('./games');
+			//servernode.gamesDirs.push('./games');
 			return true;
 		},
 		http: function (http) {
@@ -24,3 +24,5 @@ var options = {
 
 // Option parameter is optional
 var sn = new ServerNode(options);
+
+module.exports = sn;
