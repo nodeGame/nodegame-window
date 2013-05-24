@@ -1503,7 +1503,7 @@ HTMLRenderer.prototype.addDefaultPipeline = function() {
 			return el.content;
 		}
 	});
-}
+};
 
 
 /**
@@ -1593,6 +1593,7 @@ function Entity (e) {
 	('undefined' !== typeof window) ? window : module.parent.exports.window, // window
 	('undefined' !== typeof node) ? node : module.parent.exports.node // node
 );
+
 (function(exports, node){
 	
 	var JSUS = node.JSUS;
