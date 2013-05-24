@@ -204,9 +204,9 @@ by the GameWindow engine.</p>
   <div class="body"><p>The constructor performs the following operations:</p>
 
 
-<div class="highlight"><pre><code><span class="o">-</span> <span class="n">creates</span> <span class="n">a</span> <span class="n">root</span> <span class="n">div</span> <span class="n">element</span> <span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">root</span><span class="p">)</span>
-<span class="o">-</span> <span class="n">creates</span> <span class="n">an</span> <span class="n">iframe</span> <span class="n">element</span> <span class="n">inside</span> <span class="n">the</span> <span class="n">root</span> <span class="n">element</span>  <span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span>
-<span class="o">-</span> <span class="n">defines</span> <span class="n">standard</span> <span class="n">event</span> <span class="n">listeners</span> <span class="k">for</span> <span class="n">showing</span> <span class="n">and</span> <span class="n">hiding</span> <span class="n">elements</span>
+<div class="highlight"><pre><code> <span class="o">-</span> <span class="n">creates</span> <span class="n">a</span> <span class="n">root</span> <span class="n">div</span> <span class="n">element</span> <span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">root</span><span class="p">)</span>
+ <span class="o">-</span> <span class="n">creates</span> <span class="n">an</span> <span class="n">iframe</span> <span class="n">element</span> <span class="n">inside</span> <span class="n">the</span> <span class="n">root</span> <span class="n">element</span> <span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">frame</span><span class="p">)</span>
+ <span class="o">-</span> <span class="n">defines</span> <span class="n">standard</span> <span class="n">event</span> <span class="n">listeners</span> <span class="k">for</span> <span class="n">showing</span> <span class="n">and</span> <span class="n">hiding</span> <span class="n">elements</span>
 </code></pre></div>
 
 
@@ -256,9 +256,9 @@ by the GameWindow engine.</p>
 </div>
 
 
-<p>Counts the number of frames currently being loaded    </p>
+<p>Counts the number of frames currently being loaded</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -273,7 +273,7 @@ by the GameWindow engine.</p>
 
 <p>Cache for loaded iframes</p>
 
-<p>Maps URI to a cache object with the following properties: <br />
+<p>Maps URI to a cache object with the following properties:
  - <code>contents</code> (a string describing the innerHTML or null if not cached),
  - optionally 'cacheOnClose' (a bool telling whether to cache the frame when
    it is replaced by a new one).</p>
@@ -334,7 +334,7 @@ in specific frames</p>
 
   <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
   
-<span class="p">};</span></pre></div>
+<span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -366,8 +366,8 @@ in specific frames</p>
 <p>Defaults:</p>
 
 
-<div class="highlight"><pre><code><span class="o">-</span> <span class="n">promptOnleave</span> <span class="n">TRUE</span>
-<span class="o">-</span> <span class="n">captures</span> <span class="n">ESC</span> <span class="n">key</span>
+<div class="highlight"><pre><code> <span class="o">-</span> <span class="n">promptOnleave</span> <span class="n">TRUE</span>
+ <span class="o">-</span> <span class="n">captures</span> <span class="n">ESC</span> <span class="n">key</span>
 </code></pre></div>
 
 
@@ -449,7 +449,7 @@ and then into the rest of the page.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns a list of elements with the given tag name </p>
+  <div class="body"><p>Returns a list of elements with the given tag name</p>
 
 <p>Looks first into the iframe and then into the rest of the page.</p>
   </div>
@@ -552,12 +552,12 @@ and then into the rest of the page.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
-<p>var maincss        = this.addCSS(this.root, 'style.css');</p>
+<p>var maincss = this.addCSS(this.root, 'style.css');</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">header</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">generateHeader</span><span class="p">();</span>
-      <span class="kd">var</span> <span class="nx">mainframe</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addIFrame</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">,</span><span class="s1">&#39;mainframe&#39;</span><span class="p">);</span>
-      
-    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">vs</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;VisualState&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">header</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">generateHeader</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">mainframe</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addIFrame</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">,</span><span class="s1">&#39;mainframe&#39;</span><span class="p">);</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">vs</span>    <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;VisualState&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">);</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;VisualTimer&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">);</span></pre></div>
         </td>
       </tr>
@@ -568,10 +568,9 @@ and then into the rest of the page.</p>
 </div>
 <p>node.game.doneb = node.widgets.append('DoneButton', this.header);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">sd</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;StateDisplay&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">sd</span>    <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;StateDisplay&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">);</span>
 
-    <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;WaitScreen&#39;</span><span class="p">);</span>
-      </pre></div>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">widgets</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;WaitScreen&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -602,7 +601,7 @@ this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="p">}</span>
     
     <span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">mainframe</span><span class="p">].</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">initPage</span><span class="p">;</span>
-      
+
     <span class="k">break</span><span class="p">;</span>
   <span class="p">}</span>
   
@@ -724,7 +723,7 @@ The placement of the tags can change, but the order is kept.</p>
     <span class="k">if</span> <span class="p">(</span><span class="nx">tag</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">)</span> <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">attrIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">attrIdx</span> <span class="o">&lt;</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">attrIdx</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">attr</span> <span class="o">=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attrIdx</span><span class="p">];</span>
-      <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+      <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="nx">headNode</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">scriptNode</span><span class="p">);</span>
   <span class="p">}</span>
@@ -785,7 +784,7 @@ iframe object, one for every given library.</p>
     <span class="nx">scriptNode</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">lib</span><span class="p">;</span>
     <span class="nx">headNode</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">scriptNode</span><span class="p">);</span>
   <span class="p">}</span>
-<span class="p">};</span></pre></div>
+<span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -824,7 +823,7 @@ iframe object, one for every given library.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initLibs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">globalLibs</span><span class="p">,</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">globalLibs</span> <span class="o">=</span> <span class="nx">globalLibs</span> <span class="o">||</span> <span class="p">[];</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">frameLibs</span> <span class="o">=</span> <span class="nx">frameLibs</span> <span class="o">||</span> <span class="p">{};</span>
-<span class="p">}</span></pre></div>
+<span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1521,8 +1520,8 @@ used.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>    
-  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not determine where writing&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -1560,7 +1559,7 @@ used.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">writeln</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">br</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
+  <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Could not determine where writing&#39;</span><span class="p">,</span> <span class="s1">&#39;ERR&#39;</span><span class="p">);</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -1589,12 +1588,13 @@ property is toggled. (i.e. false means enable, true means disable) </p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toggleInputs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">op</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">container</span><span class="p">;</span>
   
   <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
   <span class="p">}</span>
   
   <span class="kd">var</span> <span class="nx">inputTags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">];</span>
@@ -1662,7 +1662,7 @@ to the document, and then appends the div element to it.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_generateRoot</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
+  <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">addElement</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="nb">document</span><span class="p">);</span>
     <span class="nx">root</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
@@ -1793,7 +1793,7 @@ in the current screen.</p>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
   <span class="p">}</span>
   <span class="kd">var</span> <span class="nx">eb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEventButton</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">);</span>
   <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">eb</span><span class="p">);</span>
@@ -1919,7 +1919,7 @@ of the data of other players.</p>
   <span class="nx">opt</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="s1">&#39;ALL&#39;</span><span class="p">));</span>
   <span class="nx">toSelector</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
   
-  <span class="kd">var</span> <span class="nx">opt</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">);</span>
+  <span class="nx">opt</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">);</span>
   <span class="nx">opt</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
   <span class="nx">opt</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="s1">&#39;SERVER&#39;</span><span class="p">));</span>
   <span class="nx">toSelector</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
@@ -2301,7 +2301,7 @@ that leaving the page may halt the game.</p>
         <td class="code highlight"><div class="highlight"><pre><span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">windowObj</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
   <span class="nx">text</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">text</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">textOnleave</span> <span class="o">:</span> <span class="nx">text</span><span class="p">;</span> 
-  <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>    
+  <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -2390,10 +2390,10 @@ inside which to display content. </p>
   <div class="body"><p>In the following order the screen can be:</p>
 
 
-<div class="highlight"><pre><code><span class="o">-</span> <span class="n">the</span> <span class="n">body</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">iframe</span> 
-<span class="o">-</span> <span class="n">the</span> <span class="n">document</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">iframe</span> 
-<span class="o">-</span> <span class="n">the</span> <span class="n">body</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">document</span> 
-<span class="o">-</span> <span class="n">the</span> <span class="n">last</span> <span class="n">child</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">document</span>
+<div class="highlight"><pre><code> <span class="o">-</span> <span class="n">the</span> <span class="n">body</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">iframe</span> 
+ <span class="o">-</span> <span class="n">the</span> <span class="n">document</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">iframe</span> 
+ <span class="o">-</span> <span class="n">the</span> <span class="n">body</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">document</span> 
+ <span class="o">-</span> <span class="n">the</span> <span class="n">last</span> <span class="n">child</span> <span class="n">element</span> <span class="n">of</span> <span class="n">the</span> <span class="n">document</span>
 </code></pre></div>
 
 
@@ -2408,7 +2408,7 @@ inside which to display content. </p>
   <span class="k">else</span> <span class="p">{</span>
     <span class="nx">el</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">return</span>  <span class="nx">el</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
 <span class="p">};</span></pre></div>
         </td>
       </tr>
