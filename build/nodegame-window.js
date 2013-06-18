@@ -645,23 +645,31 @@ GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func
  * 
  */
 GameWindow.prototype.updateStatus = function(func, frame) {
-	// Update the reference to the frame obj
-	this.frame = window.frames[frame].document;
-		
-	if (func) {
-		func.call(node.game); // TODO: Pass the right this reference
-		//node.log('Frame Loaded correctly!');
-	}
-		
-	this.areLoading--;
-
-	if (this.areLoading === 0) {
-		this.state = node.is.LOADED;
-		node.emit('WINDOW_LOADED');
-	}
-	else {
-		node.log('Attempt to update state, before the window object was loaded', 'DEBUG');
-	}
+    // Update the reference to the frame obj
+    this.frame = window.frames[frame].document;
+    
+    if (func) {
+	func.call(node.game); // TODO: Pass the right this reference
+	//node.log('Frame Loaded correctly!');
+    }
+    
+    this.areLoading--;
+    
+    if (this.areLoading === 0) {
+        this.state = node.is.LOADED;
+        node.emit('WINDOW_LOADED');
+        
+        if (node.game.getStageLevel() >= node.stageLevels.LOADED) {
+            // We must make sure that the step callback is fully executed. 
+            // Only the last one to load (between the window and 
+            // the callback will emit 'PLAYING'.
+            node.emit('PLAYING');
+        }
+        
+    }
+    else {
+	node.silly('Attempt to update state, before the window object was loaded');
+    }
 };
 	
 /**
