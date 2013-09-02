@@ -26,11 +26,13 @@
     
     var J = node.JSUS;
 
+    var constants = node.constants;
+
     var Player = node.Player,
     PlayerList = node.PlayerList,
     GameMsg = node.GameMsg,
     GameMsgGenerator = node.GameMsgGenerator;
-
+    
     var DOM = J.get('DOM');
 
     if (!DOM) {
@@ -84,7 +86,7 @@
         
         // ### GameWindow.state
         //
-        this.state = node.constants.is.LOADED;
+        this.state = constants.is.LOADED;
 
         // ### GameWindow.areLoading
         // Counts the number of frames currently being loaded
@@ -232,6 +234,13 @@
 
             if (!document.getElementById('mainframe')) {
                 this.addIFrame(this.root,'mainframe');
+                this.frame = window.frames[this.mainframe]; // there is no document yet
+	        initPage = this.getBlankPage();
+	        if (this.conf.noEscape) {
+		    // TODO: inject the no escape code here
+	        }
+	    
+	        window.frames[this.mainframe].src = initPage;
 	    }
 
 	    node.game.vs    = node.widgets.append('VisualState', this.header);
@@ -246,13 +255,7 @@
 		this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 	    }
 	    
-	    this.frame = window.frames[this.mainframe]; // there is no document yet
-	    initPage = this.getBlankPage();
-	    if (this.conf.noEscape) {
-		// TODO: inject the no escape code here
-	    }
-	    
-	    window.frames[this.mainframe].src = initPage;
+	   
 
 	    break;
 	    
@@ -261,6 +264,15 @@
 	    
             if (!document.getElementById('mainframe')) {
                 this.addIFrame(this.root,'mainframe');
+                this.frame = window.frames[this.mainframe]; // there is no document yet
+	        initPage = this.getBlankPage();
+	        if (this.conf.noEscape) {
+		    // TODO: inject the no escape code here
+		    // not working
+		    //this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
+	        }
+	        
+	        window.frames[this.mainframe].src = initPage;
 	    }
 
             node.widgets.append('WaitScreen');
@@ -270,15 +282,7 @@
 		this.addCSS(document.body, node.conf.host + '/stylesheets/player.css');
 	    }
 	    
-	    this.frame = window.frames[this.mainframe]; // there is no document yet
-	    initPage = this.getBlankPage();
-	    if (this.conf.noEscape) {
-		// TODO: inject the no escape code here
-		// not working
-		//this.addJS(initPage, node.conf.host + 'javascripts/noescape.js');
-	    }
-	    
-	    window.frames[this.mainframe].src = initPage;
+	
             
 	    break;
 	}
@@ -598,7 +602,7 @@
         // Update frame's currently showing URI:
         this.currentURIs[frame] = uri;
         
-        this.state = node.constants.is.LOADING;
+        this.state = constants.is.LOADING;
         this.areLoading++;  // keep track of nested call to loadFrame
         
         var that = this;
@@ -681,10 +685,10 @@
         this.areLoading--;
         
         if (this.areLoading === 0) {
-            this.state = node.constants.is.LOADED;
+            this.state = constants.is.LOADED;
             node.emit('WINDOW_LOADED');
             
-            if (node.game.getStageLevel() >= node.stageLevels.LOADED) {
+            if (node.game.getStageLevel() >= constants.stageLevels.LOADED) {
                 // We must make sure that the step callback is fully executed. 
                 // Only the last one to load (between the window and 
                 // the callback will emit 'PLAYING'.
