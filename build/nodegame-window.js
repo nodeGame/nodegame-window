@@ -197,7 +197,8 @@
      * 
      */
     GameWindow.prototype.setup = function (type){
-
+        var mainframe, initPage;
+        
 	if (!this.root) {
 	    this.root = document.body;
 	    //this.root = this.generateNodeGameRoot();
@@ -228,7 +229,7 @@
 	    
 	    //var maincss = this.addCSS(this.root, 'style.css');
 	    this.header     = this.generateHeader();
-	    var mainframe   = this.addIFrame(this.root,'mainframe');
+	    mainframe       = document.getElementById('mainframe') || this.addIFrame(this.root,'mainframe');
 
 	    node.game.vs    = node.widgets.append('VisualState', this.header);
 	    node.game.timer = node.widgets.append('VisualTimer', this.header);
@@ -243,7 +244,7 @@
 	    }
 	    
 	    this.frame = window.frames[this.mainframe]; // there is no document yet
-	    var initPage = this.getBlankPage();
+	    initPage = this.getBlankPage();
 	    if (this.conf.noEscape) {
 		// TODO: inject the no escape code here
 	    }
@@ -255,7 +256,7 @@
 
         case 'SOLO_PLAYER':
 	    
-	    var mainframe = this.addIFrame(this.root, 'mainframe');            
+            mainframe = document.getElementById('mainframe') || this.addIFrame(this.root,'mainframe');
 	    node.widgets.append('WaitScreen');
             
 	    // Add default CSS
@@ -264,7 +265,7 @@
 	    }
 	    
 	    this.frame = window.frames[this.mainframe]; // there is no document yet
-	    var initPage = this.getBlankPage();
+	    initPage = this.getBlankPage();
 	    if (this.conf.noEscape) {
 		// TODO: inject the no escape code here
 		// not working
