@@ -1,7 +1,7 @@
 /**
  * # GameWindow
  * 
- * Copyright(c) 2012 Stefano Balietti
+ * Copyright(c) 2013 Stefano Balietti
  * MIT Licensed
  * 
  * GameWindow provides a handy API to interface nodeGame with the 
@@ -59,16 +59,15 @@
      * 
      * The constructor performs the following operations:
      * 
-     *      - creates a root div element (this.root)
-     *      - creates an iframe element inside the root element (this.frame)
-     *      - defines standard event listeners for showing and hiding elements
-     * 
+     *   - creates a root div element (this.root)
+     *   - creates an iframe element inside the root element (this.frame)
+     *   - defines standard event listeners for showing and hiding elements
      */
     function GameWindow() {
-        var that = this;
-	
+        this.setStateLevel('UNINITIALIZED');
+
         if ('undefined' === typeof window) {
-	    throw new Error('nodeWindow: no DOM found. Are we in a browser? Aborting.');
+	    throw new Error('nodeWindow: no DOM found. Are you in a browser?');
         }
         
         if ('undefined' === typeof node) {
@@ -83,10 +82,6 @@
         
         this.conf = {};
         
-        // ### GameWindow.state
-        //
-        this.state = constants.is.LOADED;
-
         // ### GameWindow.areLoading
         // Counts the number of frames currently being loaded
         this.areLoading = 0;
@@ -116,7 +111,6 @@
         // in specific frames
         this.frameLibs = {};
 
-
         this.init();	
     }
 
@@ -128,14 +122,13 @@
      * Sets global variables based on local configuration.
      * 
      * Defaults:
-     * 
-     *      - promptOnleave TRUE
-     *      - captures ESC key
+     *  - promptOnleave TRUE
+     *  - captures ESC key
      * 
      * @param {object} options Configuration options
-     * 
      */
     GameWindow.prototype.init = function (options) {
+        this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(GameWindow.defaults, options);
 	
@@ -152,8 +145,27 @@
         else if (this.conf.noEscape === false){
 	    this.restoreEscape();
         }
-        
+        this.setStateLevel('INITIALIZED');
     };
+
+    /**
+     * ## GameWindow.setStateLevel
+     *
+     * Validates and sets window's state level. 
+     *
+     * @see constants.windowLevels
+     */
+    GameWindow.prototype.setStateLevel = function(level) {
+        if ('string' !== typeof level) {
+            throw new TypeError('GameWindow.setStateLevel: level must be string');
+        }
+        if ('undefined' === typeof constants.windowLevels[level]) {
+            throw new Error('GameWindow.setStateLevel: unrecognized level.');
+        }
+        
+        this.state = constants.windowLevels[level];
+    };
+
 
     /**
      * ### GameWindow.getElementById
@@ -195,7 +207,6 @@
      * Setups the page with a predefined configuration of widgets.
      * 
      * @param {string} type The type of page to setup (MONITOR|PLAYER)
-     * 
      */
     GameWindow.prototype.setup = function (type){
         var initPage;
@@ -555,8 +566,13 @@
      * 
      */
     GameWindow.prototype.load = GameWindow.prototype.loadFrame = function (uri, func, opts) {
-        if (!uri) return;
+        if ('string' !== typeof uri) {
+            throw new TypeError('GameWindow.loadFrame: uri must be string.');
+        }
+        this.setStateLevel('LOADING');
         
+        var that = this;
+
         // Default options:
         var frame = this.mainframe;
         var loadCache = GameWindow.defaults.cacheDefaults.loadCache;
@@ -616,24 +632,13 @@
         // Update frame's currently showing URI:
         this.currentURIs[frame] = uri;
         
-        this.state = constants.is.LOADING;
-        updateAreLoading.call(this, 1);  // keep track of nested call to loadFrame
-        
-        var that = this;
+        // Keep track of nested call to loadFrame.
+        updateAreLoading.call(this, 1);
         
         // Add the onload event listener:
         iframe.onload = function() {
-	    if (that.conf.noEscape) {
-	        
-	        // TODO: inject the no escape code here
-	        
-	        //that.addJS(iframe.document, node.conf.host + 'javascripts/noescape.js');
-	        //that.addJS(that.getElementById('mainframe'), node.conf.host + 'javascripts/noescape.js');
-	    }
-            
-	    handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);
-            
-	    that.updateStatus(func, frame);
+	    handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);    
+	    that.updateLoadFrameState(func, frame);
         };
         
         // Cache lookup:
@@ -647,7 +652,7 @@
 	        handleFrameLoad.call(this, uri, frame, loadCache, storeCacheNow);
 	        
 	        // Update status (onload isn't called if frame was already ready):
-	        this.updateStatus(func, frame);
+	        this.updateLoadFrameState(func, frame);
 	    }
         }
         else {
@@ -673,7 +678,7 @@
     };
 
     /**
-     * ### GameWindow.updateStatus
+     * ### GameWindow.loadFrameState
      * 
      * Cleans up the window state after an iframe has been loaded
      * 
@@ -687,7 +692,7 @@
      * @param {object} The iframe of reference
      * 
      */
-    GameWindow.prototype.updateStatus = function(func, frame) {
+    GameWindow.prototype.updateLoadFrameState = function(func, frame) {
         // Update the reference to the frame obj
         this.frame = window.frames[frame].document;
         if (func) {
@@ -698,21 +703,26 @@
         updateAreLoading.call(this, -1);
         
         if (this.areLoading === 0) {
-            this.state = constants.is.LOADED;
+            this.setStateLevel('LOADED');
             node.emit('WINDOW_LOADED');
-            
-            if (node.game.getStageLevel() >= constants.stageLevels.LOADED) {
-                // We must make sure that the step callback is fully executed. 
-                // Only the last one to load (between the window and 
-                // the callback will emit 'PLAYING'.
-                node.emit('PLAYING');
-            }
-            
+            // The listener will take care of emitting PLAYING,
+            // if all conditions are met. 
         }
         else {
 	    node.silly('GameWindow.updateState: ' + this.areLoading + ' loadFrame processes open.');
         }
     };
+
+    /**
+     * ## GameWindow.isReady
+     *
+     * Returns TRUE if the state is either INITIALIZED or LOADED.
+     */
+       
+    GameWindow.prototype.isReady = function() {
+        var l = constants.windowLevels;
+        return this.state === l.INITIALIZED || this.state === l.LOADED;
+    }
     
     /**
      * Creates and adds a container div with id 'gn_header' to 
@@ -1636,211 +1646,211 @@ function Entity (e) {
 );
 
 (function(exports, node){
-	
-	var JSUS = node.JSUS;
-	var NDDB = node.NDDB;
+    
+    var JSUS = node.JSUS;
+    var NDDB = node.NDDB;
 
-	var HTMLRenderer = node.window.HTMLRenderer;
-	var Entity = node.window.HTMLRenderer.Entity;
-	
-	/*!
-	* 
-	* List: handle list operation
-	* 
-	*/
-	
-	exports.List = List;
-	
-	List.prototype = new NDDB();
-	List.prototype.constructor = List;	
-	
-	function List (options, data) {
-		options = options || {};
-		this.options = options;
-		
-		NDDB.call(this, options, data); 
-		
-		this.id = options.id || 'list_' + Math.round(Math.random() * 1000);
-		
-		this.DL = null;
-		this.auto_update = this.options.auto_update || false;
-		this.htmlRenderer = null; 
-		this.lifo = false;
-		
-		this.init(this.options);
-	}
-	
-	// TODO: improve init
-	List.prototype.init = function (options) {
-		options = options || this.options;
-		
-		this.FIRST_LEVEL = options.first_level || 'dl';
-		this.SECOND_LEVEL = options.second_level || 'dt';
-		this.THIRD_LEVEL = options.third_level || 'dd';
-		
-		this.last_dt = 0;
-		this.last_dd = 0;
-		this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
-																		: this.auto_update;
-		
-		var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
-		
-		this.globalCompare = function (o1, o2) {
-			if (!o1 && !o2) return 0;
-			if (!o2) return 1;
-			if (!o1) return -1;
+    var HTMLRenderer = node.window.HTMLRenderer;
+    var Entity = node.window.HTMLRenderer.Entity;
+    
+    /*!
+     * 
+     * List: handle list operation
+     * 
+     */
+    
+    exports.List = List;
+    
+    List.prototype = new NDDB();
+    List.prototype.constructor = List;  
+    
+    function List (options, data) {
+        options = options || {};
+        this.options = options;
+        
+        NDDB.call(this, options, data); 
+        
+        this.id = options.id || 'list_' + Math.round(Math.random() * 1000);
+        
+        this.DL = null;
+        this.auto_update = this.options.auto_update || false;
+        this.htmlRenderer = null; 
+        this.lifo = false;
+        
+        this.init(this.options);
+    }
+    
+    // TODO: improve init
+    List.prototype.init = function (options) {
+        options = options || this.options;
+        
+        this.FIRST_LEVEL = options.first_level || 'dl';
+        this.SECOND_LEVEL = options.second_level || 'dt';
+        this.THIRD_LEVEL = options.third_level || 'dd';
+        
+        this.last_dt = 0;
+        this.last_dd = 0;
+        this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
+            : this.auto_update;
+        
+        var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
+        
+        this.globalCompare = function (o1, o2) {
+            if (!o1 && !o2) return 0;
+            if (!o2) return 1;
+            if (!o1) return -1;
 
-			// FIFO
-			if (!lifo) {
-				if (o1.dt < o2.dt) return -1;
-				if (o1.dt > o2.dt) return 1;
-			}
-			else {
-				if (o1.dt < o2.dt) return 1;
-				if (o1.dt > o2.dt) return -1;
-			}
-			if (o1.dt === o2.dt) {
-				if ('undefined' === typeof o1.dd) return -1;
-				if ('undefined'=== typeof o2.dd) return 1;
-				if (o1.dd < o2.dd) return -1;
-				if (o1.dd > o2.dd) return 1;
-				if (o1.nddbid < o2.nddbid) return 1;
-				if (o1.nddbid > o2.nddbid) return -1;
-			}
-			return 0;
-		}; 
-		
-		
-		this.DL = options.list || document.createElement(this.FIRST_LEVEL);
-		this.DL.id = options.id || this.id;
-		if (options.className) {
-			this.DL.className = options.className;
-		}
-		if (this.options.title) {
-			this.DL.appendChild(document.createTextNode(options.title));
-		}
-		
-		// was
-		//this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});
-		this.htmlRenderer = new HTMLRenderer({render: options.render});
-	};
-	
-	List.prototype._add = function (node) {
-		if (!node) return;
-//		console.log('about to add node');
-//		console.log(node);
-		this.insert(node);
-		if (this.auto_update) {
-			this.parse();
-		}
-	};
-	
-	List.prototype.addDT = function (elem, dt) {
-		if ('undefined' === typeof elem) return;
-		this.last_dt++;
-		dt = ('undefined' !== typeof dt) ? dt: this.last_dt;  
-		this.last_dd = 0;
-		var node = new Node({dt: dt, content: elem});
-		return this._add(node);
-	};
-	
-	List.prototype.addDD = function (elem, dt, dd) {
-		if ('undefined' === typeof elem) return;
-		dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
-		dd = ('undefined' !== typeof dd) ? dd: this.last_dd++;
-		var node = new Node({dt: dt, dd: dd, content: elem});
-		return this._add(node);
-	};
-	
-	List.prototype.parse = function() {
-		this.sort();
-		var old_dt = null;
-		var old_dd = null;
-		
-		var appendDT = function() {
-			var node = document.createElement(this.SECOND_LEVEL);
-			this.DL.appendChild(node);
-			old_dd = null;
-			old_dt = node;
-			return node;
-		};
-		
-		var appendDD = function() {
-			var node = document.createElement(this.THIRD_LEVEL);
-//			if (old_dd) {
-//				old_dd.appendChild(node);
-//			}
-//			else if (!old_dt) {
-//				old_dt = appendDT.call(this);
-//			}
-//			old_dt.appendChild(node);
-			this.DL.appendChild(node);
-//			old_dd = null;
-//			old_dt = node;
-			return node;
-		};
-		
-		// Reparse all every time
-		// TODO: improve this
-		if (this.DL) {
-			while (this.DL.hasChildNodes()) {
-				this.DL.removeChild(this.DL.firstChild);
-			}
-			if (this.options.title) {
-				this.DL.appendChild(document.createTextNode(this.options.title));
-			}
-		}
-		
-		for (var i=0; i<this.db.length; i++) {
-			var el = this.db[i];
-			var node;
-			if ('undefined' === typeof el.dd) {
-				node = appendDT.call(this);
-				//console.log('just created dt');
-			}
-			else {
-				node = appendDD.call(this);
-			}
-//			console.log('This is the el')
-//			console.log(el);
-			var content = this.htmlRenderer.render(el);
-//			console.log('This is how it is rendered');
-//			console.log(content);
-			node.appendChild(content);		
-		}
-		
-		return this.DL;
-	};
-	
-	List.prototype.getRoot = function() {
-		return this.DL;
-	};
-	
-	
-	
-//	List.prototype.createItem = function(id) {
-//		var item = document.createElement(this.SECOND_LEVEL);
-//		if (id) {
-//			item.id = id;
-//		}
-//		return item;
-//	};
-	
-	// Cell Class
-	Node.prototype = new Entity();
-	Node.prototype.constructor = Node;
-	
-	function Node (node) {
-		Entity.call(this, node);
-		this.dt = ('undefined' !== typeof node.dt) ? node.dt : null;
-		if ('undefined' !== typeof node.dd) {
-			this.dd = node.dd;
-		}
-	}
-	
+            // FIFO
+            if (!lifo) {
+                if (o1.dt < o2.dt) return -1;
+                if (o1.dt > o2.dt) return 1;
+            }
+            else {
+                if (o1.dt < o2.dt) return 1;
+                if (o1.dt > o2.dt) return -1;
+            }
+            if (o1.dt === o2.dt) {
+                if ('undefined' === typeof o1.dd) return -1;
+                if ('undefined'=== typeof o2.dd) return 1;
+                if (o1.dd < o2.dd) return -1;
+                if (o1.dd > o2.dd) return 1;
+                if (o1.nddbid < o2.nddbid) return 1;
+                if (o1.nddbid > o2.nddbid) return -1;
+            }
+            return 0;
+        }; 
+        
+        
+        this.DL = options.list || document.createElement(this.FIRST_LEVEL);
+        this.DL.id = options.id || this.id;
+        if (options.className) {
+            this.DL.className = options.className;
+        }
+        if (this.options.title) {
+            this.DL.appendChild(document.createTextNode(options.title));
+        }
+        
+        // was
+        //this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});
+        this.htmlRenderer = new HTMLRenderer({render: options.render});
+    };
+    
+    List.prototype._add = function (node) {
+        if (!node) return;
+        //              console.log('about to add node');
+        //              console.log(node);
+        this.insert(node);
+        if (this.auto_update) {
+            this.parse();
+        }
+    };
+    
+    List.prototype.addDT = function (elem, dt) {
+        if ('undefined' === typeof elem) return;
+        this.last_dt++;
+        dt = ('undefined' !== typeof dt) ? dt: this.last_dt;  
+        this.last_dd = 0;
+        var node = new Node({dt: dt, content: elem});
+        return this._add(node);
+    };
+    
+    List.prototype.addDD = function (elem, dt, dd) {
+        if ('undefined' === typeof elem) return;
+        dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
+        dd = ('undefined' !== typeof dd) ? dd: this.last_dd++;
+        var node = new Node({dt: dt, dd: dd, content: elem});
+        return this._add(node);
+    };
+    
+    List.prototype.parse = function() {
+        this.sort();
+        var old_dt = null;
+        var old_dd = null;
+        
+        var appendDT = function() {
+            var node = document.createElement(this.SECOND_LEVEL);
+            this.DL.appendChild(node);
+            old_dd = null;
+            old_dt = node;
+            return node;
+        };
+        
+        var appendDD = function() {
+            var node = document.createElement(this.THIRD_LEVEL);
+            //                  if (old_dd) {
+            //                          old_dd.appendChild(node);
+            //                  }
+            //                  else if (!old_dt) {
+            //                          old_dt = appendDT.call(this);
+            //                  }
+            //                  old_dt.appendChild(node);
+            this.DL.appendChild(node);
+            //                  old_dd = null;
+            //                  old_dt = node;
+            return node;
+        };
+        
+        // Reparse all every time
+        // TODO: improve this
+        if (this.DL) {
+            while (this.DL.hasChildNodes()) {
+                this.DL.removeChild(this.DL.firstChild);
+            }
+            if (this.options.title) {
+                this.DL.appendChild(document.createTextNode(this.options.title));
+            }
+        }
+        
+        for (var i=0; i<this.db.length; i++) {
+            var el = this.db[i];
+            var node;
+            if ('undefined' === typeof el.dd) {
+                node = appendDT.call(this);
+                //console.log('just created dt');
+            }
+            else {
+                node = appendDD.call(this);
+            }
+            //                  console.log('This is the el')
+            //                  console.log(el);
+            var content = this.htmlRenderer.render(el);
+            //                  console.log('This is how it is rendered');
+            //                  console.log(content);
+            node.appendChild(content);          
+        }
+        
+        return this.DL;
+    };
+    
+    List.prototype.getRoot = function() {
+        return this.DL;
+    };
+    
+    
+    
+    //  List.prototype.createItem = function(id) {
+    //          var item = document.createElement(this.SECOND_LEVEL);
+    //          if (id) {
+    //                  item.id = id;
+    //          }
+    //          return item;
+    //  };
+    
+    // Cell Class
+    Node.prototype = new Entity();
+    Node.prototype.constructor = Node;
+    
+    function Node (node) {
+        Entity.call(this, node);
+        this.dt = ('undefined' !== typeof node.dt) ? node.dt : null;
+        if ('undefined' !== typeof node.dd) {
+            this.dd = node.dd;
+        }
+    }
+    
 })(
-	('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
-	('undefined' !== typeof node) ? node : module.parent.exports
+    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
+    ('undefined' !== typeof node) ? node : module.parent.exports
 );
 
 (function(exports, window, node) {
