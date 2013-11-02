@@ -12,7 +12,7 @@
  * Dynamic content can be loaded inside the iframe without losing the
  * javascript state inside the page.
  *
- * Defines a number of profiles associated with special page 1layout.
+ * Defines a number of profiles associated with special page layout.
  *
  * Depends on nodegame-client.
  * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
@@ -1016,6 +1016,25 @@
     };
 
     /**
+     * ### GameWindow.getScreenInfo
+     *
+     * Returns information about the screen in which nodeGame is running
+     *
+     * @return {object} A object containing the scren info
+     */
+    GameWindow.prototype.getScreenInfo = function() {
+        var screen = window.screen;
+        return {
+            height: screen.height,
+            widht: screen.width,
+            availHeight: screen.availHeight,
+            availWidth: screen.availWidht,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixedDepth
+        };
+    };
+
+    /**
      * ### GameWindow._generateRoot
      *
      * Creates a div element with the given id
@@ -1688,12 +1707,9 @@
  * performs the following operations:
  *
  * - if it is already an HTML element, returns it;
- * - if it contains a  #parse() method, tries to invoke it to
- *      generate HTML;
- * - if it is an object, tries to render it as a table of
- *   key:value pairs;
+ * - if it contains a  #parse() method, tries to invoke it to generate HTML;
+ * - if it is an object, tries to render it as a table of key:value pairs;
  * - finally, creates an HTML text node with it and returns it
- *
  *
  * Depends on the nodegame-client add-on TriggerManager
  *
@@ -1710,6 +1726,10 @@
     JSUS = node.JSUS;
 
     var TriggerManager = node.TriggerManager;
+
+    if (!TriggerManager) {
+        throw new Error('HTMLRenderer requires node.TriggerManager to load.');
+    }
 
     exports.HTMLRenderer = HTMLRenderer;
     exports.HTMLRenderer.Entity = Entity;
@@ -2010,7 +2030,7 @@
         
         // was
         //this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});
-        this.htmlRenderer = new HTMLRenderer({render: options.render});
+        this.htmlRenderer = new HTMLRenderer(options.render);
     };
     
     List.prototype._add = function(node) {
@@ -2168,7 +2188,7 @@
 
     Table.log = node.log;
 
-    function Table (options, data, parent) {
+    function Table(options, data, parent) {
         options = options || {};
 
         Table.log = options.log || Table.log;
