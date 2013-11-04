@@ -306,7 +306,7 @@
 
         case 'PLAYER':
 
-            this.header = this.generateHeader();
+            this.generateHeader();
 
             node.game.visualState = node.widgets.append('VisualState',
                     this.header);
@@ -848,28 +848,43 @@
     /**
      * ### GameWindow.generateHeader
      *
-     * Creates and adds a container div with id 'gn_header' to the root element
+     * Adds a container div with id 'gn_header' to the root element
      *
-     * If a header element has already been created, deletes it,
-     * and creates a new one.
+     * If a header element already exists, deletes its content
+     * and returns it.
      *
-     * @return {Element} The created element
-     *
-     * @TODO: Should be always added as first child
+     * @return {Element} The header element
      */
     GameWindow.prototype.generateHeader = function() {
-        if (this.header) {
-            this.header.innerHTML = '';
-            this.header = null;
+        var root, header;
+        header = this.getHeader();
+        if (header) {
+            header.innerHTML = '';
         }
+        else {
+            root = this.getFrameRoot();
+            this.header = this.addElement('div', root, 'gn_header');
+            header = this.header;
+        }   
+        return header;
+    };
 
-        return this.addElement('div', this.root, 'gn_header');
+    /**
+     * ### GameWindow.getHeader
+     *
+     * Returns a reference to the header element, if defined
+     *
+     * @return {Element} The header element
+     */
+    GameWindow.prototype.getHeader = function() {
+        return this.header;
     };
 
 
     // Overriding Document.write and DOM.writeln and DOM.write
     GameWindow.prototype._write = DOM.write;
     GameWindow.prototype._writeln = DOM.writeln;
+
     /**
      * ### GameWindow.write
      *
@@ -924,7 +939,7 @@
      * If an id is provided, only children of the element with the specified
      * id are toggled.
      *
-     * If id is given it will use _GameWindow.getRoot()_ to determine the
+     * If id is given it will use _GameWindow.getFrameDocument()_ to determine the
      * forms to toggle.
      *
      * If a state parameter is given, all the input forms will be either
@@ -2109,30 +2124,15 @@
             else {
                 node = appendDD.call(this);
             }
-            //                  console.log('This is the el')
-            //                  console.log(el);
             var content = this.htmlRenderer.render(el);
-            //                  console.log('This is how it is rendered');
-            //                  console.log(content);
             node.appendChild(content);          
-        }
-        
+        }        
         return this.DL;
     };
     
     List.prototype.getRoot = function() {
         return this.DL;
     };
-    
-    
-    
-    //  List.prototype.createItem = function(id) {
-    //          var item = document.createElement(this.SECOND_LEVEL);
-    //          if (id) {
-    //                  item.id = id;
-    //          }
-    //          return item;
-    //  };
     
     // Cell Class
     Node.prototype = new Entity();
