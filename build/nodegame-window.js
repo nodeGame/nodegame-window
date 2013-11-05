@@ -298,7 +298,7 @@
 
             // Add default CSS.
             if (node.conf.host) {
-                this.addCSS(this.root,
+                this.addCSS(this.getFrameRoot(),
                             node.conf.host + '/stylesheets/monitor.css');
             }
 
@@ -315,12 +315,12 @@
             node.game.stateDisplay = node.widgets.append('StateDisplay',
                     this.header);
 
-            // Will continue in SOLO_PLAYER
+            // Will continue in SOLO_PLAYER.
 
         case 'SOLO_PLAYER':
 
             if (!this.getFrame()) {
-                this.addIFrame(this.root, this.mainframe);
+                this.addIFrame(this.getFrameRoot(), this.mainframe);
                 // At this point, there is no document in the iframe yet.
                 this.frame = window.frames[this.mainframe];
                 initPage = this.getBlankPage();
@@ -335,7 +335,7 @@
 
             // Add default CSS.
             if (node.conf.host) {
-                this.addCSS(this.root,
+                this.addCSS(this.getFrameRoot(),
                             node.conf.host + '/stylesheets/player.css');
             }
 
@@ -743,7 +743,6 @@
             window.frames[frame].location = uri;
         }
 
-
         // Adding a reference to nodeGame also in the iframe
         window.frames[frame].window.node = node;
     };
@@ -930,6 +929,54 @@
         }
         return this._writeln(root, text, br);
     };
+
+    /**
+     * ### GameWindow.getLoadingDots
+     *
+     * Creats and returns a span element with incrementing dots inside
+     *
+     * New dots are added every second, until the limit is reached, and it 
+     * starts from the beginning
+     *
+     * Gives the impression of a loading time.
+     *
+     * @param {string} id Optional The id of the span
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval.
+     */
+    GameWindow.prototype.getLoadingDots = function(len, id) {
+        var span_dots, i, limit, intervalId;
+        if (len & len < 0) {
+            throw new Error('GameWindow.getLoadingDots: len < 0.');
+        }
+        len = len || 5;
+        span_dots = document.createElement('span');
+        span_dots.id = id || 'span_dots';
+        limit = '';
+        for (i = 0; i < len; i++) {
+            limit = limit + '.';
+        }
+        // Refreshing the dots...
+        intervalId = setInterval(function() {
+            if (span_dots.innerHTML !== limit) {
+                span_dots.innerHTML = span_dots.innerHTML + '.';  
+            }
+            else {
+                span_dots.innerHTML = '.';
+            }
+        }, 1000);
+
+        function stop() {
+            span_dots.innerHTML = '.';
+            clearInterval(intervalId);
+        }
+
+        return {
+            span: span_dots,
+            stop: stop
+        }
+    };
+
 
     /**
      * ### GameWindow.toggleInputs
