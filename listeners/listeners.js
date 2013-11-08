@@ -10,39 +10,47 @@
 
     "use strict";
 
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = window.getElementById(idOrObj);
+            if (!el) {
+                throw new Error(prefix + ': could not find element ' +
+                                'with id ' + idOrObj);
+            }
+        }
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
+        }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element.');
+        }
+        return el;
+    }
+
     node.on('NODEGAME_GAME_CREATED', function() {
         window.init(node.conf.window);
     });
 
-    node.on('HIDE', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot hide element ' + id);
-            return;
-        }
-        el.style.visibility = 'hidden';
+    node.on('HIDE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
+        el.style.display = 'none';
     });
 
-    node.on('SHOW', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot show element ' + id);
-            return;
-        }
-        el.style.visibility = 'visible';
+    node.on('SHOW', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+        el.style.display = '';
     });
 
-    node.on('TOGGLE', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot toggle element ' + id);
-            return;
-        }
-        if (el.style.visibility === 'visible') {
-            el.style.visibility = 'hidden';
+    node.on('TOGGLE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+        
+        if (el.style.display === 'none') {
+            el.style.display = '';
         }
         else {
-            el.style.visibility = 'visible';
+            el.style.display = 'none';
         }
     });
 
@@ -61,7 +69,7 @@
         window.toggleInputs(id);
     });
 
-    node.log('node-window: listeners added');
+    node.log('node-window: listeners added.');
 
 })(
     'undefined' !== typeof node ? node : undefined

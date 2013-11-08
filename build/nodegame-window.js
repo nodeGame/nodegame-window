@@ -152,6 +152,15 @@
          */
         this.frameLibs = {};
 
+        /**
+         * ### GameWindow.state
+         *
+         * The window's state level
+         *
+         * @see constants.windowLevels
+         */
+        this.state = null;
+
         this.init();
     }
 
@@ -317,6 +326,7 @@
 
             // Will continue in SOLO_PLAYER.
 
+        /* falls through */
         case 'SOLO_PLAYER':
 
             if (!this.getFrame()) {
@@ -488,7 +498,7 @@
 
         // Don't preload if no URIs are given:
         if (!uris || !uris.length) {
-            if(callback) callback();
+            if (callback) callback();
             return;
         }
 
@@ -551,18 +561,19 @@
      * A helper method of GameWindow.loadFrame.
      * Puts cached contents into the iframe or caches new contents if requested.
      * Handles reloading of script tags and injected libraries.
-     * Must be called with `this` set to GameWindow instance.
+     * Must be called with the current GameWindow instance.
      *
+     * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
      * @param {string} frame ID of GameWindow's frame
-     * @param {bool} loadCache whether to load from cache
-     * @param {bool} storeCache whether to store to cache
+     * @param {bool} loadCache Whether to load from cache
+     * @param {bool} storeCache Whether to store to cache
      *
      * @see GameWindow.loadFrame
      *
      * @api private
      */
-    function handleFrameLoad(uri, frame, loadCache, storeCache) {
+    function handleFrameLoad(that, uri, frame, loadCache, storeCache) {
         var frameNode;
         var frameDocumentElement;
 
@@ -574,7 +585,7 @@
 
         if (loadCache) {
             // Load frame from cache:
-            frameDocumentElement.innerHTML = this.cache[uri].contents;
+            frameDocumentElement.innerHTML = that.cache[uri].contents;
         }
 
         // (Re-)Inject libraries and reload scripts:
@@ -582,12 +593,12 @@
         if (loadCache) {
             reloadScripts(frameNode);
         }
-        injectLibraries(frameNode, this.globalLibs.concat(
-                this.frameLibs.hasOwnProperty(uri) ? this.frameLibs[uri] : []));
+        injectLibraries(frameNode, that.globalLibs.concat(
+                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
 
         if (storeCache) {
             // Store frame in cache:
-            this.cache[uri].contents = frameDocumentElement.innerHTML;
+            that.cache[uri].contents = frameDocumentElement.innerHTML;
         }
     }
 
@@ -703,7 +714,7 @@
 
         // Create entry for this URI in cache object
         // and store cacheOnClose flag:
-        if (!(uri in this.cache)) {
+        if (!this.cache.hasOwnProperty(uri)) {
             this.cache[uri] = { contents: null, cacheOnClose: false };
         }
         this.cache[uri].cacheOnClose = storeCacheLater;
@@ -719,7 +730,7 @@
 
         // Add the onload event listener:
         iframe.onload = function() {
-            handleFrameLoad.call(that, uri, frame, loadCache, storeCacheNow);
+            handleFrameLoad(that, uri, frame, loadCache, storeCacheNow);
             that.updateLoadFrameState(func, frame);
         };
 
@@ -731,8 +742,7 @@
             // iframe.onload handles the filling of the contents.
             // TODO: Fix code duplication between here and onload function.
             if (frameReady) {
-                handleFrameLoad.call(this,
-                        uri, frame, loadCache, storeCacheNow);
+                handleFrameLoad(this, uri, frame, loadCache, storeCacheNow);
 
                 // Update status (onload not called if frame was already ready):
                 this.updateLoadFrameState(func, frame);
@@ -864,7 +874,7 @@
             root = this.getFrameRoot();
             this.header = this.addElement('div', root, 'gn_header');
             header = this.header;
-        }   
+        }
         return header;
     };
 
@@ -933,10 +943,10 @@
     /**
      * ### GameWindow.getLoadingDots
      *
-     * Creats and returns a span element with incrementing dots inside
+     * Creates and returns a span element with incrementing dots inside
      *
-     * New dots are added every second, until the limit is reached, and it 
-     * starts from the beginning
+     * New dots are added every second until the limit is reached, then it
+     * starts from the beginning.
      *
      * Gives the impression of a loading time.
      *
@@ -959,7 +969,7 @@
         // Refreshing the dots...
         intervalId = setInterval(function() {
             if (span_dots.innerHTML !== limit) {
-                span_dots.innerHTML = span_dots.innerHTML + '.';  
+                span_dots.innerHTML = span_dots.innerHTML + '.';
             }
             else {
                 span_dots.innerHTML = '.';
@@ -974,7 +984,7 @@
         return {
             span: span_dots,
             stop: stop
-        }
+        };
     };
 
 
@@ -1469,8 +1479,6 @@
         return id;
     };
 
-
-
     // Where to place them?
 
     /**
@@ -1601,39 +1609,47 @@
 
     "use strict";
 
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = window.getElementById(idOrObj);
+            if (!el) {
+                throw new Error(prefix + ': could not find element ' +
+                                'with id ' + idOrObj);
+            }
+        }
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
+        }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element.');
+        }
+        return el;
+    }
+
     node.on('NODEGAME_GAME_CREATED', function() {
         window.init(node.conf.window);
     });
 
-    node.on('HIDE', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot hide element ' + id);
-            return;
-        }
-        el.style.visibility = 'hidden';
+    node.on('HIDE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
+        el.style.display = 'none';
     });
 
-    node.on('SHOW', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot show element ' + id);
-            return;
-        }
-        el.style.visibility = 'visible';
+    node.on('SHOW', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+        el.style.display = '';
     });
 
-    node.on('TOGGLE', function(id) {
-        var el = window.getElementById(id);
-        if (!el) {
-            node.log('Cannot toggle element ' + id);
-            return;
-        }
-        if (el.style.visibility === 'visible') {
-            el.style.visibility = 'hidden';
+    node.on('TOGGLE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+        
+        if (el.style.display === 'none') {
+            el.style.display = '';
         }
         else {
-            el.style.visibility = 'visible';
+            el.style.display = 'none';
         }
     });
 
@@ -1652,7 +1668,7 @@
         window.toggleInputs(id);
     });
 
-    node.log('node-window: listeners added');
+    node.log('node-window: listeners added.');
 
 })(
     'undefined' !== typeof node ? node : undefined
