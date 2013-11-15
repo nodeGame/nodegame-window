@@ -512,7 +512,7 @@
 
             // Create an invisible internal frame for the current URI:
             iframe = document.createElement('iframe');
-            iframe.style.visibility = 'hidden';
+            iframe.style.display = 'none';
             iframeName = 'tmp_iframe_' + uriIdx;
             iframe.id = iframeName;
             iframe.name = iframeName;
@@ -550,6 +550,15 @@
             // Start loading the page:
             window.frames[iframeName].location = currentUri;
         }
+    };
+
+    /**
+     * ### GameWindow.clearCache
+     *
+     * Empties the cache
+     */
+    GameWindow.prototype.clearCache = function() {
+        this.cache = {};
     };
 
 
@@ -631,8 +640,8 @@
      *    (default: default iframe of the game)
      *  - cache (object): Caching options.  Fields:
      *      * loadMode (string):
-     *          'reload' (default; reload page without the cache),
-     *          'cache' (get the page from cache if possible)
+     *          'cache' (default; get the page from cache if possible),
+     *          'reload' (reload page without the cache)
      *      * storeMode (string):
      *          'off' (default; don't cache page),
      *          'onLoad' (cache given page after it is loaded),
