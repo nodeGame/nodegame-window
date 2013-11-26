@@ -161,6 +161,16 @@
          */
         this.state = null;
 
+        /**
+         * ### GameWindow.waitScreen
+         *
+         * Reference to the _WaitScreen_ widget, if one is appended in the page 
+         *
+         * @see node.widgets.WaitScreen
+         */
+        this.waitScreen = null;
+
+        // Init.
         this.init();
     }
 
@@ -485,16 +495,21 @@
     /**
      * ### GameWindow.preCache
      *
-     * Loads the HTML content of the given URIs into the cache
+     * Loads the HTML content of the given URI(s) into the cache
      *
-     * @param {array} uris The URIs to cache
-     * @param {function} callback The function to call once the caching is done
+     * @param {string|array} uris The URI(s) to cache
+     * @param {function} callback Optional. The function to call once the
+     *   caching is done
      */
     GameWindow.prototype.preCache = function(uris, callback) {
         var that;
         var loadedCount;
         var currentUri, uriIdx;
         var iframe, iframeName;
+
+        if ('string' === typeof uris) {
+            uris = [ uris ];
+        }
 
         // Don't preload if no URIs are given:
         if (!uris || !uris.length) {
@@ -651,8 +666,9 @@
      * content is coming from another domain.
      *
      * @param {string} uri The uri to load
-     * @param {function} func The function to call once the DOM is ready
-     * @param {object} opts The options object
+     * @param {function} func Optional. The function to call once the DOM is
+     *   ready
+     * @param {object} opts Optional. The options object
      */
     GameWindow.prototype.loadFrame = function(uri, func, opts) {
         var that;
@@ -898,7 +914,6 @@
         return this.header;
     };
 
-
     // Overriding Document.write and DOM.writeln and DOM.write
     GameWindow.prototype._write = DOM.write;
     GameWindow.prototype._writeln = DOM.writeln;
@@ -959,6 +974,8 @@
      *
      * Gives the impression of a loading time.
      *
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
      * @param {string} id Optional The id of the span
      * @return {object} An object containing two properties: the span element
      *   and a method stop, that clears the interval.
@@ -996,6 +1013,26 @@
         };
     };
 
+    /**
+     * ### GameWindow.addLoadingDots
+     *
+     * Appends _loading dots_ to an HTML element
+     *
+     * By invoking this method you lose access to the _stop_ function of the
+     * _loading dots_ element.
+     *
+     * @param {HTMLElement} root The element to which the loading dots will be
+     *   appended.
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} The span with the loading dots.
+     *
+     * @see GameWindow.getLoadingDots
+     */
+    GameWindow.prototype.addLoadingDots = function(root, len, id) {
+        return root.appendChild(this.getLoadingDots(len, id).span);
+    };
 
     /**
      * ### GameWindow.toggleInputs
@@ -1026,8 +1063,8 @@
         }
         else {
             container = this.getFrameDocument();
-            if (!container) {
-                // No warning.
+            if (!container || !container.getElementsByTagName) {
+                // Frame either not existing or not ready. No warning.
                 return;
             }
         }
@@ -1064,7 +1101,7 @@
      * TODO: check if this can be called in any stage.
      */
     GameWindow.prototype.lockFrame = function(text) {
-        if (!node.game.waitScreen) {
+        if (!this.waitScreen) {
             throw new Error('GameWindow.lockFrame: waitScreen not found.');
         }
         if (text && 'string' !== typeof text) {
