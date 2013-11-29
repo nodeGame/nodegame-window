@@ -2302,7 +2302,12 @@
      */
     function Table(options, data) {
         options = options || {};
-        
+        // Updates indexes on the fly.
+        if (!options.update) options.update = {};
+        if ('undefined' === typeof options.update.indexes) {
+            options.update.indexes = true;
+        }
+
         NDDB.call(this, options, data);
 
         if (!this.row) {
@@ -2315,8 +2320,8 @@
                 return c.y;
             });
         }
-        if (!this.id) {
-            this.index('id', function(c) {
+        if (!this.rowcol) {
+            this.index('rowcol', function(c) {
                 return c.x + '_' + c.y;
             });
         }
@@ -2353,6 +2358,8 @@
         if (options.className) {
             this.table.className = options.className;
         }
+
+        // Init renderer.
         this.initRenderer(options.render);
     }
 
@@ -2409,7 +2416,7 @@
             return this.row.get(row);
         }
 
-        return this.index.get(row + '_' + col);
+        return this.rowcol.get(row + '_' + col);
     };
 
     Table.prototype.addClass = function(c) {
