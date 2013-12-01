@@ -71,28 +71,65 @@
             throw new Error('nodeWindow: nodeGame not found');
         }
 
-        node.log('nodeWindow: loading...');
+        node.log('node-window: loading...');
 
         // ## GameWindow properties
 
         /**
-         * ### GameWindow.mainframe
+         * ### GameWindow.frameName
          *
          * The name (and also id) of the iframe where the pages are loaded
          */
-        this.mainframe = null;
+        this.frameName = null;
 
         /**
-         * ### GameWindow.frame
+         * ### GameWindow.frameElement
          *
-         * A reference to the iframe document
+         * A reference to the iframe object of type _HTMLIFrameElement_
+         *
+         * You can this element also by:
+         *
+         * - document.getElementById(this.frameName)
+         *
+         * This is the element that contains the _Window_ object of the iframe.
+         *
+         * @see this.frameName
+         * @see this.frameWindow
+         * @see this.frameDocument
          */
-        this.frame = null;
+        this.frameElement = null;
+
+        /**
+         * ### GameWindow.frameWindow
+         *
+         * A reference to the iframe Window object
+         *
+         * You can get this element also by:
+         *
+         * - window.frames[this.frameName]
+         */
+        this.frameWindow = null;
+
+        /**
+         * ### GameWindow.frameDocument
+         *
+         * A reference to the iframe Document object
+         *
+         * You can get this element also by:
+         *
+         * - JSUS.getIFrameDocument(this.frameElement)
+         *
+         * @see this.frameElement
+         * @see this.frameWindow
+         */
+        this.frameDocument = null;
 
         /**
          * ### GameWindow.root
          *
-         * A reference to the top element in the iframe, usually the `body` tag
+         * A reference to the HTML element to which the iframe is appended
+         *
+         * By default, this element is a reference to document.body.
          */
         this.root = null;
 
@@ -116,6 +153,7 @@
          * Cache for loaded iframes
          *
          * Maps URI to a cache object with the following properties:
+         *
          * - `contents` (the innerHTML property or null if not cached)
          * - optionally 'cacheOnClose' (a bool telling whether to cache
          *   the frame when it is replaced by a new one)
@@ -130,7 +168,6 @@
          * Maps frame names (e.g. 'mainframe') to the URIs they are showing.
          */
         this.currentURIs = {};
-
 
         /**
          * ### GameWindow.globalLibs
@@ -192,7 +229,7 @@
         options = options || {};
         this.conf = J.merge(GameWindow.defaults, options);
 
-        this.mainframe = options.mainframe || 'mainframe';
+        this.frameName = options.frameName || 'mainframe';
 
         if (this.conf.promptOnleave) {
             this.promptOnleave();
@@ -260,8 +297,8 @@
         var el;
 
         el = null;
-        if (this.frame && this.frame.getElementById) {
-            el = this.frame.getElementById(id);
+        if (this.frameDocument && this.frameDocument.getElementById) {
+            el = this.frameDocument.getElementById(id);
         }
         if (!el) {
             el = document.getElementById(id);
@@ -282,8 +319,8 @@
      * @see GameWindow.getElementById
      */
     GameWindow.prototype.getElementsByTagName = function(tag) {
-        return this.frame ?
-            this.frame.getElementsByTagName(tag) :
+        return this.frameDocument ?
+            this.frameDocument.getElementsByTagName(tag) :
             document.getElementsByTagName(tag);
     };
 
@@ -340,14 +377,21 @@
         case 'SOLO_PLAYER':
 
             if (!this.getFrame()) {
-                this.addIFrame(this.getFrameRoot(), this.mainframe);
-                // At this point, there is no document in the iframe yet.
-                this.frame = window.frames[this.mainframe];
+
+                this.frameObj = this.addIFrame(this.getFrameRoot(),
+                                               this.frameName);
+
+                this.frameDocument = this.getIFrameDocument(this.frameObj);
+
+                // Ste 1 Dec. was:
+                // // At this point, there is no document in the iframe yet.
+                // this.frame = window.frames[this.frameName];
+
                 initPage = this.getBlankPage();
                 if (this.conf.noEscape) {
                     // TODO: inject the no escape code here
                 }
-                window.frames[this.mainframe].src = initPage;
+                window.frames[this.frameName].src = initPage;
             }
 
             // Adding the WaitScreen.
@@ -372,19 +416,18 @@
      * Takes out all the script tags with the className "injectedlib"
      * that were inserted by injectLibraries.
      *
-     * @param {NodeGameClient} frameNode The node object of the iframe
+     * @param {HTMLIFrameElement} iframe The target iframe
      *
      * @see injectLibraries
      *
      * @api private
      */
-    function removeLibraries(frameNode) {
+    function removeLibraries(iframe) {
         var idx;
         var contentDocument;
         var scriptNodes, scriptNode;
 
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
+        contentDocument = W.getIFrameDocument(iframe);
 
         scriptNodes = contentDocument.getElementsByClassName('injectedlib');
         for (idx = 0; idx < scriptNodes.length; idx++) {
@@ -641,6 +684,65 @@
         }
     }
 
+//    var onLoad, detach, completed;
+//
+//    var iframeTest = document.createElement('iframe');
+//    iframe.style.display = 'none';
+//    document.body.appendChild(iframeTest);
+//    
+//    // The ready event handler.
+//    completed = function(event) {
+//
+//	// readyState === "complete" works also in oldIE.
+//	if (document.addEventListener || 
+//            event.type === "load" || 
+//            document.readyState === 'complete') {
+//
+//	    detach();
+//	    
+//	
+//	}
+//    };
+//
+//  
+//
+//    // Standards-based browsers support DOMContentLoaded.
+//    if (document.addEventListener) {
+//
+//        detach = function() {
+//            document.removeEventListener('DOMContentLoaded', completed, false);
+//	    window.removeEventListener('load', completed, false);
+//        };
+//
+//        onLoad = function() {
+//	    // Use the handy event callback
+//	    document.addEventListener('DOMContentLoaded', completed, false);
+//            
+//	    // A fallback to window.onload, that will always work
+//	    window.addEventListener('load', completed, false);
+//        };
+//        
+//	
+//    }
+//    // If IE event model is used.
+//    else {
+//
+//        detach = function() {
+//            document.detachEvent('onreadystatechange', completed );
+//	    window.detachEvent('onload', completed );
+//        };
+//
+//        onLoad = function() {
+//            // Ensure firing before onload, maybe late but safe also for iframes.
+//	    document.attachEvent('onreadystatechange', completed );
+//
+//	    // A fallback to window.onload, that will always work.
+//	    window.attachEvent('onload', completed );
+//        };
+
+
+
+
     /**
      * ### GameWindow.loadFrame
      *
@@ -686,7 +788,7 @@
         that = this;
 
         // Default options:
-        frame = this.mainframe;
+        frame = this.frameName;
         loadCache = GameWindow.defaults.cacheDefaults.loadCache;
         storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
         storeCacheLater = GameWindow.defaults.cacheDefaults.storeCacheLater;
@@ -801,7 +903,7 @@
      */
     GameWindow.prototype.updateLoadFrameState = function(func, frame) {
         // Update the reference to the frame obj
-        this.frame = window.frames[frame].document;
+        this.frameDocument = window.frames[frame].document;
         if (func) {
             func.call(node.game); // TODO: Pass the right this reference
         }
@@ -823,12 +925,12 @@
     /**
      * ### GameWindow.getFrame
      *
-     * Returns a reference to the frame (mainframe)
+     * Returns a reference to the frame.
      *
-     * @return {Element} The mainframe
+     * @return {Element} The frame of the game
      */
     GameWindow.prototype.getFrame = function() {
-        return document.getElementById(this.mainframe);
+        return document.getElementById(this.frameName);
     };
 
     /**
@@ -850,7 +952,7 @@
      * @return {object} The document object of the iframe
      */
     GameWindow.prototype.getFrameDocument = function() {
-        return this.frame;
+        return this.frameDocument;
     };
 
     /**
@@ -1617,17 +1719,17 @@
      *
      * In the following order the screen can be:
      *
-     *      - the body element of the iframe
-     *      - the document element of the iframe
-     *      - the body element of the document
-     *      - the last child element of the document
+     * - the body element of the iframe
+     * - the document element of the iframe
+     * - the body element of the document
+     * - the last child element of the document
      *
      * @return {Element} The screen
      */
     GameWindow.prototype.getScreen = function() {
-        var el = this.frame;
+        var el = this.getFrameDocument();
         if (el) {
-            el = this.frame.body || el;
+            el = el.body || el;
         }
         else {
             el = document.body || document.lastElementChild;
