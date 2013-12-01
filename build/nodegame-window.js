@@ -576,7 +576,6 @@
         this.cache = {};
     };
 
-
     /**
      * ### handleFrameLoad
      *
@@ -755,6 +754,10 @@
 
         // Add the onload event listener:
         iframe.onload = function() {
+            // Remove onload hanlder for this frame.
+            // Buggy Opera 11.52 fires the onload twice.            
+            iframe.onload = null;
+
             handleFrameLoad(that, uri, frame, loadCache, storeCacheNow);
             that.updateLoadFrameState(func, frame);
         };
@@ -1651,14 +1654,14 @@
  * www.nodegame.org
  * ---
  */
-(function(node, window) {
+(function(node) {
 
     "use strict";
 
     function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
-            el = window.getElementById(idOrObj);
+            el = W.getElementById(idOrObj);
             if (!el) {
                 throw new Error(prefix + ': could not find element ' +
                                 'with id ' + idOrObj);
@@ -1675,7 +1678,7 @@
     }
 
     node.on('NODEGAME_GAME_CREATED', function() {
-        window.init(node.conf.window);
+        W.init(node.conf.window);
     });
 
     node.on('HIDE', function(idOrObj) {
@@ -1701,24 +1704,23 @@
 
     // Disable all the input forms found within a given id element.
     node.on('INPUT_DISABLE', function(id) {
-        window.toggleInputs(id, true);
+        W.toggleInputs(id, true);
     });
-
+    
     // Disable all the input forms found within a given id element.
     node.on('INPUT_ENABLE', function(id) {
-        window.toggleInputs(id, false);
+        W.toggleInputs(id, false);
     });
-
+    
     // Disable all the input forms found within a given id element.
     node.on('INPUT_TOGGLE', function(id) {
-        window.toggleInputs(id);
+        W.toggleInputs(id);
     });
-
+    
     node.log('node-window: listeners added.');
-
+    
 })(
     'undefined' !== typeof node ? node : undefined
- ,  'undefined' !== typeof node.window ? node.window : undefined
 );
 /**
  * # Canvas class for nodeGame window
@@ -1900,7 +1902,7 @@
      * @param {object} options Optional. Configuration object
      *
      */
-    HTMLRenderer.prototype.init = function (options) {
+    HTMLRenderer.prototype.init = function(options) {
         options = options || this.options;
         this.options = options;
 
@@ -1924,7 +1926,7 @@
      * pipeline
      *
      */
-    HTMLRenderer.prototype.reset = function () {
+    HTMLRenderer.prototype.reset = function() {
         this.clear(true);
         this.addDefaultPipeline();
     };
@@ -1940,7 +1942,7 @@
             return document.createTextNode(el.content);
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
             if (el.content && 'object' === typeof el.content) {
                 var div = document.createElement('div');
@@ -1955,9 +1957,10 @@
             }
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
-            if (el.content && el.content.parse && 'function' === typeof el.content.parse) {
+            if (el.content && el.content.parse 
+                && 'function' === typeof el.content.parse) {
                 var html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
                     return html;
@@ -1965,7 +1968,7 @@
             }
         });
 
-        this.tm.addTrigger(function (el) {
+        this.tm.addTrigger(function(el) {
             if (!el) return;
             if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
                 return el.content;
@@ -1982,7 +1985,7 @@
      * @param {boolean} clear TRUE, to confirm the clearing
      * @return {boolean} TRUE, if clearing is successful
      */
-    HTMLRenderer.prototype.clear = function (clear) {
+    HTMLRenderer.prototype.clear = function(clear) {
         return this.tm.clear(clear);
     };
 
@@ -1995,7 +1998,7 @@
      * @param {number} pos Optional. The position of the renderer in the pipeline
      * @return {boolean} TRUE, if insertion is successful
      */
-    HTMLRenderer.prototype.addRenderer = function (renderer, pos) {
+    HTMLRenderer.prototype.addRenderer = function(renderer, pos) {
         return this.tm.addTrigger(renderer, pos);
     };
 
@@ -2007,7 +2010,7 @@
      * @param {function} renderer The function to remove
      * @return {boolean} TRUE, if removal is successful
      */
-    HTMLRenderer.prototype.removeRenderer = function (renderer) {
+    HTMLRenderer.prototype.removeRenderer = function(renderer) {
         return this.tm.removeTrigger(renderer);
     };
 
@@ -2021,7 +2024,7 @@
      *
      * @see TriggerManager.pullTriggers
      */
-    HTMLRenderer.prototype.render = function (o) {
+    HTMLRenderer.prototype.render = function(o) {
         return this.tm.pullTriggers(o);
     };
 
@@ -2032,7 +2035,7 @@
      *
      * @return {number} The number of render functions in the pipeline
      */
-    HTMLRenderer.prototype.size = function () {
+    HTMLRenderer.prototype.size = function() {
         return this.tm.triggers.length;
     };
 
@@ -2050,16 +2053,16 @@
      *
      * @param {object} The object to transform in entity
      */
-    function Entity (e) {
+    function Entity(e) {
         e = e || {};
         this.content = ('undefined' !== typeof e.content) ? e.content : '';
         this.className = ('undefined' !== typeof e.style) ? e.style : null;
     }
 
 })(
-    ('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
-    ('undefined' !== typeof window) ? window : module.parent.exports.window, // window
-    ('undefined' !== typeof node) ? node : module.parent.exports.node // node
+    ('undefined' !== typeof node) ? node.window || node : module.exports,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof node) ? node : module.parent.exports.node
 );
 /**
  * # List class for nodeGame window
@@ -2279,7 +2282,7 @@
     exports.Table = Table;
     exports.Table.Cell = Cell;
 
-    var JSUS = node.JSUS;
+    var J = node.JSUS;
     var NDDB = node.NDDB;
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
@@ -2331,7 +2334,7 @@
         this.defaultDim3 = options.defaultDim3 || 'z';
 
         this.table = options.table || document.createElement('table');
-        this.id = options.id || 
+        this.id = options.id ||
             'table_' + Math.round(Math.random() * 1000);
 
         this.auto_update = 'undefined' !== typeof options.auto_update ?
@@ -2419,11 +2422,26 @@
         return this.rowcol.get(row + '_' + col);
     };
 
-    Table.prototype.addClass = function(c) {
-        if (!c) return;
-        if (c instanceof Array) c = c.join(' ');
-        this.forEach(function(el) {
-            node.window.addClass(el, c);
+    /**
+     * ## Table.addClass
+     *
+     * Adds a CSS class to each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.addClass = function(className) {
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.addClass: className must be string or ' +
+                                'array.');
+        }
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+
+        this.each(function(el) {
+            W.addClass(el, className);
         });
 
         if (this.auto_update) {
@@ -2433,24 +2451,35 @@
         return this;
     };
 
-    // Depends on node.window
-    Table.prototype.removeClass = function(c) {
-        if (!c) return;
-
+    /**
+     * ## Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.removeClass = function(className) {
         var func;
-        if (c instanceof Array) {
-            func = function(el, c) {
-                for (var i=0; i< c.length; i++) {
-                    node.window.removeClass(el, c[i]);
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.removeClass: className must be string ' +
+                                'or array.');
+        }
+
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
                 }
             };
         }
         else {
-            func = node.window.removeClass;
+            func = W.removeClass;
         }
 
-        this.forEach(function(el) {
-            func.call(this,el,c);
+        this.each(function(el) {
+            func.call(this, el, className);
         });
 
         if (this.auto_update) {
@@ -2460,23 +2489,31 @@
         return this;
     };
 
+    
     Table.prototype._addSpecial = function(data, type) {
+        var out, i;
         if (!data) return;
         type = type || 'header';
         if ('object' !== typeof data) {
             return {content: data, type: type};
         }
 
-        var out = [];
-        for (var i=0; i < data.length; i++) {
+        out = [];
+        for (i = 0; i < data.length; i++) {
             out.push({content: data[i], type: type});
         }
         return out;
     };
 
-
+    /**
+     * ## Table.setHeader
+     *
+     * Set the headers for the table
+     *
+     * @param {string|array} Array of strings representing the header
+     */
     Table.prototype.setHeader = function(header) {
-        this.header = this._addSpecial(header);
+        this.header = this._addSpecial(header, 'header');
     };
 
     Table.prototype.add2Header = function(header) {
@@ -2503,7 +2540,7 @@
     Table._checkDim123 = function(dims) {
         var t = Table.H.slice(0);
         for (var i=0; i< dims.length; i++) {
-            if (!JSUS.removeElement(dims[i],t)) return false;
+            if (!J.removeElement(dims[i],t)) return false;
         }
         return true;
     };
@@ -2515,7 +2552,7 @@
      */
     Table.prototype.updatePointer = function(pointer, value) {
         if (!pointer) return false;
-        if (!JSUS.in_array(pointer, Table.H)) {
+        if (!J.in_array(pointer, Table.H)) {
             Table.log('Cannot update invalid pointer: ' + pointer, 'ERR');
             return false;
         }
@@ -2539,21 +2576,21 @@
             dims = Table.H;
         }
 
-        var insertCell = function(content){
+        var insertCell = function(content) {
             //Table.log('content');
             //Table.log(x + ' ' + y + ' ' + z);
             //Table.log(i + ' ' + j + ' ' + h);
 
             var cell = {};
             cell[dims[0]] = i; // i always defined
-            cell[dims[1]] = (j) ? y+j : y;
-            cell[dims[2]] = (h) ? z+h : z;
+            cell[dims[1]] = (j) ? y + j : y;
+            cell[dims[2]] = (h) ? z + h : z;
             cell.content = content;
             //Table.log(cell);
             this.insert(new Cell(cell));
-            this.updatePointer(dims[0],cell[dims[0]]);
-            this.updatePointer(dims[1],cell[dims[1]]);
-            this.updatePointer(dims[2],cell[dims[2]]);
+            this.updatePointer(dims[0], cell[dims[0]]);
+            this.updatePointer(dims[1], cell[dims[1]]);
+            this.updatePointer(dims[2], cell[dims[2]]);
         };
 
         // By default, only the second dimension is incremented
@@ -2638,16 +2675,20 @@
     // TODO: Only 2D for now
     // TODO: improve algorithm, rewrite
     Table.prototype.parse = function() {
+        var TABLE, TR, TD, THEAD, TBODY, TFOOT;
+        var i, trid, f, old_x, old_left;
+        var diff, j;
 
         // Create a cell element (td,th...)
         // and fill it with the return value of a
         // render value.
         var fromCell2TD = function(cell, el) {
+            var TD, content;
             if (!cell) return;
             el = el || 'td';
-            var TD = document.createElement(el);
-            var content = this.htmlRenderer.render(cell);
-            //var content = (!JSUS.isNode(c) || !JSUS.isElement(c)) ? document.createTextNode(c) : c;
+            TD = document.createElement(el);
+            content = this.htmlRenderer.render(cell);
+            //var content = (!J.isNode(c) || !J.isElement(c)) ? document.createTextNode(c) : c;
             TD.appendChild(content);
             if (cell.className) TD.className = cell.className;
             return TD;
@@ -2659,41 +2700,34 @@
             }
         }
 
-        var TABLE = this.table,
-        TR,
-        TD,
-        i;
+        TABLE = this.table;
 
         // HEADER
         if (this.header && this.header.length > 0) {
-            var THEAD = document.createElement('thead');
+            THEAD = document.createElement('thead');
             TR = document.createElement('tr');
-            // Add an empty cell to balance the left header column
+            // Add an empty cell to balance the left header column.
             if (this.left && this.left.length > 0) {
                 TR.appendChild(document.createElement('th'));
             }
             for (i=0; i < this.header.length; i++) {
-                TR.appendChild(fromCell2TD.call(this, this.header[i],'th'));
+                TR.appendChild(fromCell2TD.call(this, this.header[i], 'th'));
             }
             THEAD.appendChild(TR);
-            i=0;
             TABLE.appendChild(THEAD);
+            i = 0;
         }
 
-        //console.log(this.table);
-        //console.log(this.id);
-        //console.log(this.db.length);
-
         // BODY
-        if (this.length) {
-            var TBODY = document.createElement('tbody');
+        if (this.size()) {
+            TBODY = document.createElement('tbody');
 
             this.sort(['y','x']); // z to add first
-            var trid = -1;
+            trid = -1;
             // TODO: What happens if the are missing at the beginning ??
-            var f = this.first();
-            var old_x = f.x;
-            var old_left = 0;
+            f = this.first();
+            old_x = f.x;
+            old_left = 0;
 
             for (i=0; i < this.db.length; i++) {
                 //console.log('INSIDE TBODY LOOP');
@@ -2705,7 +2739,7 @@
                     //Table.log(trid);
                     old_x = f.x - 1; // must start exactly from the first
 
-                    // Insert left header, if any
+                    // Insert left header, if any.
                     if (this.left && this.left.length) {
                         TD = document.createElement('td');
                         //TD.className = this.missing;
@@ -2714,28 +2748,28 @@
                     }
                 }
 
-                // Insert missing cells
+                // Insert missing cells.
                 if (this.db[i].x > old_x + 1) {
-                    var diff = this.db[i].x - (old_x + 1);
-                    for (var j=0; j < diff; j++ ) {
+                    diff = this.db[i].x - (old_x + 1);
+                    for (j = 0; j < diff; j++ ) {
                         TD = document.createElement('td');
                         TD.className = this.missing;
                         TR.appendChild(TD);
                     }
                 }
-                // Normal Insert
+                // Normal Insert.
                 TR.appendChild(fromCell2TD.call(this, this.db[i]));
 
-                // Update old refs
+                // Update old refs.
                 old_x = this.db[i].x;
             }
             TABLE.appendChild(TBODY);
         }
 
 
-        //FOOTER
+        // FOOTER.
         if (this.footer && this.footer.length > 0) {
-            var TFOOT = document.createElement('tfoot');
+            TFOOT = document.createElement('tfoot');
             TR = document.createElement('tr');
             for (i=0; i < this.header.length; i++) {
                 TR.appendChild(fromCell2TD.call(this, this.footer[i]));
@@ -2747,7 +2781,18 @@
         return TABLE;
     };
 
+    /**
+     * ## Table.resetPointers
+     *
+     * Reset all pointers to 0 or to the value of the input parameter
+     *
+     * @param {object} pointers Optional. Objects contains the new pointers
+     */
     Table.prototype.resetPointers = function(pointers) {
+        if (pointers && 'object' !== typeof pointers) {
+            throw new TypeError('Table.resetPointers: pointers must be ' +
+                                'object or undefined.');
+        }
         pointers = pointers || {};
         this.pointers = {
             x: pointers.pointerX || 0,
@@ -2756,7 +2801,15 @@
         };
     };
 
-
+    /**
+     * ## Table.clear
+     *
+     * Removes all entries and indexes, and resets the pointers
+     *
+     * @param {boolean} confirm TRUE, to confirm the operation.
+     *
+     * @see NDDB.clear
+     */
     Table.prototype.clear = function(confirm) {
         if (NDDB.prototype.clear.call(this, confirm)) {
             this.resetPointers();
@@ -2767,7 +2820,16 @@
     Cell.prototype = new Entity();
     Cell.prototype.constructor = Cell;
 
-    function Cell (cell){
+    /**
+     * ## Cell.
+     *
+     * Creates a new Cell
+     *
+     * @param {object} cell An object containing the coordinates in the table
+     *
+     * @see Entity
+     */
+    function Cell(cell) {
         Entity.call(this, cell);
         this.x = ('undefined' !== typeof cell.x) ? cell.x : null;
         this.y = ('undefined' !== typeof cell.y) ? cell.y : null;
@@ -2775,7 +2837,7 @@
     }
 
 })(
-    ('undefined' !== typeof node) ? node.window || node : module.exports, // Exports
-    ('undefined' !== typeof window) ? window : module.parent.exports.window, // window
-    ('undefined' !== typeof node) ? node : module.parent.exports.node // node
+    ('undefined' !== typeof node) ? node.window || node : module.exports,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof node) ? node : module.parent.exports.node
 );

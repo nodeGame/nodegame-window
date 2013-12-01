@@ -6,14 +6,14 @@
  * www.nodegame.org
  * ---
  */
-(function(node, window) {
+(function(node) {
 
     "use strict";
 
     function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
-            el = window.getElementById(idOrObj);
+            el = W.getElementById(idOrObj);
             if (!el) {
                 throw new Error(prefix + ': could not find element ' +
                                 'with id ' + idOrObj);
@@ -30,7 +30,7 @@
     }
 
     node.on('NODEGAME_GAME_CREATED', function() {
-        window.init(node.conf.window);
+        W.init(node.conf.window);
     });
 
     node.on('HIDE', function(idOrObj) {
@@ -56,22 +56,21 @@
 
     // Disable all the input forms found within a given id element.
     node.on('INPUT_DISABLE', function(id) {
-        window.toggleInputs(id, true);
+        W.toggleInputs(id, true);
     });
-
+    
     // Disable all the input forms found within a given id element.
     node.on('INPUT_ENABLE', function(id) {
-        window.toggleInputs(id, false);
+        W.toggleInputs(id, false);
     });
-
+    
     // Disable all the input forms found within a given id element.
     node.on('INPUT_TOGGLE', function(id) {
-        window.toggleInputs(id);
+        W.toggleInputs(id);
     });
-
+    
     node.log('node-window: listeners added.');
-
+    
 })(
     'undefined' !== typeof node ? node : undefined
- ,  'undefined' !== typeof node.window ? node.window : undefined
 );
