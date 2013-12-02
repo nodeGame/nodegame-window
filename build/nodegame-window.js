@@ -14,8 +14,7 @@
  *
  * Defines a number of profiles associated with special page layout.
  *
- * Depends on nodegame-client.
- * GameWindow.Table and GameWindow.List depend on NDDB and JSUS.
+ * Depends on JSUS and nodegame-client.
  * ---
  */
 (function(window, node) {
@@ -24,19 +23,19 @@
 
     var J = node.JSUS;
 
+    if (!J) {
+        throw new Error('GameWindow: JSUS object not found. Aborting');
+    }
+
+    var DOM = J.get('DOM');
+    
+    if (!DOM) {
+        throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
+    }
+
     var constants = node.constants;
     var windowLevels = constants.windowLevels;
 
-    var Player = node.Player,
-        PlayerList = node.PlayerList,
-        GameMsg = node.GameMsg,
-        GameMsgGenerator = node.GameMsgGenerator;
-
-    var DOM = J.get('DOM');
-
-    if (!DOM) {
-        throw new Error('JSUS DOM object not found. Aborting');
-    }
 
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
@@ -64,11 +63,12 @@
         this.setStateLevel('UNINITIALIZED');
 
         if ('undefined' === typeof window) {
-            throw new Error('nodeWindow: no DOM found. Are you in a browser?');
+            throw new Error('GameWindow: no window found. Are you in a ' +
+                            'browser?');
         }
 
         if ('undefined' === typeof node) {
-            throw new Error('nodeWindow: nodeGame not found');
+            throw new Error('GameWindow: nodeGame not found');
         }
 
         node.log('node-window: loading...');
@@ -280,48 +280,85 @@
     GameWindow.prototype.getStateLevel = function() {
         return this.state;
     };
-
+    
     /**
-     * ### GameWindow.getElementById
+     * ### GameWindow.isReady
      *
-     * Returns the element with the given id
+     * Returns whether the GameWindow is ready
      *
-     * Looks first into the iframe and then into the rest of the page.
+     * Returns TRUE if the state is either INITIALIZED or LOADED.
      *
-     * @param {string} id The id of the element
-     * @return {Element|null} The element in the page, or null if none is found
-     *
-     * @see GameWindow.getElementsByTagName
+     * @return {boolean} Whether the window is ready
      */
-    GameWindow.prototype.getElementById = function(id) {
-        var el;
-
-        el = null;
-        if (this.frameDocument && this.frameDocument.getElementById) {
-            el = this.frameDocument.getElementById(id);
-        }
-        if (!el) {
-            el = document.getElementById(id);
-        }
-        return el;
+    GameWindow.prototype.isReady = function() {
+        return this.state === windowLevels.INITIALIZED ||
+               this.state === windowLevels.LOADED;
     };
 
     /**
-     * ### GameWindow.getElementsByTagName
+     * ### GameWindow.getFrame
      *
-     * Returns a list of elements with the given tag name
+     * Returns a reference to the HTML element of the frame of the game
      *
-     * Looks first into the iframe and then into the rest of the page.
-     *
-     * @param {string} tag The tag of the elements
-     * @return {array|null} The elements in the page, or null if none is found
-     *
-     * @see GameWindow.getElementById
+     * @return {HTMLIFrameElement} The iframe element of the game
      */
-    GameWindow.prototype.getElementsByTagName = function(tag) {
-        return this.frameDocument ?
-            this.frameDocument.getElementsByTagName(tag) :
-            document.getElementsByTagName(tag);
+    GameWindow.prototype.getFrame = function() {
+        return this.frameElement ? this.frameElement :
+            document.getElementById(this.frameName);
+    };
+
+    /**
+     * ### GameWindow.getFrameWindow
+     *
+     * Returns a reference to the window object of the frame of the game
+     *
+     * @return {Window} The window object of the iframe of the game
+     */
+    GameWindow.prototype.getFrameWindow = function() {
+        return this.frameWindow ? this.frameWindow :
+            document.getElementById(this.frameName);
+    };
+
+    /**
+     * ### GameWindow.getFrameDocument
+     *
+     * Returns a reference to the document object of the iframe
+     *
+     * @return {Document} The document object of the iframe of the game
+     */
+    GameWindow.prototype.getFrameDocument = function() {
+        return this.frameDocument ? this.frameDocument : 
+            this.getIFrameDocument(this.getFrame());
+    };
+
+    /**
+     * ### GameWindow.getFrameRoot
+     *
+     * Returns a reference to the root element in the iframe
+     *
+     * @return {Element} The root element in the iframe
+     */
+    GameWindow.prototype.getFrameRoot = function() {
+        return this.root;
+    };
+
+    /**
+     * ### GameWindow.clearFrame
+     *
+     * Clear the content of the frame
+     */
+    GameWindow.prototype.clearFrame = function() {
+        var iframe, frameName;
+        iframe = this.getFrame();
+        if (!iframe) {
+            throw new Error('GameWindow.clearFrame: cannot detect frame.');
+        }
+        frameName = iframe.name || iframe.id;
+        iframe.onload = null;
+        iframe.src = 'about:blank';
+        this.frameElement = iframe;
+        this.frameWindow = window.frames[frameName];
+        this.frameDocument = W.getIFrameDocument(iframe);
     };
 
     /**
@@ -445,18 +482,17 @@
      * Deletes and reinserts all the script tags, effectively reloading the
      * scripts. The placement of the tags can change, but the order is kept.
      *
-     * @param {NodeGameClient} frameNode The node object of the iframe
+     * @param {HTMLIFrameElement} iframe The target iframe
      *
      * @api private
      */
-    function reloadScripts(frameNode) {
+    function reloadScripts(iframe) {
         var contentDocument;
         var headNode;
         var tag, scriptNodes, scriptNodeIdx, scriptNode;
         var attrIdx, attr;
 
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
+        contentDocument = W.getIFrameDocument(iframe);
 
         headNode = contentDocument.getElementsByTagName('head')[0];
 
@@ -489,20 +525,19 @@
      * Then injects `<script class="injectedlib" src="...">` lines into given
      * iframe object, one for every given library.
      *
-     * @param {NodeGameClient} frameNode The node object of the iframe
+     * @param {HTMLIFrameElement} iframe The target iframe
      * @param {array} libs An array of strings giving the "src" attribute for
      *   the `<script>` lines to insert
      *
      * @api private
      */
-    function injectLibraries(frameNode, libs) {
+    function injectLibraries(iframe, libs) {
         var contentDocument;
         var headNode;
         var scriptNode;
         var libIdx, lib;
 
-        contentDocument = frameNode.contentDocument ?
-            frameNode.contentDocument : frameNode.contentWindow.document;
+        contentDocument = W.getIFrameDocument(iframe);
 
         headNode = contentDocument.getElementsByTagName('head')[0];
 
@@ -514,7 +549,6 @@
             headNode.appendChild(scriptNode);
         }
     }
-
 
     /**
      * ### GameWindow.initLibs
@@ -581,10 +615,7 @@
                 return function() {
                     var frameDocumentElement;
 
-                    frameDocumentElement =
-                        (thisIframe.contentDocument ?
-                         thisIframe.contentDocument :
-                         thisIframe.contentWindow.document)
+                    frameDocumentElement = W.getIFrameDocument(thisIframe)
                         .documentElement;
 
                     // Store the contents in the cache:
@@ -644,10 +675,7 @@
         var frameDocumentElement;
 
         frameNode = document.getElementById(frame);
-        frameDocumentElement =
-            (frameNode.contentDocument ?
-             frameNode.contentDocument : frameNode.contentWindow.document)
-            .documentElement;
+        frameDocumentElement = W.getIFrameDocument(frameNode).documentElement;
 
         if (loadCache) {
             // Load frame from cache:
@@ -683,6 +711,9 @@
             }, 300);
         }
     }
+
+// THIS CONTAINS CODE TO PERFORM TO CATCH THE ONLOAD EVENT UNDER DIFFERENT
+// BROWSERS
 
 //    var onLoad, detach, completed;
 //
@@ -776,7 +807,7 @@
         var frame;
         var loadCache;
         var storeCacheNow, storeCacheLater;
-        var iframe;
+        var iframe, iframeDocument;
         var frameNode, frameDocumentElement, frameReady;
         var lastURI;
 
@@ -819,7 +850,8 @@
         // Get the internal frame object:
         iframe = document.getElementById(frame);
         // Query readiness (so we know whether onload is going to be called):
-        frameReady = iframe.contentWindow.document.readyState;
+        iframeDocument = W.getIFrameDocument(iframe);
+        frameReady = iframeDocument.readyState;
         // ...reduce it to a boolean:
         frameReady = frameReady === 'interactive' || frameReady === 'complete';
 
@@ -830,9 +862,7 @@
                 this.cache[lastURI].cacheOnClose) {
 
             frameNode = document.getElementById(frame);
-            frameDocumentElement =
-                (frameNode.contentDocument ?
-                 frameNode.contentDocument : frameNode.contentWindow.document)
+            frameDocumentElement = W.getIFrameDocument(frameNode)
                 .documentElement;
 
             this.cache[lastURI].contents = frameDocumentElement.innerHTML;
@@ -894,16 +924,19 @@
      *
      * The method performs the following operations:
      *
-     *  - executes a given callback function
-     *  - decrements the counter of loading iframes
-     *  - set the window state as loaded (eventually)
+     * - updates the frameDocument reference
+     * - executes a given callback function
+     * - decrements the counter of loading iframes
+     * - set the window state as loaded (eventually)
      *
-     * @param {function} Optional. A callback function
-     * @param {object} The iframe of reference
+     * @param {function} func Optional. A callback function
+     * @param {string} frameName The name of the iframe of reference
+     *
+     * @see GameWindow.frameDocument
      */
-    GameWindow.prototype.updateLoadFrameState = function(func, frame) {
-        // Update the reference to the frame obj
-        this.frameDocument = window.frames[frame].document;
+    GameWindow.prototype.updateLoadFrameState = function(func, frameName) {
+        // Update the reference to the frame document.
+        this.frameDocument = window.frames[frameName].document;
         if (func) {
             func.call(node.game); // TODO: Pass the right this reference
         }
@@ -920,68 +953,6 @@
             node.silly('GameWindow.updateState: ' + this.areLoading +
                        ' loadFrame processes open.');
         }
-    };
-
-    /**
-     * ### GameWindow.getFrame
-     *
-     * Returns a reference to the frame.
-     *
-     * @return {Element} The frame of the game
-     */
-    GameWindow.prototype.getFrame = function() {
-        return document.getElementById(this.frameName);
-    };
-
-    /**
-     * ### GameWindow.getFrameRoot
-     *
-     * Returns a reference to the root element in the iframe
-     *
-     * @return {Element} The root element in the iframe
-     */
-    GameWindow.prototype.getFrameRoot = function() {
-        return this.root;
-    };
-
-    /**
-     * ### GameWindow.getFrameRoot
-     *
-     * Returns a reference to the document object of the iframe
-     *
-     * @return {object} The document object of the iframe
-     */
-    GameWindow.prototype.getFrameDocument = function() {
-        return this.frameDocument;
-    };
-
-    /**
-     * ### GameWindow.clearFrame
-     *
-     * Clear the content of the frame
-     */
-    GameWindow.prototype.clearFrame = function() {
-        var mainframe;
-        mainframe = this.getFrame();
-        if (!mainframe) {
-            throw new Error('GameWindow.clearFrame: cannot detect frame');
-        }
-        mainframe.onload = null;
-        mainframe.src = 'about:blank';
-    };
-
-    /**
-     * ### GameWindow.isReady
-     *
-     * Returns whether the GameWindow is ready
-     *
-     * Returns TRUE if the state is either INITIALIZED or LOADED.
-     *
-     * @return {boolean} Whether the window is ready
-     */
-    GameWindow.prototype.isReady = function() {
-        return this.state === windowLevels.INITIALIZED ||
-               this.state === windowLevels.LOADED;
     };
 
     /**
@@ -1019,181 +990,182 @@
         return this.header;
     };
 
-    // Overriding Document.write and DOM.writeln and DOM.write
-    GameWindow.prototype._write = DOM.write;
-    GameWindow.prototype._writeln = DOM.writeln;
 
+    
     /**
-     * ### GameWindow.write
+     * ### GameWindow.getElementById
      *
-     * Appends content inside a root element
+     * Returns the element with the given id
      *
-     * The content can be a text string, an HTML node or element.
-     * If no root element is specified, the default screen is used.
+     * Looks first into the iframe and then into the rest of the page.
      *
-     * @param {string|object} text The content to write
-     * @param {Element} root The root element
-     * @return {string|object} The content written
+     * @param {string} id The id of the element
+     * @return {Element|null} The element in the page, or null if none is found
      *
-     * @see GameWindow.writeln
+     * @see GameWindow.getElementsByTagName
      */
-    GameWindow.prototype.write = function(text, root) {
-        root = root || this.getScreen();
-        if (!root) {
-            throw new
-                Error('GameWindow.write: could not determine where to write');
+    GameWindow.prototype.getElementById = function(id) {
+        var el;
+
+        el = null;
+        if (this.frameDocument && this.frameDocument.getElementById) {
+            el = this.frameDocument.getElementById(id);
         }
-        return this._write(root, text);
+        if (!el) {
+            el = document.getElementById(id);
+        }
+        return el;
     };
 
     /**
-     * ### GameWindow.writeln
+     * ### GameWindow.getElementsByTagName
      *
-     * Appends content inside a root element followed by a break element
+     * Returns a list of elements with the given tag name
      *
-     * The content can be a text string, an HTML node or element.
-     * If no root element is specified, the default screen is used.
+     * Looks first into the iframe and then into the rest of the page.
      *
-     * @param {string|object} text The content to write
-     * @param {Element} root The root element
-     * @return {string|object} The content written
+     * @param {string} tag The tag of the elements
+     * @return {array|null} The elements in the page, or null if none is found
      *
-     * @see GameWindow.write
+     * @see GameWindow.getElementById
      */
-    GameWindow.prototype.writeln = function(text, root, br) {
-        root = root || this.getScreen();
-        if (!root) {
-            throw new
-                Error('GameWindow.writeln: could not determine where to write');
-        }
-        return this._writeln(root, text, br);
+    GameWindow.prototype.getElementsByTagName = function(tag) {
+        return this.frameDocument ?
+            this.frameDocument.getElementsByTagName(tag) :
+            document.getElementsByTagName(tag);
     };
 
+
+
+    //Expose GameWindow prototype to the global object.
+    node.GameWindow = GameWindow;
+
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+
+/**
+ * # GameWindow event button module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Handles default behavior of the browser on certain DOM Events.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var GameWindow = node.GameWindow;
+
     /**
-     * ### GameWindow.getLoadingDots
+     * ### GameWindow.noEscape
      *
-     * Creates and returns a span element with incrementing dots inside
+     * Binds the ESC key to a function that always returns FALSE
      *
-     * New dots are added every second until the limit is reached, then it
-     * starts from the beginning.
+     * This prevents socket.io to break the connection with the server.
      *
-     * Gives the impression of a loading time.
-     *
-     * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
-     * @param {string} id Optional The id of the span
-     * @return {object} An object containing two properties: the span element
-     *   and a method stop, that clears the interval.
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
      */
-    GameWindow.prototype.getLoadingDots = function(len, id) {
-        var span_dots, i, limit, intervalId;
-        if (len & len < 0) {
-            throw new Error('GameWindow.getLoadingDots: len < 0.');
-        }
-        len = len || 5;
-        span_dots = document.createElement('span');
-        span_dots.id = id || 'span_dots';
-        limit = '';
-        for (i = 0; i < len; i++) {
-            limit = limit + '.';
-        }
-        // Refreshing the dots...
-        intervalId = setInterval(function() {
-            if (span_dots.innerHTML !== limit) {
-                span_dots.innerHTML = span_dots.innerHTML + '.';
+    GameWindow.prototype.noEscape = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.document.onkeydown = function(e) {
+            var keyCode = (window.event) ? event.keyCode : e.keyCode;
+            if (keyCode === 27) {
+                return false;
             }
-            else {
-                span_dots.innerHTML = '.';
-            }
-        }, 1000);
-
-        function stop() {
-            span_dots.innerHTML = '.';
-            clearInterval(intervalId);
-        }
-
-        return {
-            span: span_dots,
-            stop: stop
         };
     };
 
     /**
-     * ### GameWindow.addLoadingDots
+     * ### GameWindow.restoreEscape
      *
-     * Appends _loading dots_ to an HTML element
+     * Removes the the listener on the ESC key
      *
-     * By invoking this method you lose access to the _stop_ function of the
-     * _loading dots_ element.
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
      *
-     * @param {HTMLElement} root The element to which the loading dots will be
-     *   appended.
-     * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
-     * @param {string} id Optional The id of the span
-     * @return {object} The span with the loading dots.
-     *
-     * @see GameWindow.getLoadingDots
+     * @see GameWindow.noEscape()
      */
-    GameWindow.prototype.addLoadingDots = function(root, len, id) {
-        return root.appendChild(this.getLoadingDots(len, id).span);
+    GameWindow.prototype.restoreEscape = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.document.onkeydown = null;
     };
 
     /**
-     * ### GameWindow.toggleInputs
+     * ### GameWindow.promptOnleave
      *
-     * Enables / disables the input forms
+     * Captures the onbeforeunload event and warns the user that leaving the
+     * page may halt the game.
      *
-     * If an id is provided, only children of the element with the specified
-     * id are toggled.
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
+     * @param {string} text Optional. A text to be displayed with the alert
      *
-     * If id is given it will use _GameWindow.getFrameDocument()_ to determine the
-     * forms to toggle.
-     *
-     * If a state parameter is given, all the input forms will be either
-     * disabled or enabled (and not toggled).
-     *
-     * @param {string} id The id of the element container of the forms.
-     * @param {boolean} state The state enabled / disabled for the forms.
+     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
      */
-    GameWindow.prototype.toggleInputs = function(id, state) {
-        var container, inputTags, j, len, i, inputs, nInputs;
-
-        if ('undefined' !== typeof id) {
-            container = this.getElementById(id);
-            if (!container) {
-                throw new Error('GameWindow.toggleInputs: no elements found ' +
-                                'with id ' + id + '.');
+    GameWindow.prototype.promptOnleave = function(windowObj, text) {
+        windowObj = windowObj || window;
+        text = ('undefined' === typeof text) ? this.conf.textOnleave : text;
+        windowObj.onbeforeunload = function(e) {
+            e = e || window.event;
+            // For IE<8 and Firefox prior to version 4
+            if (e) {
+                e.returnValue = text;
             }
-        }
-        else {
-            container = this.getFrameDocument();
-            if (!container || !container.getElementsByTagName) {
-                // Frame either not existing or not ready. No warning.
-                return;
-            }
-        }
-
-        inputTags = ['button', 'select', 'textarea', 'input'];
-        len = inputTags.length;
-        for (j = 0; j < len; j++) {
-            inputs = container.getElementsByTagName(inputTags[j]);
-            nInputs = inputs.length;
-            for (i = 0; i < nInputs; i++) {
-                // Set to state, or toggle.
-                if ('undefined' === typeof state) {
-                    state = inputs[i].disabled ? false : true;
-                }
-                if (state) {
-                    inputs[i].disabled = state;
-                }
-                else {
-                    inputs[i].removeAttribute('disabled');
-                }
-            }
-        }
+            // For Chrome, Safari, IE8+ and Opera 12+
+            return text;
+        };
     };
 
+    /**
+     * ### GameWindow.restoreOnleave
+     *
+     * Removes the onbeforeunload event listener
+     *
+     * @param {object} windowObj Optional. The window container in which
+     *   to bind the ESC key
+     *
+     * @see GameWindow.promptOnleave
+     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
+     */
+    GameWindow.prototype.restoreOnleave = function(windowObj) {
+        windowObj = windowObj || window;
+        windowObj.onbeforeunload = null;
+    };
+
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+
+/**
+ * # GameWindow selector module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Utility functions to create and manipulate meaninful HTML select lists for
+ * nodeGame.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var J = node.JSUS;
+
+    var GameWindow = node.GameWindow;
+    
     /**
      * ### GameWindow.lockFrame
      *
@@ -1238,144 +1210,107 @@
         this.setStateLevel('LOADED');
     };
 
-    /**
-     * ### GameWindow.getScreenInfo
-     *
-     * Returns information about the screen in which nodeGame is running
-     *
-     * @return {object} A object containing the scren info
-     */
-    GameWindow.prototype.getScreenInfo = function() {
-        var screen = window.screen;
-        return {
-            height: screen.height,
-            widht: screen.width,
-            availHeight: screen.availHeight,
-            availWidth: screen.availWidht,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixedDepth
-        };
-    };
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
 
-    /**
-     * ### GameWindow._generateRoot
-     *
-     * Creates a div element with the given id
-     *
-     * After creation it tries to append the element in the following order to:
-     *
-     *      - the specified root element
-     *      - the body element
-     *      - the last element of the document
-     *
-     * If it fails, it creates a new body element, appends it
-     * to the document, and then appends the div element to it.
-     *
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id
-     * @return {Element} The newly created root element
-     *
-     * @api private
-     */
-    GameWindow.prototype._generateRoot = function(root, id) {
-        root = root || document.body || document.lastElementChild;
-        if (!root) {
-            this.addElement('body', document);
-            root = document.body;
+/**
+ * # GameWindow listeners
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * www.nodegame.org
+ * ---
+ */
+(function(node) {
+
+    "use strict";
+
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = W.getElementById(idOrObj);
+            if (!el) {
+                throw new Error(prefix + ': could not find element ' +
+                                'with id ' + idOrObj);
+            }
         }
-        this.root = this.addElement('div', root, id);
-        return this.root;
-    };
-
-    /**
-     * ### GameWindow.generateNodeGameRoot
-     *
-     * Creates a div element with id 'nodegame'
-     *
-     * @param {Element} root Optional. The root element
-     * @return {Element} The newly created element
-     *
-     * @see GameWindow._generateRoot()
-     */
-    GameWindow.prototype.generateNodeGameRoot = function(root) {
-        return this._generateRoot(root, 'nodegame');
-    };
-
-    /**
-     * ### GameWindow.generateRandomRoot
-     *
-     * Creates a div element with a unique random id
-     *
-     * @param {Element} root Optional. The root element
-     * @return {Element} The newly created root element
-     *
-     * @see GameWindow._generateRoot()
-     */
-    GameWindow.prototype.generateRandomRoot = function(root) {
-        return this._generateRoot(root, this.generateUniqueId());
-    };
-
-
-
-    // Useful
-
-    /**
-     * ### GameWindow.getEventButton
-     *
-     * Creates an HTML button element that will emit an event when clicked
-     *
-     * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
-     * @return {Element} The newly created button
-     */
-    GameWindow.prototype.getEventButton =
-    function(event, text, id, attributes) {
-        var b;
-
-        if (!event) return;
-
-        b = this.getButton(id, text, attributes);
-        b.onclick = function() {
-            node.emit(event);
-        };
-        return b;
-    };
-
-    /**
-     * ### GameWindow.addEventButton
-     *
-     * Adds an EventButton to the specified root element
-     *
-     * If no valid root element is provided, it is append as last element
-     * in the current screen.
-     *
-     * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
-     * @return {Element} The newly created button
-     *
-     * @see GameWindow.getEventButton
-     */
-    GameWindow.prototype.addEventButton =
-    function(event, text, root, id, attributes) {
-        var eb;
-
-        if (!event) return;
-        if (!root) {
-            root = this.getScreen();
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
         }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element.');
+        }
+        return el;
+    }
 
-        eb = this.getEventButton(event, text, id, attributes);
+    node.on('NODEGAME_GAME_CREATED', function() {
+        W.init(node.conf.window);
+    });
 
-        return root.appendChild(eb);
-    };
+    node.on('HIDE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
+        el.style.display = 'none';
+    });
 
+    node.on('SHOW', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
+        el.style.display = '';
+    });
 
-    // Useful API
+    node.on('TOGGLE', function(idOrObj) {
+        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+        
+        if (el.style.display === 'none') {
+            el.style.display = '';
+        }
+        else {
+            el.style.display = 'none';
+        }
+    });
+
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_DISABLE', function(id) {
+        W.toggleInputs(id, true);
+    });
+    
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_ENABLE', function(id) {
+        W.toggleInputs(id, false);
+    });
+    
+    // Disable all the input forms found within a given id element.
+    node.on('INPUT_TOGGLE', function(id) {
+        W.toggleInputs(id);
+    });
+    
+    node.log('node-window: listeners added.');
+    
+})(
+    'undefined' !== typeof node ? node : undefined
+);
+/**
+ * # GameWindow selector module
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * Utility functions to create and manipulate meaninful HTML select lists for
+ * nodeGame.
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+    
+    var J = node.JSUS;
+    var constants = node.constants;
+    var GameWindow = node.GameWindow;
 
     /**
      * ### GameWindow.getRecipientSelector
@@ -1601,8 +1536,101 @@
         return root.appendChild(stateSelector);
     };
 
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
 
-    // Do we need it?
+/**
+ * # GameWindow extras
+ * Copyright(c) 2013 Stefano Balietti
+ * MIT Licensed
+ *
+ * http://www.nodegame.org
+ * ---
+ */
+(function(window, node) {
+
+    "use strict";
+
+    var GameWindow = node.GameWindow;
+
+    var J = node.JSUS;
+    var DOM = J.get('DOM');
+    
+    /**
+     * ### GameWindow.getScreen
+     *
+     * Returns the screen of the game, i.e. the innermost element
+     * inside which to display content
+     *
+     * In the following order the screen can be:
+     *
+     * - the body element of the iframe
+     * - the document element of the iframe
+     * - the body element of the document
+     * - the last child element of the document
+     *
+     * @return {Element} The screen
+     */
+    GameWindow.prototype.getScreen = function() {
+        var el = this.getFrameDocument();
+        if (el) {
+            el = el.body || el;
+        }
+        else {
+            el = document.body || document.lastElementChild;
+        }
+        return el;
+    };
+
+    /**
+     * ### GameWindow.write
+     *
+     * Appends content inside a root element
+     *
+     * The content can be a text string, an HTML node or element.
+     * If no root element is specified, the default screen is used.
+     *
+     * @param {string|object} text The content to write
+     * @param {Element} root The root element
+     * @return {string|object} The content written
+     *
+     * @see GameWindow.writeln
+     */
+    GameWindow.prototype.write = function(text, root) {
+        root = root || this.getScreen();
+        if (!root) {
+            throw new
+                Error('GameWindow.write: could not determine where to write.');
+        }
+        return DOM.write(root, text);
+    };
+
+    /**
+     * ### GameWindow.writeln
+     *
+     * Appends content inside a root element followed by a break element
+     *
+     * The content can be a text string, an HTML node or element.
+     * If no root element is specified, the default screen is used.
+     *
+     * @param {string|object} text The content to write
+     * @param {Element} root The root element
+     * @return {string|object} The content written
+     *
+     * @see GameWindow.write
+     */
+    GameWindow.prototype.writeln = function(text, root, br) {
+        root = root || this.getScreen();
+        if (!root) {
+            throw new
+                Error('GameWindow.writeln: could not determine where to write.');
+        }
+        return DOM.writeln(root, text, br);
+    };
 
     /**
      * ### GameWindow.generateUniqueId
@@ -1630,116 +1658,206 @@
         return id;
     };
 
-    // Where to place them?
-
     /**
-     * ### GameWindow.noEscape
+     * ### GameWindow.toggleInputs
      *
-     * Binds the ESC key to a function that always returns FALSE
+     * Enables / disables the input forms
      *
-     * This prevents socket.io to break the connection with the server.
+     * If an id is provided, only children of the element with the specified
+     * id are toggled.
      *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
+     * If id is given it will use _GameWindow.getFrameDocument()_ to determine the
+     * forms to toggle.
+     *
+     * If a state parameter is given, all the input forms will be either
+     * disabled or enabled (and not toggled).
+     *
+     * @param {string} id The id of the element container of the forms.
+     * @param {boolean} state The state enabled / disabled for the forms.
      */
-    GameWindow.prototype.noEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = function(e) {
-            var keyCode = (window.event) ? event.keyCode : e.keyCode;
-            if (keyCode === 27) {
-                return false;
+    GameWindow.prototype.toggleInputs = function(id, state) {
+        var container, inputTags, j, len, i, inputs, nInputs;
+
+        if ('undefined' !== typeof id) {
+            container = this.getElementById(id);
+            if (!container) {
+                throw new Error('GameWindow.toggleInputs: no elements found ' +
+                                'with id ' + id + '.');
             }
-        };
-    };
-
-    /**
-     * ### GameWindow.restoreEscape
-     *
-     * Removes the the listener on the ESC key
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.noEscape()
-     */
-    GameWindow.prototype.restoreEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = null;
-    };
-
-    /**
-     * ### GameWindow.promptOnleave
-     *
-     * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game.
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     * @param {string} text Optional. A text to be displayed with the alert
-     *
-     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-     */
-    GameWindow.prototype.promptOnleave = function(windowObj, text) {
-        windowObj = windowObj || window;
-        text = ('undefined' === typeof text) ? this.conf.textOnleave : text;
-        windowObj.onbeforeunload = function(e) {
-            e = e || window.event;
-            // For IE<8 and Firefox prior to version 4
-            if (e) {
-                e.returnValue = text;
-            }
-            // For Chrome, Safari, IE8+ and Opera 12+
-            return text;
-        };
-    };
-
-    /**
-     * ### GameWindow.restoreOnleave
-     *
-     * Removes the onbeforeunload event listener
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.promptOnleave
-     * @see https://developer.mozilla.org/en/DOM/window.onbeforeunload
-     */
-    GameWindow.prototype.restoreOnleave = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.onbeforeunload = null;
-    };
-
-    // Do we need these?
-
-    /**
-     * ### GameWindow.getScreen
-     *
-     * Returns the screen of the game, i.e. the innermost element
-     * inside which to display content
-     *
-     * In the following order the screen can be:
-     *
-     * - the body element of the iframe
-     * - the document element of the iframe
-     * - the body element of the document
-     * - the last child element of the document
-     *
-     * @return {Element} The screen
-     */
-    GameWindow.prototype.getScreen = function() {
-        var el = this.getFrameDocument();
-        if (el) {
-            el = el.body || el;
         }
         else {
-            el = document.body || document.lastElementChild;
+            container = this.getFrameDocument();
+            if (!container || !container.getElementsByTagName) {
+                // Frame either not existing or not ready. No warning.
+                return;
+            }
         }
-        return el;
+
+        inputTags = ['button', 'select', 'textarea', 'input'];
+        len = inputTags.length;
+        for (j = 0; j < len; j++) {
+            inputs = container.getElementsByTagName(inputTags[j]);
+            nInputs = inputs.length;
+            for (i = 0; i < nInputs; i++) {
+                // Set to state, or toggle.
+                if ('undefined' === typeof state) {
+                    state = inputs[i].disabled ? false : true;
+                }
+                if (state) {
+                    inputs[i].disabled = state;
+                }
+                else {
+                    inputs[i].removeAttribute('disabled');
+                }
+            }
+        }
     };
 
-    //Expose nodeGame to the global object
-    node.window = new GameWindow();
-    if ('undefined' !== typeof window) window.W = node.window;
+    /**
+     * ### GameWindow.getScreenInfo
+     *
+     * Returns information about the screen in which nodeGame is running
+     *
+     * @return {object} A object containing the scren info
+     */
+    GameWindow.prototype.getScreenInfo = function() {
+        var screen = window.screen;
+        return {
+            height: screen.height,
+            widht: screen.width,
+            availHeight: screen.availHeight,
+            availWidth: screen.availWidht,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixedDepth
+        };
+    };
+
+    /**
+     * ### GameWindow.getLoadingDots
+     *
+     * Creates and returns a span element with incrementing dots inside
+     *
+     * New dots are added every second until the limit is reached, then it
+     * starts from the beginning.
+     *
+     * Gives the impression of a loading time.
+     *
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval.
+     */
+    GameWindow.prototype.getLoadingDots = function(len, id) {
+        var span_dots, i, limit, intervalId;
+        if (len & len < 0) {
+            throw new Error('GameWindow.getLoadingDots: len < 0.');
+        }
+        len = len || 5;
+        span_dots = document.createElement('span');
+        span_dots.id = id || 'span_dots';
+        limit = '';
+        for (i = 0; i < len; i++) {
+            limit = limit + '.';
+        }
+        // Refreshing the dots...
+        intervalId = setInterval(function() {
+            if (span_dots.innerHTML !== limit) {
+                span_dots.innerHTML = span_dots.innerHTML + '.';
+            }
+            else {
+                span_dots.innerHTML = '.';
+            }
+        }, 1000);
+
+        function stop() {
+            span_dots.innerHTML = '.';
+            clearInterval(intervalId);
+        }
+
+        return {
+            span: span_dots,
+            stop: stop
+        };
+    };
+
+    /**
+     * ### GameWindow.addLoadingDots
+     *
+     * Appends _loading dots_ to an HTML element
+     *
+     * By invoking this method you lose access to the _stop_ function of the
+     * _loading dots_ element.
+     *
+     * @param {HTMLElement} root The element to which the loading dots will be
+     *   appended.
+     * @param {number} len Optional. The maximum length of the loading dots.
+     *   Defaults, 5
+     * @param {string} id Optional The id of the span
+     * @return {object} The span with the loading dots.
+     *
+     * @see GameWindow.getLoadingDots
+     */
+    GameWindow.prototype.addLoadingDots = function(root, len, id) {
+        return root.appendChild(this.getLoadingDots(len, id).span);
+    };
+
+     /**
+     * ### GameWindow.getEventButton
+     *
+     * Creates an HTML button element that will emit an event when clicked
+     *
+     * @param {string} event The event to emit when clicked
+     * @param {string} text Optional. The text on the button
+     * @param {string} id The id of the button
+     * @param {object} attributes Optional. The attributes of the button
+     * @return {Element} The newly created button
+     */
+    GameWindow.prototype.getEventButton =
+    function(event, text, id, attributes) {
+    
+        var b;
+        if ('string' !== typeof event) {
+            throw new TypeError('GameWindow.getEventButton: event must ' +
+                                'be string.');
+        }
+        b = this.getButton(id, text, attributes);
+        b.onclick = function() {
+            node.emit(event);
+        };
+        return b;
+    };
+
+    /**
+     * ### GameWindow.addEventButton
+     *
+     * Adds an EventButton to the specified root element
+     *
+     * If no valid root element is provided, it is append as last element
+     * in the current screen.
+     *
+     * @param {string} event The event to emit when clicked
+     * @param {string} text Optional. The text on the button
+     * @param {Element} root Optional. The root element
+     * @param {string} id The id of the button
+     * @param {object} attributes Optional. The attributes of the button
+     * @return {Element} The newly created button
+     *
+     * @see GameWindow.getEventButton
+     */
+    GameWindow.prototype.addEventButton =
+    function(event, text, root, id, attributes) {
+        var eb;
+
+        if (!event) return;
+        if (!root) {
+            root = this.getScreen();
+        }
+
+        eb = this.getEventButton(event, text, id, attributes);
+
+        return root.appendChild(eb);
+    };
 
 })(
     // GameWindow works only in the browser environment. The reference
@@ -1748,82 +1866,13 @@
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
 
-/**
- * # GameWindow listeners
- * Copyright(c) 2013 Stefano Balietti
- * MIT Licensed
- *
- * www.nodegame.org
- * ---
- */
-(function(node) {
-
+// Creates a new GameWindow instance in the global scope.
+(function() {
     "use strict";
+    node.window = new node.GameWindow();
+    if ('undefined' !== typeof window) window.W = node.window;
+})();
 
-    function getElement(idOrObj, prefix) {
-        var el;
-        if ('string' === typeof idOrObj) {
-            el = W.getElementById(idOrObj);
-            if (!el) {
-                throw new Error(prefix + ': could not find element ' +
-                                'with id ' + idOrObj);
-            }
-        }
-        else if (J.isElement(idOrObj)) {
-            el = idOrObj;
-        }
-        else {
-            throw new TypeError(prefix + ': idOrObj must be string ' +
-                                ' or HTML Element.');
-        }
-        return el;
-    }
-
-    node.on('NODEGAME_GAME_CREATED', function() {
-        W.init(node.conf.window);
-    });
-
-    node.on('HIDE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-        el.style.display = 'none';
-    });
-
-    node.on('SHOW', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-        el.style.display = '';
-    });
-
-    node.on('TOGGLE', function(idOrObj) {
-        var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-        
-        if (el.style.display === 'none') {
-            el.style.display = '';
-        }
-        else {
-            el.style.display = 'none';
-        }
-    });
-
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_DISABLE', function(id) {
-        W.toggleInputs(id, true);
-    });
-    
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_ENABLE', function(id) {
-        W.toggleInputs(id, false);
-    });
-    
-    // Disable all the input forms found within a given id element.
-    node.on('INPUT_TOGGLE', function(id) {
-        W.toggleInputs(id);
-    });
-    
-    node.log('node-window: listeners added.');
-    
-})(
-    'undefined' !== typeof node ? node : undefined
-);
 /**
  * # Canvas class for nodeGame window
  * Copyright(c) 2013 Stefano Balietti
