@@ -36,6 +36,9 @@
     var constants = node.constants;
     var windowLevels = constants.windowLevels;
 
+    // Allows just one update at the time to the counter of loading frames.
+    var lockedUpdate = false;
+
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
 
@@ -515,115 +518,11 @@
     };
 
     /**
-     * ### removeLibraries
-     *
-     * Removes injected scripts from iframe
-     *
-     * Takes out all the script tags with the className "injectedlib"
-     * that were inserted by injectLibraries.
-     *
-     * @param {HTMLIFrameElement} iframe The target iframe
-     *
-     * @see injectLibraries
-     *
-     * @api private
-     */
-    function removeLibraries(iframe) {
-        var idx;
-        var contentDocument;
-        var scriptNodes, scriptNode;
-
-        contentDocument = W.getIFrameDocument(iframe);
-
-        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
-        for (idx = 0; idx < scriptNodes.length; idx++) {
-            scriptNode = scriptNodes[idx];
-            scriptNode.parentNode.removeChild(scriptNode);
-        }
-    }
-
-    /**
-     * ### reloadScripts
-     *
-     * Reloads all script nodes in iframe
-     *
-     * Deletes and reinserts all the script tags, effectively reloading the
-     * scripts. The placement of the tags can change, but the order is kept.
-     *
-     * @param {HTMLIFrameElement} iframe The target iframe
-     *
-     * @api private
-     */
-    function reloadScripts(iframe) {
-        var contentDocument;
-        var headNode;
-        var tag, scriptNodes, scriptNodeIdx, scriptNode;
-        var attrIdx, attr;
-
-        contentDocument = W.getIFrameDocument(iframe);
-
-        headNode = contentDocument.getElementsByTagName('head')[0];
-
-        scriptNodes = contentDocument.getElementsByTagName('script');
-        for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
-                scriptNodeIdx++) {
-
-            // Remove tag:
-            tag = scriptNodes[scriptNodeIdx];
-            tag.parentNode.removeChild(tag);
-
-            // Reinsert tag for reloading:
-            scriptNode = document.createElement('script');
-            if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
-            for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
-                attr = tag.attributes[attrIdx];
-                scriptNode.setAttribute(attr.name, attr.value);
-            }
-            headNode.appendChild(scriptNode);
-        }
-    }
-
-
-    /**
-     * ### injectLibraries
-     *
-     * Injects scripts into the iframe
-     *
-     * First removes all old injected script tags.
-     * Then injects `<script class="injectedlib" src="...">` lines into given
-     * iframe object, one for every given library.
-     *
-     * @param {HTMLIFrameElement} iframe The target iframe
-     * @param {array} libs An array of strings giving the "src" attribute for
-     *   the `<script>` lines to insert
-     *
-     * @api private
-     */
-    function injectLibraries(iframe, libs) {
-        var contentDocument;
-        var headNode;
-        var scriptNode;
-        var libIdx, lib;
-
-        contentDocument = W.getIFrameDocument(iframe);
-
-        headNode = contentDocument.getElementsByTagName('head')[0];
-
-        for (libIdx = 0; libIdx < libs.length; libIdx++) {
-            lib = libs[libIdx];
-            scriptNode = document.createElement('script');
-            scriptNode.className = 'injectedlib';
-            scriptNode.src = lib;
-            headNode.appendChild(scriptNode);
-        }
-    }
-
-    /**
      * ### GameWindow.initLibs
      *
      * Specifies the libraries to be loaded automatically in the iframes
      *
-     * This method must be called before any calls to GameWindow.loadFrame.
+     * This method must be called before any call to GameWindow.loadFrame.
      *
      * @param {array} globalLibs Array of strings describing absolute library
      *   paths that should be loaded in every iframe
@@ -656,8 +555,17 @@
             uris = [ uris ];
         }
 
-        // Don't preload if no URIs are given:
-        if (!uris || !uris.length) {
+        if (!J.isArray(uris)) {
+            throw new TypeError('GameWindow.preCache: uris must be string ' +
+                                'or array.');
+        }
+        if (callback && 'function' !== typeof callback) {
+            throw new TypeError('GameWindow.preCache: callback must be ' +
+                                'function or undefined.');
+        }
+            
+        // Don't preload if an empty array is passed.
+        if (!uris.length) {
             if (callback) callback();
             return;
         }
@@ -717,57 +625,86 @@
     GameWindow.prototype.clearCache = function() {
         this.cache = {};
     };
+    
+    /**
+     * ### GameWindow.generateHeader
+     *
+     * Adds a container div with id 'gn_header' to the root element
+     *
+     * If a header element already exists, deletes its content
+     * and returns it.
+     *
+     * @return {Element} The header element
+     */
+    GameWindow.prototype.generateHeader = function() {
+        var root, header;
+        header = this.getHeader();
+        if (header) {
+            header.innerHTML = '';
+        }
+        else {
+            root = this.getFrameRoot();
+            this.header = this.addElement('div', root, 'gn_header');
+            header = this.header;
+        }
+        return header;
+    };
 
     /**
-     * ### handleFrameLoad
+     * ### GameWindow.getHeader
      *
-     * Handles iframe contents loading
+     * Returns a reference to the header element, if defined
      *
-     * A helper method of GameWindow.loadFrame.
-     * Puts cached contents into the iframe or caches new contents if requested.
-     * Handles reloading of script tags and injected libraries.
-     * Must be called with the current GameWindow instance.
-     *
-     * @param {GameWindow} that The GameWindow instance
-     * @param {uri} uri URI to load
-     * @param {string} frameName ID of the iframe
-     * @param {bool} loadCache Whether to load from cache
-     * @param {bool} storeCache Whether to store to cache
-     *
-     * @see GameWindow.loadFrame
-     *
-     * @api private
+     * @return {Element} The header element
      */
-    function handleFrameLoad(that, uri, frameName, loadCache, storeCache) {
-        var iframe, iframeDocumentElement;
+    GameWindow.prototype.getHeader = function() {
+        return this.header;
+    };
 
-        iframe = document.getElementById(frameName);
-        iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
-
-        if (loadCache) {
-            // Load frame from cache:
-            iframeDocumentElement.innerHTML = that.cache[uri].contents;
-            // Update references to frameWindow and frameDocument
-            // if this was the frame of the game.
-            if (frameName === that.frameName) {
-                that.frameWindow = iframe.contentWindow;
-                that.frameDocument = that.getIFrameDocument(iframe);
-            }
+    /**
+     * ### GameWindow.getElementById
+     *
+     * Returns the element with the given id
+     *
+     * Looks first into the iframe and then into the rest of the page.
+     *
+     * @param {string} id The id of the element
+     * @return {Element|null} The element in the page, or null if none is found
+     *
+     * @see GameWindow.getElementsByTagName
+     */
+    GameWindow.prototype.getElementById = function(id) {
+        var el, frameDocument;
+        
+        frameDocument = this.getFrameDocument(), el = null;
+        if (frameDocument && frameDocument.getElementById) {
+            el = frameDocument.getElementById(id);
         }
-
-        // (Re-)Inject libraries and reload scripts:
-        removeLibraries(iframe);
-        if (loadCache) {
-            reloadScripts(iframe);
+        if (!el) {
+            el = document.getElementById(id);
         }
-        injectLibraries(iframe, that.globalLibs.concat(
-                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
+        return el;
+    };
 
-        if (storeCache) {
-            // Store frame in cache:
-            that.cache[uri].contents = iframeDocumentElement.innerHTML;
-        }
-    }
+    /**
+     * ### GameWindow.getElementsByTagName
+     *
+     * Returns a list of elements with the given tag name
+     *
+     * Looks first into the iframe and then into the rest of the page.
+     *
+     * @param {string} tag The tag of the elements
+     * @return {array|null} The elements in the page, or null if none is found
+     *
+     * @see GameWindow.getElementById
+     */
+    GameWindow.prototype.getElementsByTagName = function(tag) {
+        var frameDocument;
+        frameDocument = this.getFrameDocument();
+        return frameDocument ? frameDocument.getElementsByTagName(tag) :
+            document.getElementsByTagName(tag);
+    };
+
 
 // THIS CONTAINS CODE TO PERFORM TO CATCH THE ONLOAD EVENT UNDER DIFFERENT
 // BROWSERS
@@ -946,7 +883,7 @@
         this.currentURIs[iframeName] = uri;
 
         // Keep track of nested call to loadFrame.
-        updateAreLoading.call(this, 1);
+        updateAreLoading(1);
 
         // Add the onload event listener:
         iframe.onload = function() {
@@ -988,27 +925,26 @@
     };
 
     /**
-     * ### GameWindow.loadFrameState
+     * ### GameWindow.updateLoadFrameState
      *
-     * Cleans up the window state after an iframe has been loaded
+     * Sets window state after a new frame has been loaded
      *
      * The method performs the following operations:
      *
-     * - updates the frameDocument reference
      * - executes a given callback function
      * - decrements the counter of loading iframes
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
      *
-     * @see GameWindow.frameDocument
+     * @see updateAreLoading
      */
     GameWindow.prototype.updateLoadFrameState = function(func) {
         if (func) {
             func.call(node.game);
         }
 
-        updateAreLoading.call(this, -1);
+        updateAreLoading(-1);
 
         if (this.areLoading === 0) {
             this.setStateLevel('LOADED');
@@ -1017,108 +953,192 @@
             // if all conditions are met.
         }
         else {
-            node.silly('GameWindow.updateState: ' + this.areLoading +
+            node.silly('GameWindow.updateLoadFrameState: ' + this.areLoading +
                        ' loadFrame processes open.');
         }
     };
 
-    var lockedUpdate = false;
-    function updateAreLoading(update) {
-        var that;
+    /* Private helper functions follow */
+
+    /**
+     * ### handleFrameLoad
+     *
+     * Handles iframe contents loading
+     *
+     * A helper method of GameWindow.loadFrame.
+     * Puts cached contents into the iframe or caches new contents if requested.
+     * Handles reloading of script tags and injected libraries.
+     * Must be called with the current GameWindow instance.
+     *
+     * @param {GameWindow} that The GameWindow instance
+     * @param {uri} uri URI to load
+     * @param {string} frameName ID of the iframe
+     * @param {bool} loadCache Whether to load from cache
+     * @param {bool} storeCache Whether to store to cache
+     *
+     * @see GameWindow.loadFrame
+     *
+     * @api private
+     */
+    function handleFrameLoad(that, uri, frameName, loadCache, storeCache) {
+        var iframe, iframeDocumentElement;
+
+        iframe = document.getElementById(frameName);
+        iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
+
+        if (loadCache) {
+            // Load frame from cache:
+            iframeDocumentElement.innerHTML = that.cache[uri].contents;
+            // Update references to frameWindow and frameDocument
+            // if this was the frame of the game.
+            if (frameName === that.frameName) {
+                that.frameWindow = iframe.contentWindow;
+                that.frameDocument = that.getIFrameDocument(iframe);
+            }
+        }
+
+        // (Re-)Inject libraries and reload scripts:
+        removeLibraries(iframe);
+        if (loadCache) {
+            reloadScripts(iframe);
+        }
+        injectLibraries(iframe, that.globalLibs.concat(
+                that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
+
+        if (storeCache) {
+            // Store frame in cache:
+            that.cache[uri].contents = iframeDocumentElement.innerHTML;
+        }
+    }
+
+    /**
+     * ### removeLibraries
+     *
+     * Removes injected scripts from iframe
+     *
+     * Takes out all the script tags with the className "injectedlib"
+     * that were inserted by injectLibraries.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     *
+     * @see injectLibraries
+     *
+     * @api private
+     */
+    function removeLibraries(iframe) {
+        var idx;
+        var contentDocument;
+        var scriptNodes, scriptNode;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+        for (idx = 0; idx < scriptNodes.length; idx++) {
+            scriptNode = scriptNodes[idx];
+            scriptNode.parentNode.removeChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### reloadScripts
+     *
+     * Reloads all script nodes in iframe
+     *
+     * Deletes and reinserts all the script tags, effectively reloading the
+     * scripts. The placement of the tags can change, but the order is kept.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     *
+     * @api private
+     */
+    function reloadScripts(iframe) {
+        var contentDocument;
+        var headNode;
+        var tag, scriptNodes, scriptNodeIdx, scriptNode;
+        var attrIdx, attr;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        headNode = contentDocument.getElementsByTagName('head')[0];
+
+        scriptNodes = contentDocument.getElementsByTagName('script');
+        for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
+                scriptNodeIdx++) {
+
+            // Remove tag:
+            tag = scriptNodes[scriptNodeIdx];
+            tag.parentNode.removeChild(tag);
+
+            // Reinsert tag for reloading:
+            scriptNode = document.createElement('script');
+            if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+            for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
+                attr = tag.attributes[attrIdx];
+                scriptNode.setAttribute(attr.name, attr.value);
+            }
+            headNode.appendChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### injectLibraries
+     *
+     * Injects scripts into the iframe
+     *
+     * First removes all old injected script tags.
+     * Then injects `<script class="injectedlib" src="...">` lines into given
+     * iframe object, one for every given library.
+     *
+     * @param {HTMLIFrameElement} iframe The target iframe
+     * @param {array} libs An array of strings giving the "src" attribute for
+     *   the `<script>` lines to insert
+     *
+     * @api private
+     */
+    function injectLibraries(iframe, libs) {
+        var contentDocument;
+        var headNode;
+        var scriptNode;
+        var libIdx, lib;
+
+        contentDocument = W.getIFrameDocument(iframe);
+
+        headNode = contentDocument.getElementsByTagName('head')[0];
+
+        for (libIdx = 0; libIdx < libs.length; libIdx++) {
+            lib = libs[libIdx];
+            scriptNode = document.createElement('script');
+            scriptNode.className = 'injectedlib';
+            scriptNode.src = lib;
+            headNode.appendChild(scriptNode);
+        }
+    }
+
+    /**
+     * ### updateAreLoading
+     *
+     * Updates the counter of loading frames in a secure way
+     *
+     * Ensure atomicity of the operation by using the _lockedUpdate_ semaphore.
+     *
+     * @param {GameWindow} that A reference to the GameWindow instance
+     * @param {number} update The number to add to the counter
+     *
+     * @see GameWindow.lockedUpdate
+     * @api private
+     */
+    function updateAreLoading(that, update) {
         if (!lockedUpdate) {
             lockedUpdate = true;
-            this.areLoading = this.areLoading + update;
+            that.areLoading = that.areLoading + update;
             lockedUpdate = false;
         }
         else {
-            that = this;
             setTimeout(function() {
                 updateAreLoading.call(that, update);
             }, 300);
         }
     }
-
-
-    /**
-     * ### GameWindow.generateHeader
-     *
-     * Adds a container div with id 'gn_header' to the root element
-     *
-     * If a header element already exists, deletes its content
-     * and returns it.
-     *
-     * @return {Element} The header element
-     */
-    GameWindow.prototype.generateHeader = function() {
-        var root, header;
-        header = this.getHeader();
-        if (header) {
-            header.innerHTML = '';
-        }
-        else {
-            root = this.getFrameRoot();
-            this.header = this.addElement('div', root, 'gn_header');
-            header = this.header;
-        }
-        return header;
-    };
-
-    /**
-     * ### GameWindow.getHeader
-     *
-     * Returns a reference to the header element, if defined
-     *
-     * @return {Element} The header element
-     */
-    GameWindow.prototype.getHeader = function() {
-        return this.header;
-    };
-
-    /**
-     * ### GameWindow.getElementById
-     *
-     * Returns the element with the given id
-     *
-     * Looks first into the iframe and then into the rest of the page.
-     *
-     * @param {string} id The id of the element
-     * @return {Element|null} The element in the page, or null if none is found
-     *
-     * @see GameWindow.getElementsByTagName
-     */
-    GameWindow.prototype.getElementById = function(id) {
-        var el, frameDocument;
-        
-        frameDocument = this.getFrameDocument(), el = null;
-        if (frameDocument && frameDocument.getElementById) {
-            el = frameDocument.getElementById(id);
-        }
-        if (!el) {
-            el = document.getElementById(id);
-        }
-        return el;
-    };
-
-    /**
-     * ### GameWindow.getElementsByTagName
-     *
-     * Returns a list of elements with the given tag name
-     *
-     * Looks first into the iframe and then into the rest of the page.
-     *
-     * @param {string} tag The tag of the elements
-     * @return {array|null} The elements in the page, or null if none is found
-     *
-     * @see GameWindow.getElementById
-     */
-    GameWindow.prototype.getElementsByTagName = function(tag) {
-        var frameDocument;
-        frameDocument = this.getFrameDocument();
-        return frameDocument ? frameDocument.getElementsByTagName(tag) :
-            document.getElementsByTagName(tag);
-    };
-
-
 
     //Expose GameWindow prototype to the global object.
     node.GameWindow = GameWindow;
