@@ -290,13 +290,14 @@
      *
      * Returns whether the GameWindow is ready
      *
-     * Returns TRUE if the state is either INITIALIZED or LOADED.
+     * Returns TRUE if the state is either INITIALIZED or LOADED or LOCKED.
      *
      * @return {boolean} Whether the window is ready
      */
     GameWindow.prototype.isReady = function() {
         return this.state === windowLevels.INITIALIZED ||
-               this.state === windowLevels.LOADED;
+            this.state === windowLevels.LOADED ||
+            this.state === windowLevels.LOCKED;
     };
 
     /**
@@ -501,7 +502,7 @@
             }
 
             // Adding the WaitScreen.
-            node.game.waitScreen = node.widgets.append('WaitScreen');
+            node.widgets.append('WaitScreen');
 
             // Add default CSS.
             if (node.conf.host) {
@@ -1268,6 +1269,7 @@
     var J = node.JSUS;
 
     var GameWindow = node.GameWindow;
+    var windowLevels = node.constants.windowLevels;
     
     /**
      * ### GameWindow.lockFrame
@@ -1288,9 +1290,12 @@
             throw new TypeError('GameWindow.lockFrame: text must be string ' +
                                 'or undefined');
         }
+        if (!this.isReady()) {
+            throw new Error('GameWindow.lockFrame: window not ready.');
+        }
         this.setStateLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
-        node.game.waitScreen.lock(text);
+        this.waitScreen.lock(text);
         this.setStateLevel('LOCKED');
     };
 
@@ -1302,17 +1307,27 @@
      * Requires the waitScreen widget to be loaded.
      */
     GameWindow.prototype.unlockFrame = function() {
-        if (!node.game.waitScreen) {
+        if (!this.waitScreen) {
             throw new Error('GameWindow.unlockFrame: waitScreen not found.');
         }
         if (this.getStateLevel() !== windowLevels.LOCKED) {
             throw new Error('GameWindow.unlockFrame: frame is not locked.');
         }
         this.setStateLevel('UNLOCKING');
-        node.game.waitScreen.unlock();
+        this.waitScreen.unlock();
         this.setStateLevel('LOADED');
     };
 
+    /**
+     * ### GameWindow.isFrameLocked
+     *
+     * TRUE, if the frame is locked.
+     *
+     * @see GameWindow.state
+     */
+    GameWindow.prototype.isFrameLocked = function() {
+        return this.getStateLevel() === windowLevels.LOCKED;
+    };
 })(
     // GameWindow works only in the browser environment. The reference
     // to the node.js module object is for testing purpose only
