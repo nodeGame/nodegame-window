@@ -54,6 +54,66 @@
         storeCacheLater: false
     };
 
+    function onLoadStd(iframe, cb) {
+        var iframeWin;
+        iframeWin = iframe.contentWindow;
+
+        function completed(event) {
+            detach();
+            if (cb) cb();
+        }
+
+        function detach() {
+            iframe.removeEventListener('load', completed, false);
+            iframeWin.removeEventListener('load', completed, false);
+        }
+
+        // Use the handy event callback
+        iframe.addEventListener('load', completed, false);
+
+        // A fallback to window.onload, that will always work
+        iframeWin.addEventListener('load', completed, false);
+    }
+    
+    function onLoadIE(iframe, cb) {
+        var iframeWin, iframeDoc;
+        iframeWin = iframe.contentWindow;
+        iframeDoc = W.getIFrameDocument(iframe)
+
+        function completed(event) {
+	    // readyState === "complete" works also in oldIE.
+	    if (event.type === 'load' ||
+                iframeDoc.readyState === "complete") {
+	        detach();
+                if (cb) cb();
+	    }
+        }
+
+        function detach() {
+            iframe.detachEvent('onreadystatechange', completed );
+            iframeWin.detachEvent('onload', completed );
+        }
+
+        // Ensure firing before onload, maybe late but safe also for iframes.
+        iframe.attachEvent('onreadystatechange', completed );
+
+        // A fallback to window.onload, that will always work.
+        iframeWin.attachEvent('onload', completed );
+    }
+
+    function onLoad(iframe, cb) {
+        // IE
+        if (iframe.attachEvent) {
+            onLoadIE(iframe, cb);
+        }
+        // Standards-based browsers support DOMContentLoaded.
+        else {
+            onLoadStd(iframe, cb);
+        }
+    }
+
+    window.onLoad = onLoad;
+
     /**
      * ## GameWindow constructor
      *
@@ -710,62 +770,7 @@
 // THIS CONTAINS CODE TO PERFORM TO CATCH THE ONLOAD EVENT UNDER DIFFERENT
 // BROWSERS
 
-//    var onLoad, detach, completed;
-//
-//    var iframeTest = document.createElement('iframe');
-//    iframe.style.display = 'none';
-//    document.body.appendChild(iframeTest);
-//
-//    // The ready event handler.
-//    completed = function(event) {
-//
-//      // readyState === "complete" works also in oldIE.
-//      if (document.addEventListener ||
-//            event.type === "load" ||
-//            document.readyState === 'complete') {
-//
-//          detach();
-//
-//
-//      }
-//    };
-//
-//
-//
-//    // Standards-based browsers support DOMContentLoaded.
-//    if (document.addEventListener) {
-//
-//        detach = function() {
-//            document.removeEventListener('DOMContentLoaded', completed, false);
-//          window.removeEventListener('load', completed, false);
-//        };
-//
-//        onLoad = function() {
-//          // Use the handy event callback
-//          document.addEventListener('DOMContentLoaded', completed, false);
-//
-//          // A fallback to window.onload, that will always work
-//          window.addEventListener('load', completed, false);
-//        };
-//
-//
-//    }
-//    // If IE event model is used.
-//    else {
-//
-//        detach = function() {
-//            document.detachEvent('onreadystatechange', completed );
-//          window.detachEvent('onload', completed );
-//        };
-//
-//        onLoad = function() {
-//            // Ensure firing before onload, maybe late but safe also for iframes.
-//          document.attachEvent('onreadystatechange', completed );
-//
-//          // A fallback to window.onload, that will always work.
-//          window.attachEvent('onload', completed );
-//        };
-
+ 
 
 
 
@@ -885,21 +890,16 @@
 
         // Keep track of nested call to loadFrame.
         updateAreLoading(1);
-
-        // Add the onload event listener:
-        iframe.onload = function() {
+     
+        onLoad(iframe, function() {                       
             // Updates references to frame window and document.
             that.frameWindow = window.frames[iframeName];
             that.frameDocument =  W.getIFrameDocument(that.getFrame());
-
-            // Remove onload hanlder for this frame.
-            // Buggy Opera 11.52 fires the onload twice.
-            // Not fixed yet. The second time is actually the right one...
-            iframe.onload = null;
-
+            // Handles caching.
             handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+            // Executes callback and updates GameWindow state.
             that.updateLoadFrameState(func);
-        };
+        });
 
         // Cache lookup:
         if (loadCache) {
