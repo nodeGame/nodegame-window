@@ -963,6 +963,25 @@
         }
     };
 
+    /**
+     * ### GameWindow.getIFrameAnyChild
+     *
+     * Gets the first available child of an IFrame
+     *
+     * Tries head, body, lastChild and the HTML element
+     *
+     * @param {object} iframe The IFrame
+     *
+     * @return {object|undefined} The child or undefined if nothing is found
+     */
+    GameWindow.prototype.getIFrameAnyChild = function(iframe) {
+        var contentDocument;
+        contentDocument = W.getIFrameDocument(iframe);
+        return contentDocument.head || contentDocument.body ||
+            contentDocument.lastChild ||
+            contentDocument.getElementsByTagName('html')[0];
+    };
+
     /* Private helper functions follow */
 
     /**
@@ -1064,7 +1083,7 @@
 
         contentDocument = W.getIFrameDocument(iframe);
 
-        headNode = contentDocument.getElementsByTagName('head')[0];
+        headNode = W.getIFrameAnyChild(iframe);
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -1108,7 +1127,7 @@
 
         contentDocument = W.getIFrameDocument(iframe);
 
-        headNode = contentDocument.getElementsByTagName('head')[0];
+        headNode = W.getIFrameAnyChild(iframe);
 
         for (libIdx = 0; libIdx < libs.length; libIdx++) {
             lib = libs[libIdx];
