@@ -680,31 +680,6 @@
                 });
             })(currentUri, iframe);
 
-//            iframe.onload = (function(uri, thisIframe) {
-//                return function() {
-//                    var frameDocumentElement;
-//
-//                    frameDocumentElement = W.getIFrameDocument(thisIframe)
-//                        .documentElement;
-//
-//                    // Store the contents in the cache:
-//                    that.cache[uri] = {
-//                        contents: frameDocumentElement.innerHTML,
-//                        cacheOnClose: false
-//                    };
-//
-//                    // Remove the internal frame:
-//                    document.body.removeChild(thisIframe);
-//
-//                    // Increment loaded URIs counter:
-//                    loadedCount++;
-//                    if (loadedCount >= uris.length) {
-//                        // All requested URIs have been loaded at this point.
-//                        if (callback) callback();
-//                    }
-//                };
-//            })(currentUri, iframe);
-
             // Start loading the page:
             window.frames[iframeName].location = currentUri;
         }
@@ -917,28 +892,15 @@
         // Keep track of nested call to loadFrame.
         updateAreLoading(this, 1);
 
-        // Add the onload event listener:
-//       iframe.onload = function() {
-//           // Updates references to frame window and document.
-//           that.frameWindow = window.frames[iframeName];
-//           that.frameDocument = W.getIFrameDocument(that.getFrame());
-//
-//           // Remove onload hanlder for this frame.
-//           // Buggy Opera 11.52 fires the onload twice.
-//           // Not fixed yet. The second time is actually the right one...
-//           iframe.onload = null;
-//
-//           handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
-//           that.updateLoadFrameState(func);
-//       };
-
+        // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
                 // Updates references to frame window and document.
                 that.frameWindow = window.frames[iframeName];
                 that.frameDocument = W.getIFrameDocument(that.getFrame());
                 // Handles caching.
-                handleFrameLoad(that, uri, iframeName, loadCache, storeCacheNow);
+                handleFrameLoad(that, uri, iframeName,
+                                loadCache, storeCacheNow);
                 // Executes callback and updates GameWindow state.
                 that.updateLoadFrameState(func);
             });
