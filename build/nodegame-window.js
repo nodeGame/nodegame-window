@@ -66,7 +66,10 @@
 
         function completed(event) {
             detach();
-            if (cb) cb();
+
+            if (cb) {
+                setTimeout(function() { cb(); }, 100);
+            }
         }
 
         function detach() {
@@ -110,7 +113,6 @@
     function onLoad(iframe, cb) {
         // IE
         if (iframe.attachEvent) {
-        //if (iframe.addEventListener) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -653,11 +655,12 @@
             document.body.appendChild(iframe);
 
             (function(uri, thisIframe) {
+                // Register the onLoad handler:
                 onLoad(thisIframe, function() {
-                    var frameDocumentElement;
+                    var frameDocument, frameDocumentElement;
 
-                    frameDocumentElement = W.getIFrameDocument(thisIframe)
-                        .documentElement;
+                    frameDocument = W.getIFrameDocument(thisIframe);
+                    frameDocumentElement = frameDocument.documentElement;
 
                     // Store the contents in the cache:
                     that.cache[uri] = {
@@ -677,7 +680,6 @@
                 });
             })(currentUri, iframe);
 
-//            // Register the onload handler:
 //            iframe.onload = (function(uri, thisIframe) {
 //                return function() {
 //                    var frameDocumentElement;
