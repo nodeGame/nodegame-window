@@ -59,17 +59,14 @@
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
-            detach();
+            // Detaching the function to avoid double execution.
+            iframe.removeEventListener('load', completed, false);
+            iframeWin.removeEventListener('load', completed, false);
             if (cb) {
                 // Some browsers fires onLoad too early.
                 // A small timeout is enough.                
                 setTimeout(function() { cb(); }, 100);
             }
-        }
-
-        function detach() {
-            iframe.removeEventListener('load', completed, false);
-            iframeWin.removeEventListener('load', completed, false);
         }
 
         // Use the handy event callback
@@ -88,18 +85,17 @@
             // readyState === "complete" works also in oldIE.
             if (event.type === 'load' ||
                 iframeDoc.readyState === 'complete') {
-                detach();
+
+                // Detaching the function to avoid double execution.
+                iframe.detachEvent('onreadystatechange', completed );
+                iframeWin.detachEvent('onload', completed );
+
                 if (cb) {
                     // Some browsers fires onLoad too early.
                     // A small timeout is enough.
                     setTimeout(function() { cb(); }, 100);
                 }
             }
-        }
-
-        function detach() {
-            iframe.detachEvent('onreadystatechange', completed );
-            iframeWin.detachEvent('onload', completed );
         }
 
         // Ensure firing before onload, maybe late but safe also for iframes.
@@ -203,11 +199,11 @@
         this.frameRoot = null;
 
         /**
-         * ### GameWindow.header
+         * ### GameWindow.headerElement
          *
          * A reference to the HTMLDivElement representing the header
          */
-        this.header = null;
+        this.headerElement = null;
 
         /**
          * ### GameWindow.headerName
@@ -669,11 +665,11 @@
             throw new Error('GameWindow.setHeader: invalid root element.');
         }
  
-        this.header = header;
+        this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
             
-        return this.header;
+        return this.headerElement;
     };
 
     /**
@@ -684,11 +680,11 @@
      * @return {Element} The header element
      */
     GameWindow.prototype.getHeader = function() {
-        if (!this.header) {
-            this.header = this.headerName ? 
+        if (!this.headerElement) {
+            this.headerElement = this.headerName ? 
                 document.getElementById(this.headerName) : null;
         }
-        return this.header;
+        return this.headerElement;
     };
     
     /**
@@ -732,8 +728,8 @@
      */
     GameWindow.prototype.destroyHeader = function() {
         this.clearHeader();
-        this.headerRoot.removeChild(this.header);
-        this.header = null;
+        this.headerRoot.removeChild(this.headerElement);
+        this.headerElement = null;
         this.headerName = null;
         this.headerRoot = null;
     };
@@ -749,7 +745,7 @@
         if (!header) {
             throw new Error('GameWindow.clearHeadr: cannot detect header.');
         }
-        this.header.innerHTML = '';
+        this.headerElement.innerHTML = '';
     };
 
     /**
@@ -802,11 +798,11 @@
             this.generateHeader();
 
             node.game.visualState = node.widgets.append('VisualState',
-                    this.header);
+                    this.headerElement);
             node.game.timer = node.widgets.append('VisualTimer',
-                    this.header);
+                    this.headerElement);
             node.game.stateDisplay = node.widgets.append('StateDisplay',
-                    this.header);
+                    this.headerElement);
 
             // Will continue in SOLO_PLAYER.
 
