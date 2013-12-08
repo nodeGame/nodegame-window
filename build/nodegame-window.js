@@ -493,7 +493,7 @@
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
      * @param {Element} root Optional. The HTML element to which the iframe
-     *   will be appended. Defaults, this.root or document.body.
+     *   will be appended. Defaults, this.frameRoot or document.body.
      * @param {string} frameName Optional. The name of the iframe. Defaults,
      *   'mainframe'.
      * @param {boolean} force Optional. Will create the frame even if an
@@ -514,7 +514,7 @@
                             'already existing. It cannot be duplicated.');
         }
 
-        root = root || this.root || document.body;
+        root = root || this.frameRoot || document.body;
 
         if (!J.isElement(root)) {
             throw new Error('GameWindow.generateFrame: invalid root element.');
@@ -560,7 +560,7 @@
             throw new Error('GameWindow.setFrame: invalid root element.');
         }
 
-        this.root = root;
+        this.frameRoot = root;
         this.frameName = iframeName;
         this.frameElement = iframe;
         this.frameWindow = iframe.contentWindow;
@@ -582,6 +582,7 @@
         this.frameElement = null;
         this.frameWindow = null;
         this.frameDocument = null;
+        this.frameRoot = null;
     };
 
     /**
