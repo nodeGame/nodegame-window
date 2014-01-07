@@ -1526,6 +1526,9 @@
      * TODO: check if this can be called in any stage.
      */
     GameWindow.prototype.lockFrame = function(text) {
+        var that;
+        that = this;
+
         if (!this.waitScreen) {
             throw new Error('GameWindow.lockFrame: waitScreen not found.');
         }
@@ -1534,7 +1537,8 @@
                                 'or undefined');
         }
         if (!this.isReady()) {
-            throw new Error('GameWindow.lockFrame: window not ready.');
+            setTimeout(function() { that.lockFrame(text); }, 100);
+            //throw new Error('GameWindow.lockFrame: window not ready.');
         }
         this.setStateLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
