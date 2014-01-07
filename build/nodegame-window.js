@@ -533,7 +533,8 @@
         }
 
         iframe = W.addIFrame(root, frameName);
-        iframe.src = 'about:blank';
+        // Method .replace does not add the uri to the history.
+        iframe.contentWindow.location.replace('about:blank');
 
         return this.setFrame(iframe, frameName, root);
     };
@@ -598,7 +599,8 @@
         }
         frameName = iframe.name || iframe.id;
         iframe.onload = null;
-        iframe.src = 'about:blank';
+        // Method .replace does not add the uri to the history.
+        iframe.contentWindow.location.replace('about:blank');
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
@@ -933,7 +935,8 @@
             })(currentUri, iframe);
 
             // Start loading the page:
-            window.frames[iframeName].location = currentUri;
+            // Method .replace does not add the uri to the history.
+            window.frames[iframeName].location.replace(currentUri);
         }
     };
 
@@ -1153,7 +1156,7 @@
         }
         else {
             // Update the frame location:
-            iframeWindow.location = uri;
+            iframeWindow.location.replace(uri);
         }
 
         // Adding a reference to nodeGame also in the iframe.
