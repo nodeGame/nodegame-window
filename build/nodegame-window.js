@@ -1,6 +1,6 @@
 /**
  * # GameWindow
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
@@ -35,6 +35,7 @@
 
     var constants = node.constants;
     var windowLevels = constants.windowLevels;
+    var screenLevels = constants.screenLevels;
 
     // Allows just one update at the time to the counter of loading frames.
     var lockedUpdate = false;
@@ -77,11 +78,18 @@
     }
 
     function onLoadIE(iframe, cb) {
-        var iframeWin, iframeDoc;
+        var iframeWin;
         iframeWin = iframe.contentWindow;
-        iframeDoc = W.getIFrameDocument(iframe);
+        // We cannot get the iframeDoc here and use it in completed. See below.
 
         function completed(event) {
+            var iframeDoc;
+
+            // IE < 10 gives 'Permission Denied' if trying to access
+            // the iframeDoc from the context of the function above.
+            // We need to re-get it from the DOM.
+            iframeDoc = JSUS.getIFrameDocument(iframe);
+
             // readyState === "complete" works also in oldIE.
             if (event.type === 'load' ||
                 iframeDoc.readyState === 'complete') {
@@ -233,6 +241,18 @@
          */
         this.areLoading = 0;
 
+
+        /**
+         * ### GameWindow.cacheSupported
+         *
+         * Flag that marks whether caching is supported by the browser
+         *
+         * Caching requires to modify the documentElement.innerHTML property
+         * of the iframe document. This property is read-only in IE < 9.
+         */
+        this.cacheSupported = null;
+
+
         /**
          * ### GameWindow.cache
          *
@@ -295,6 +315,19 @@
          */
         this.waitScreen = null;
 
+        /**
+         * ### GamwWindow.screenState
+         *
+         * Levels describing whether the user can interact with the frame.
+         *
+         * The _screen_ represents all the user can see on screen. 
+         * It includes the _frame_ area, but also the _header_.
+         *
+         * @see node.widgets.WaitScreen
+         * @see node.constants.screenLevels
+         */
+        this.screenState = node.constants.screenLevels.ACTIVE;
+
         // Init.
         this.init();
     }
@@ -345,10 +378,11 @@
     GameWindow.prototype.setStateLevel = function(level) {
         if ('string' !== typeof level) {
             throw new TypeError('GameWindow.setStateLevel: ' +
-                                'level must be string');
+                                'level must be string.');
         }
         if ('undefined' === typeof windowLevels[level]) {
-            throw new Error('GameWindow.setStateLevel: unrecognized level.');
+            throw new Error('GameWindow.setStateLevel: unrecognized level: ' +
+                            level + '.');
         }
 
         this.state = windowLevels[level];
@@ -378,8 +412,42 @@
      */
     GameWindow.prototype.isReady = function() {
         return this.state === windowLevels.INITIALIZED ||
-            this.state === windowLevels.LOADED ||
-            this.state === windowLevels.LOCKED;
+            this.state === windowLevels.LOADED;
+    };
+
+    /**
+     * ### GameWindow.setScreenLevel
+     *
+     * Validates and sets window's state level
+     *
+     * @param {string} level The level of the update
+     *
+     * @see constants.screenLevels
+     */
+    GameWindow.prototype.setScreenLevel = function(level) {
+        if ('string' !== typeof level) {
+            throw new TypeError('GameWindow.setScreenLevel: ' +
+                                'level must be string.');
+        }
+        if ('undefined' === typeof screenLevels[level]) {
+            throw new Error('GameWindow.setScreenLevel: unrecognized level: ' +
+                           level + '.');
+        }
+
+        this.screenState = screenLevels[level];
+    };
+
+    /**
+     * ### GameWindow.getScreenLevel
+     *
+     * Returns the current screen level
+     *
+     * @return {number} The screen level
+     *
+     * @see constants.screenLevels
+     */
+    GameWindow.prototype.getScreenLevel = function() {
+        return this.screenState;
     };
 
     /**
@@ -861,11 +929,58 @@
     /**
      * ### GameWindow.preCache
      *
+     * Tests wether preChace is supported by the browser.
+     *
+     * Results are stored in _GameWindow.cacheSupported_.
+     *
+     * @param {function} cb Optional. The function to call once the test if
+     *   finished. It will be called regardless of success or failure.
+     * @param {string} uri Optional. The URI to test. Defaults,  
+     *   '/pages/testpage.htm';
+     *
+     * @see GameWindow.cacheSupported
+     */
+    GameWindow.prototype.preCacheTest = function(cb, uri) {
+        var iframe, iframeName;
+        uri = uri || '/pages/testpage.htm';
+        if ('string' !== typeof uri) {
+            throw new TypeError('GameWindow.precacheTest: uri must string or ' +
+                                'undefined.');
+        }
+        iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframeName = 'preCacheTest';
+        iframe.id = iframeName;
+        iframe.name = iframeName;
+        document.body.appendChild(iframe);
+        iframe.contentWindow.location.replace(uri);
+        onLoad(iframe, function() {
+            try {
+                W.getIframeDocument(iframe).documentElement.innerHTML = 'a';
+                W.cacheSupported = true;
+            }
+            catch(e) {
+                W.cacheSupported = false;
+            }
+            document.body.removeChild(iframe);
+            if (cb) cb();
+        });
+    };
+
+    /**
+     * ### GameWindow.preCache
+     *
      * Loads the HTML content of the given URI(s) into the cache
+     *
+     * If caching is not supported by the browser, the callback will be
+     * executed anyway. 
      *
      * @param {string|array} uris The URI(s) to cache
      * @param {function} callback Optional. The function to call once the
      *   caching is done
+     *
+     * @see GameWindow.cacheSupported
+     * @see GameWindow.preCacheTest
      */
     GameWindow.prototype.preCache = function(uris, callback) {
         var that;
@@ -893,6 +1008,20 @@
         }
 
         that = this;
+
+        // Before proceeding with caching, check if caching is supported.
+        if (this.cacheSupported === null) {
+            this.preCacheTest(function() {
+                that.preCache(uris, callback);
+            });
+            return;
+        }
+        else if (this.cacheSupported === false) {
+            node.warn('GameWindow.preCache: caching is not supported by ' +
+                      'your browser.');
+            if (callback) callback();
+            return;
+        }
 
         // Keep count of loaded URIs:
         loadedCount = 0;
@@ -1055,6 +1184,16 @@
         this.setStateLevel('LOADING');
         that = this;
 
+        // Save ref to iframe window for later.
+        iframeWindow = iframe.contentWindow;
+        // Query readiness (so we know whether onload is going to be called):
+        iframeDocument = W.getIFrameDocument(iframe);
+        frameReady = iframeDocument.readyState;
+        // ...reduce it to a boolean:
+        frameReady = frameReady === 'interactive' || frameReady === 'complete';
+
+        // Begin loadFrame caching section.
+
         // Default options.
         loadCache = GameWindow.defaults.cacheDefaults.loadCache;
         storeCacheNow = GameWindow.defaults.cacheDefaults.storeCacheNow;
@@ -1094,33 +1233,42 @@
                 }
             }
         }
-        // Save ref to iframe window for later.
-        iframeWindow = iframe.contentWindow;
-        // Query readiness (so we know whether onload is going to be called):
-        iframeDocument = W.getIFrameDocument(iframe);
-        frameReady = iframeDocument.readyState;
-        // ...reduce it to a boolean:
-        frameReady = frameReady === 'interactive' || frameReady === 'complete';
 
-        // If the last frame requested to be cached on closing, do that:
-        lastURI = this.currentURIs[iframeName];
+        if (this.cacheSupported === null) {            
+            this.preCacheTest(function() {
+                that.loadFrame(uri, func, opts);
+            });
+            return;           
+        }
 
-        if (this.cache.hasOwnProperty(lastURI) &&
+        if (this.cacheSupported === false) {
+            storeCacheNow = false;
+            storeCacheLater = false;
+            loadCache = false;
+        }
+        else {
+            // If the last frame requested to be cached on closing, do that:
+            lastURI = this.currentURIs[iframeName];
+
+            if (this.cache.hasOwnProperty(lastURI) &&
                 this.cache[lastURI].cacheOnClose) {
 
-            frameDocumentElement = iframeDocument.documentElement;
-            this.cache[lastURI].contents = frameDocumentElement.innerHTML;
+                frameDocumentElement = iframeDocument.documentElement;
+                this.cache[lastURI].contents = frameDocumentElement.innerHTML;
+            }
+
+            // Create entry for this URI in cache object
+            // and store cacheOnClose flag:
+            if (!this.cache.hasOwnProperty(uri)) {
+                this.cache[uri] = { contents: null, cacheOnClose: false };
+            }
+            this.cache[uri].cacheOnClose = storeCacheLater;
+
+            // Disable loadCache if contents aren't cached:
+            if (this.cache[uri].contents === null) loadCache = false;
         }
 
-        // Create entry for this URI in cache object
-        // and store cacheOnClose flag:
-        if (!this.cache.hasOwnProperty(uri)) {
-            this.cache[uri] = { contents: null, cacheOnClose: false };
-        }
-        this.cache[uri].cacheOnClose = storeCacheLater;
-
-        // Disable loadCache if contents aren't cached:
-        if (this.cache[uri].contents === null) loadCache = false;
+        // End loadFrame caching section.
 
         // Update frame's currently showing URI:
         this.currentURIs[iframeName] = uri;
@@ -1495,12 +1643,14 @@
 );
 
 /**
- * # GameWindow selector module
- * Copyright(c) 2013 Stefano Balietti
+ * # GameWindow Screen Locker
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame.
+ * Locks / Unlocks the screen.
+ *
+ * The _screen_ represents all the user can see on screen. 
+ * It includes the _frame_ area, but also the _header_.
  *
  * http://www.nodegame.org
  * ---
@@ -1512,68 +1662,67 @@
     var J = node.JSUS;
 
     var GameWindow = node.GameWindow;
-    var windowLevels = node.constants.windowLevels;
+    var screenLevels = node.constants.screenLevels;
     
     /**
-     * ### GameWindow.lockFrame
+     * ### GameWindow.lockScreen
      *
-     * Locks the frame by opening the waitScreen widget on top
+     * Locks the screen by opening the waitScreen widget on top
      *
      * Requires the waitScreen widget to be loaded.
      *
-     * @param {string} text Optional. The text to be shown in the locked frame
+     * @param {string} text Optional. The text to be shown in the locked screen
      *
      * TODO: check if this can be called in any stage.
      */
-    GameWindow.prototype.lockFrame = function(text) {
+    GameWindow.prototype.lockScreen = function(text) {
         var that;
         that = this;
 
         if (!this.waitScreen) {
-            throw new Error('GameWindow.lockFrame: waitScreen not found.');
+            throw new Error('GameWindow.lockScreen: waitScreen not found.');
         }
         if (text && 'string' !== typeof text) {
-            throw new TypeError('GameWindow.lockFrame: text must be string ' +
+            throw new TypeError('GameWindow.lockScreen: text must be string ' +
                                 'or undefined');
         }
         if (!this.isReady()) {
-            setTimeout(function() { that.lockFrame(text); }, 100);
-            //throw new Error('GameWindow.lockFrame: window not ready.');
+            setTimeout(function() { that.lockScreen(text); }, 100);
         }
-        this.setStateLevel('LOCKING');
+        this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
         this.waitScreen.lock(text);
-        this.setStateLevel('LOCKED');
+        this.setScreenLevel('LOCKED');
     };
 
     /**
-     * ### GameWindow.unlockFrame
+     * ### GameWindow.unlockScreen
      *
-     * Unlocks the frame by removing the waitScreen widget on top
+     * Unlocks the screen by removing the waitScreen widget on top
      *
      * Requires the waitScreen widget to be loaded.
      */
-    GameWindow.prototype.unlockFrame = function() {
+    GameWindow.prototype.unlockScreen = function() {
         if (!this.waitScreen) {
-            throw new Error('GameWindow.unlockFrame: waitScreen not found.');
+            throw new Error('GameWindow.unlockScreen: waitScreen not found.');
         }
-        if (this.getStateLevel() !== windowLevels.LOCKED) {
-            throw new Error('GameWindow.unlockFrame: frame is not locked.');
+        if (!this.isScreenLocked()) {
+            throw new Error('GameWindow.unlockScreen: screen is not locked.');
         }
-        this.setStateLevel('UNLOCKING');
+        this.setScreenLevel('UNLOCKING');
         this.waitScreen.unlock();
-        this.setStateLevel('LOADED');
+        this.setScreenLevel('ACTIVE');
     };
 
     /**
-     * ### GameWindow.isFrameLocked
+     * ### GameWindow.isScreenLocked
      *
-     * TRUE, if the frame is locked.
+     * TRUE, if the screen is locked.
      *
-     * @see GameWindow.state
+     * @see GameWindow.screenState
      */
-    GameWindow.prototype.isFrameLocked = function() {
-        return this.getStateLevel() === windowLevels.LOCKED;
+    GameWindow.prototype.isScreenLocked = function() {
+        return this.getScreenLevel() !== screenLevels.ACTIVE;
     };
 })(
     // GameWindow works only in the browser environment. The reference

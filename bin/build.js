@@ -36,7 +36,7 @@ function build(options) {
     var files = [
         libDir + 'GameWindow.js',
         modulesDir + 'ui-behavior.js',
-        modulesDir + 'lockFrame.js',
+        modulesDir + 'lockScreen.js',
         listDir + 'listeners.js',
     ];
 
