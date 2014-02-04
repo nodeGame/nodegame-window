@@ -1423,8 +1423,9 @@
         var scriptNodes, scriptNode;
 
         contentDocument = W.getIFrameDocument(iframe);
-
-        scriptNodes = contentDocument.getElementsByClassName('injectedlib');
+        
+        scriptNodes = W.getElementsByClassName(contentDocument, 'injectedlib', 'script');
+        // scriptNodes = contentDocument.getElementsByClassName('injectedlib');
         for (idx = 0; idx < scriptNodes.length; idx++) {
             scriptNode = scriptNodes[idx];
             scriptNode.parentNode.removeChild(scriptNode);
