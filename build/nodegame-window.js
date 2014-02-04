@@ -956,7 +956,7 @@
         iframe.contentWindow.location.replace(uri);
         onLoad(iframe, function() {
             try {
-                W.getIframeDocument(iframe).documentElement.innerHTML = 'a';
+                W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
                 W.cacheSupported = true;
             }
             catch(e) {
