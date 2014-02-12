@@ -328,6 +328,42 @@
          */
         this.screenState = node.constants.screenLevels.ACTIVE;
 
+
+        /**
+         * ### GamwWindow.textOnleave
+         *
+         * Text that displayed to the users on the _onbeforeunload_ event
+         *
+         * By default it is null, that means that it is left to the browser
+         * default.
+         *
+         * Notice: some browser do not support displaying a custom text.
+         *
+         * @see GameWindow.promptOnleave
+         */
+        this.textOnleave = null;
+        
+        /**
+         * ### node.setup.window
+         *
+         * Setup handler for the node.window object
+         *
+         * @see node.setup
+         */
+        node.registerSetup('window', function(conf) {           
+            conf = conf || {};
+            if ('undefined' === typeof conf.promptOnleave) {
+                conf.promptOnleave = false;
+            }
+            if ('undefined' === typeof conf.noEscape) {
+                conf.noEscape = true;
+            }
+
+            this.window.init(conf);
+
+            return conf;
+        });
+
         // Init.
         this.init();
     }
@@ -350,6 +386,9 @@
         options = options || {};
         this.conf = J.merge(GameWindow.defaults, options);
 
+        if (this.conf.textOnleave) {
+            this.textOnleave = this.conf.textOnleave;
+        }
         if (this.conf.promptOnleave) {
             this.promptOnleave();
         }
@@ -1424,7 +1463,11 @@
 
         contentDocument = W.getIFrameDocument(iframe);
         
-        scriptNodes = W.getElementsByClassName(contentDocument, 'injectedlib', 'script');
+        // Old IEs do not have getElementsByClassName.
+        scriptNodes = W.getElementsByClassName(contentDocument, 'injectedlib',
+                                               'script');
+        
+        // It was. To check.
         // scriptNodes = contentDocument.getElementsByClassName('injectedlib');
         for (idx = 0; idx < scriptNodes.length; idx++) {
             scriptNode = scriptNodes[idx];
@@ -1544,8 +1587,8 @@
 );
 
 /**
- * # GameWindow event button module
- * Copyright(c) 2013 Stefano Balietti
+ * # GameWindow UI Behavior module
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Handles default behavior of the browser on certain DOM Events.
@@ -1608,7 +1651,8 @@
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
-        text = ('undefined' === typeof text) ? this.conf.textOnleave : text;
+        text = 'undefined' !== typeof text ? text : this.textOnleave;
+        
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
             // For IE<8 and Firefox prior to version 4
@@ -1734,7 +1778,7 @@
 
 /**
  * # GameWindow listeners
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * www.nodegame.org
@@ -1810,7 +1854,7 @@
 );
 /**
  * # GameWindow selector module
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
@@ -2060,7 +2104,7 @@
 
 /**
  * # GameWindow extras
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * http://www.nodegame.org
@@ -2390,7 +2434,7 @@
 
 /**
  * # Canvas class for nodeGame window
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api.
@@ -2489,7 +2533,7 @@
 })(node.window);
 /**
  * # HTMLRenderer
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -2732,7 +2776,7 @@
 );
 /**
  * # List class for nodeGame window
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML list that can be manipulated by an api. 
@@ -2931,7 +2975,7 @@
 
 /**
  * # Table class for nodeGame window
- * Copyright(c) 2013 Stefano Balietti
+ * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
