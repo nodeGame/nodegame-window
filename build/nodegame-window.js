@@ -1797,7 +1797,7 @@
                                 'with id ' + idOrObj);
             }
         }
-        else if (J.isElement(idOrObj)) {
+        else if (JSUS.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
