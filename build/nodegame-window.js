@@ -406,6 +406,35 @@
     };
 
     /**
+     * ### GameWindow.reset
+     *
+     * Resets the GameWindow to the initial state
+     *
+     * Clears the frame, header, lock and cache.
+     */
+    GameWindow.prototype.reset = function() {
+        // Remove loaded frame, if one is found.
+        if (this.getFrame()) {
+            this.destroyFrame();
+        }
+
+        // Remove header, if one is found.
+        if (this.getHeader()) {
+            this.destroyHeader();
+        }
+        
+        // Unlock screen, if currently locked.
+        if (this.isScreenLocked()) {
+            this.unlockScreen();
+        }
+
+        this.areLoading = 0;
+
+        // Clear all caches.
+        this.clearCache();
+    };
+
+    /**
      * ### GameWindow.setStateLevel
      *
      * Validates and sets window's state level
@@ -859,7 +888,7 @@
         var header;
         header = this.getHeader();
         if (!header) {
-            throw new Error('GameWindow.clearHeadr: cannot detect header.');
+            throw new Error('GameWindow.clearHeader: cannot detect header.');
         }
         this.headerElement.innerHTML = '';
     };
@@ -1922,7 +1951,7 @@
     /**
      * ### GameWindow.addStandardRecipients
      *
-     * Adds an ALL and a SERVER option to a specified select element.
+     * Adds valid _to_ recipient options to a specified select element.
      *
      * @param {object} toSelector An HTML `<select>` element
      *
@@ -1936,6 +1965,16 @@
         opt = document.createElement('option');
         opt.value = 'ALL';
         opt.appendChild(document.createTextNode('ALL'));
+        toSelector.appendChild(opt);
+
+        opt = document.createElement('option');
+        opt.value = 'CHANNEL';
+        opt.appendChild(document.createTextNode('CHANNEL'));
+        toSelector.appendChild(opt);
+
+        opt = document.createElement('option');
+        opt.value = 'ROOM';
+        opt.appendChild(document.createTextNode('ROOM'));
         toSelector.appendChild(opt);
 
         opt = document.createElement('option');
