@@ -248,7 +248,7 @@
          * Flag that marks whether caching is supported by the browser
          *
          * Caching requires to modify the documentElement.innerHTML property
-         * of the iframe document. This property is read-only in IE < 9.
+         * of the iframe document, which is read-only in IE < 9.
          */
         this.cacheSupported = null;
 
@@ -309,7 +309,7 @@
         /**
          * ### GameWindow.waitScreen
          *
-         * Reference to the _WaitScreen_ widget, if one is appended in the page
+         * Reference to the _WaitScreen_ module
          *
          * @see node.widgets.WaitScreen
          */
@@ -327,7 +327,6 @@
          * @see node.constants.screenLevels
          */
         this.screenState = node.constants.screenLevels.ACTIVE;
-
 
         /**
          * ### GamwWindow.textOnleave
@@ -402,6 +401,19 @@
         else if (this.conf.noEscape === false) {
             this.restoreEscape();
         }
+        
+        if (this.conf.waitScreen !== false) {
+            if (this.waitScreen) {
+                this.waitScreen.destroy();
+                this.waitScreen = null;
+            }
+            this.waitScreen = new node.WaitScreen(this.conf.waitScreen);            
+        }
+        else if (this.waitScreen) {
+            this.waitScreen.destroy();
+            this.waitScreen = null;
+        }
+
         this.setStateLevel('INITIALIZED');
     };
 
@@ -410,9 +422,21 @@
      *
      * Resets the GameWindow to the initial state
      *
-     * Clears the frame, header, lock and cache.
+     * Clears the frame, header, lock, widgets and cache.
+     *
+     * @see Widgets.destroyAll
      */
     GameWindow.prototype.reset = function() {
+        // Unlock screen, if currently locked.
+        if (this.isScreenLocked()) {
+            this.unlockScreen();
+        }
+
+        // Remove widgets, if Widgets exists.
+        if (node.widgets) {
+            node.widgets.destroyAll();
+        }
+
         // Remove loaded frame, if one is found.
         if (this.getFrame()) {
             this.destroyFrame();
@@ -421,11 +445,6 @@
         // Remove header, if one is found.
         if (this.getHeader()) {
             this.destroyHeader();
-        }
-        
-        // Unlock screen, if currently locked.
-        if (this.isScreenLocked()) {
-            this.unlockScreen();
         }
 
         this.areLoading = 0;
@@ -958,13 +977,10 @@
                 this.generateFrame();
             }
 
-            // Adding the WaitScreen.
-            node.widgets.append('WaitScreen');
-
             // Add default CSS.
             if (node.conf.host) {
                 this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/player.css');
+                            node.conf.host + '/stylesheets/nodegame.css');
             }
 
             break;
@@ -1881,6 +1897,158 @@
 })(
     'undefined' !== typeof node ? node : undefined
 );
+/**
+ * # WaitScreen for nodeGame Window
+ * Copyright(c) 2014 Stefano Balietti
+ * MIT Licensed
+ *
+ * Covers the screen with a grey layer and displays a message
+ *
+ * www.nodegame.org
+ * ---
+ */
+
+(function(exports, window) {
+
+    "use strict";
+
+    // Append under window.node.
+    exports.WaitScreen = WaitScreen;
+
+    // ## Meta-data
+
+    WaitScreen.version = '0.7.0';
+    WaitScreen.description = 'Show a standard waiting screen';
+
+    // Helper functions
+
+    function event_REALLY_DONE(text) {
+        text = text || W.waitScreen.text.waiting;
+        if (W.isScreenLocked()) {
+            W.waitScreen.updateText(text);
+        }
+        else {
+            W.lockScreen(text);
+        }
+    }
+
+    function event_STEPPING(text) {
+        text = text || W.waitScreen.text.stepping;
+        if (W.isScreenLocked()) {
+            W.waitScreen.updateText(text);
+        }
+        else {
+            W.lockScreen(text);
+        }
+    }
+     
+    function event_PLAYING() {
+        if (W.isScreenLocked()) {
+            W.unlockScreen();
+        }
+    }
+
+    function event_PAUSED(text) {
+        text = text || W.waitScreen.text.paused;
+        W.lockScreen(text);
+    }
+    
+    function event_RESUMED() {
+        if (W.isScreenLocked()) {
+            W.unlockScreen();
+        }
+    }
+
+    /**
+     * ## WaitScreen constructor
+     *
+     * Instantiates a new WaitScreen object 
+     *
+     * @param {object} options Optional. Configuration options.
+     */
+    function WaitScreen(options) {
+        options = options || {};
+	this.id = options.id || 'ng_waitScreen';
+        this.root = options.root || null;
+
+	this.text = {
+            waiting: options.waitingText ||
+                'Waiting for other players to be done...',
+            stepping: options.steppingText ||
+                'Initializing game step, will be ready soon...',
+            paused: options.pausedText ||
+                'Game is paused. Please wait.'
+        };
+        
+	this.waitingDiv = null;
+        this.enable();
+    }
+    
+    WaitScreen.prototype.lock = function(text) {
+        if (!this.waitingDiv) {
+            if (!this.root) {
+                this.root = W.getFrameRoot() || document.body;
+            }
+	    this.waitingDiv = W.addDiv(this.root, this.id);
+	}
+	if (this.waitingDiv.style.display === 'none') {
+	    this.waitingDiv.style.display = '';
+	}
+	this.waitingDiv.innerHTML = text;
+    };
+
+    WaitScreen.prototype.unlock = function() {
+        if (this.waitingDiv) {
+            if (this.waitingDiv.style.display === '') {
+                this.waitingDiv.style.display = 'none';
+            }
+        }
+    };
+
+    WaitScreen.prototype.updateText = function(text, append) {
+        append = append || false;
+        if ('string' !== typeof text) {
+            throw new TypeError('WaitScreen.updateText: text must be string.');
+        }
+        if (append) {
+            this.waitingDiv.appendChild(document.createTextNode(text));
+        }
+        else {
+            this.waitingDiv.innerHTML = text;
+        }
+    };
+
+    WaitScreen.prototype.enable = function(disable) {
+        if (disable === false || disable === null) {
+            node.off('REALLY_DONE', event_REALLY_DONE);
+            node.off('STEPPING', event_STEPPING);
+            node.off('PLAYING', event_PLAYING);
+            node.off('RESUMED', event_PAUSED);
+            node.off('RESUMED', event_RESUMED);
+        }
+        else {
+            node.on('REALLY_DONE', event_REALLY_DONE);
+            node.on('STEPPING', event_STEPPING);
+            node.on('PLAYING', event_PLAYING);
+            node.on('RESUMED', event_PAUSED);
+            node.on('RESUMED', event_RESUMED);
+        }
+    };
+
+    WaitScreen.prototype.destroy = function() {
+        if (W.isScreenLocked()) {
+            this.unlock();
+        }
+        if (this.waitingDiv) {
+            this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+        }
+    };
+
+})(
+    ('undefined' !== typeof node) ? node : module.parent.exports.node,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window
+);
+
 /**
  * # GameWindow selector module
  * Copyright(c) 2014 Stefano Balietti

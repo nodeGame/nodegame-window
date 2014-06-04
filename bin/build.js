@@ -38,6 +38,7 @@ function build(options) {
         modulesDir + 'ui-behavior.js',
         modulesDir + 'lockScreen.js',
         listDir + 'listeners.js',
+        libDir + 'WaitScreen.js'
     ];
 
     if (!options.bare) {
@@ -57,7 +58,6 @@ function build(options) {
             libDir + 'Table.js',
         ]);
     }
-
 
     console.log("\n");
 
