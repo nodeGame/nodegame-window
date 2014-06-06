@@ -360,6 +360,15 @@
         this.textOnleave = null;
 
         /**
+         * ### GamwWindow.rightClickDisabled
+         *
+         * TRUE, if the right click context menu is disabled
+         *
+         * @see GameWindow.disableRightClick
+         */
+        this.rightClickDisabled = false;
+
+        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -433,6 +442,10 @@
 
         if (this.conf.defaultHeaderPosition) {
             this.defaultHeaderPosition = this.conf.defaultHeaderPosition;
+        }
+
+        if (this.conf.disableRightClick) {
+            this.disableRightClick()
         }
 
         this.setStateLevel('INITIALIZED');
@@ -1089,7 +1102,10 @@
     /**
      * ### GameWindow.initLibs
      *
-     * Specifies the libraries to be loaded automatically in the iframes
+     * Specifies the libraries to be loaded automatically in the iframe
+     *
+     * Multiple calls to _initLibs_ append the new libs to the list.
+     * Deletion must be done manually.
      *
      * This method must be called before any call to GameWindow.loadFrame.
      *
@@ -1101,8 +1117,20 @@
      *   globalLibs.
      */
     GameWindow.prototype.initLibs = function(globalLibs, frameLibs) {
-        this.globalLibs = globalLibs || [];
-        this.frameLibs = frameLibs || {};
+        if (globalLibs && !J.isArray(globalLibs)) {
+            throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
+                                'array or undefined.');
+        }
+        if (frameLibs && 'object' !== typeof framLibs) {
+            throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
+                                'object or undefined.');
+        }
+        if (!globalLibs && !frameLibs) {
+            throw new Error('GameWindow.initLibs: frameLibs and frameLibs ' +
+                            'cannot be both undefined.');
+        }
+        this.globalLibs = this.globalLibs.concat(globalLibs || []);
+        J.mixin(this.frameLibs, frameLibs);
     };
 
     /**
@@ -1566,6 +1594,10 @@
         if (frameName === that.frameName) {
             that.frameWindow = iframe.contentWindow;
             that.frameDocument = that.getIFrameDocument(iframe);
+            // Disable right click in loaded iframe document, if necessary.
+            if (that.rightClickDisabled) {
+                J.disableRightClick(that.frameDocument);
+            }
         }
 
         // (Re-)Inject libraries and reload scripts:
@@ -1672,12 +1704,9 @@
      * @api private
      */
     function injectLibraries(iframe, libs) {
-        var contentDocument;
         var headNode;
         var scriptNode;
         var libIdx, lib;
-
-        contentDocument = W.getIFrameDocument(iframe);
 
         headNode = W.getIFrameAnyChild(iframe);
 
@@ -1701,6 +1730,7 @@
      * @param {number} update The number to add to the counter
      *
      * @see GameWindow.lockedUpdate
+     *
      * @api private
      */
     function updateAreLoading(that, update) {
@@ -1725,6 +1755,8 @@
      *
      * @param {GameWindow} W The current GameWindow object
      * @param {string} W Optional. The previous position of the header
+     *
+     * @api private
      */
     function adaptFrame2HeaderPosition(W, oldHeaderPos) {
         var position;
@@ -1757,6 +1789,7 @@
             break;
         case 'bottom':
             W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
+            // There might be no header yet.
             if (W.headerElement) {
                 W.getFrameRoot().insertBefore(W.headerElement,
                                               W.frameElement.nextSibling);
@@ -1790,6 +1823,7 @@
     "use strict";
 
     var GameWindow = node.GameWindow;
+    var J = node.JSUS;
 
     /**
      * ### GameWindow.noEscape
@@ -1867,6 +1901,38 @@
     GameWindow.prototype.restoreOnleave = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.onbeforeunload = null;
+    };
+
+    /**
+     * ## GameWindow.disableRightClick
+     *
+     * Disables the right click in the main page and in the iframe, if found 
+     *
+     * @see GameWindow.enableRightClick
+     * @see JSUS.disableRightClick
+     */
+    GameWindow.prototype.disableRightClick = function() {
+        if (this.frameElement) {
+            J.disableRightClick(this.getFrameDocument());
+        }
+        J.disableRightClick(document);
+        this.rightClickDisabled = true;
+    };
+
+    /**
+     * ## GameWindow.enableRightClick
+     *
+     * Enables the right click in the main page and in the iframe, if found 
+     *
+     * @see GameWindow.disableRightClick
+     * @see JSUS.enableRightClick
+     */
+    GameWindow.prototype.enableRightClick = function() {
+        if (this.frameElement) {
+             J.enableRightClick(this.getFrameDocument());
+        }
+        J.enableRightClick(document);
+        this.rightClickDisabled = false;
     };
 
 })(
