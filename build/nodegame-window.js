@@ -65,7 +65,7 @@
             iframeWin.removeEventListener('load', completed, false);
             if (cb) {
                 // Some browsers fires onLoad too early.
-                // A small timeout is enough.                
+                // A small timeout is enough.
                 setTimeout(function() { cb(); }, 120);
             }
         }
@@ -228,6 +228,24 @@
         this.headerRoot = null;
 
         /**
+         * ### GameWindow.headerPosition
+         *
+         * The relative position of the header on the screen
+         *
+         * Available positions: 'top', 'bottom', 'left', 'right'
+         *
+         * @see GameWindow.setHeaderPosition
+         */
+        this.headerPosition = null;
+
+        /**
+         * ### GameWindow.defaultHeaderPosition
+         *
+         * The default header position. 'left'.
+         */
+        this.defaultHeaderPosition = 'left';
+
+        /**
          * ### GameWindow.conf
          *
          * Object containing the current configuration
@@ -319,7 +337,7 @@
          *
          * Levels describing whether the user can interact with the frame.
          *
-         * The _screen_ represents all the user can see on screen. 
+         * The _screen_ represents all the user can see on screen.
          * It includes the _frame_ area, but also the _header_.
          *
          * @see node.widgets.WaitScreen
@@ -340,7 +358,7 @@
          * @see GameWindow.promptOnleave
          */
         this.textOnleave = null;
-        
+
         /**
          * ### node.setup.window
          *
@@ -348,7 +366,7 @@
          *
          * @see node.setup
          */
-        node.registerSetup('window', function(conf) {           
+        node.registerSetup('window', function(conf) {
             conf = conf || {};
             if ('undefined' === typeof conf.promptOnleave) {
                 conf.promptOnleave = false;
@@ -400,13 +418,13 @@
         else if (this.conf.noEscape === false) {
             this.restoreEscape();
         }
-        
+
         if (this.conf.waitScreen !== false) {
             if (this.waitScreen) {
                 this.waitScreen.destroy();
                 this.waitScreen = null;
             }
-            this.waitScreen = new node.WaitScreen(this.conf.waitScreen);            
+            this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -619,7 +637,7 @@
                 null;
         }
         return this.frameDocument;
-            
+
     };
 
     /**
@@ -627,7 +645,7 @@
      *
      * Returns a reference to the root element for the iframe
      *
-     * If none is found tries to retrieve and update it using 
+     * If none is found tries to retrieve and update it using
      * _GameWindow.getFrame()_.
      *
      * @return {Element} The root element in the iframe
@@ -690,7 +708,13 @@
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
-        return this.setFrame(iframe, frameName, root);
+        this.setFrame(iframe, frameName, root);
+
+        if (this.frameElement) {
+            adaptFrame2HeaderPosition(this);
+        }
+
+        return iframe;
     };
 
     /**
@@ -699,7 +723,7 @@
      * Sets the new default frame and update other references
      *
      * @param {IFrameElement} iframe. The new default frame.
-     * @param {string} frameName The name of the iframe. 
+     * @param {string} frameName The name of the iframe.
      * @param {Element} root The HTML element to which the iframe is appended.
      * @return {IFrameElement} The new default iframe
      * @see GameWindow.generateFrame
@@ -779,89 +803,98 @@
 
         if (!force && this.headerElement) {
             throw new Error('GameWindow.generateHeader: a header element is ' +
-                            'already existing. It cannot be duplicated.'); 
+                            'already existing. It cannot be duplicated.');
         }
-        
+
         root = root || document.body || document.lastElementChild;
 
         if (!J.isElement(root)) {
             throw new Error('GameWindow.generateHeader: invalid root element.');
         }
-        
+
         headerName = headerName || 'ng_header';
 
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
                             'string.');
         }
-        
+
         if (document.getElementById(headerName)) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
                             'unique.');
         }
-        
+
         header = this.addElement('div', root, headerName);
 
-        this.setHeader(header, headerName, root);
+        // If generateHeader is called after generateFrame, and the default
+        // header position is not bottom, we need to move the header in front.
+        if (this.frameElement && this.defaultHeaderPosition !== 'bottom') {
+            this.getFrameRoot().insertBefore(header, this.frameElement);
+        }
 
-        this.placeHeader('top');
+        this.setHeader(header, headerName, root);
+        this.setHeaderPosition(this.defaultHeaderPosition);
 
         return header;
     };
 
 
     /**
-     * ### GameWindow.placeHeader
+     * ### GameWindow.setHeaderPosition
      *
-     * Place the on a side of the page
+     * Set header's position on the screen.
+     *
+     * Available positions: 'top', 'bottom', 'left', 'right'.
+     *
+     * Positioning of the frame element is also affected, if existing, or if
+     * added later.
      *
      * @see GameWindow.generateHeader
+     * @see GameWindow.headerPosition
+     * @see GameWindow.defaultHeaderPosition
+     * @see adaptFrame2HeaderPosition
      */
-    GameWindow.prototype.placeHeader = function(position) {
-        var validPositions
+    GameWindow.prototype.setHeaderPosition = function(position) {
+        var validPositions, pos, oldPos;
         if ('string' !== typeof position) {
-            throw new TypeError('GameWindow.placeHeader: position must be ' +
-                                'string.');
+            throw new TypeError('GameWindow.setHeaderPosition: position ' +
+                                'must be string.');
         }
-        validPositions = { 
+        pos = position.toLowerCase();
+
+        // Do something only if there is a change in the position.
+        if (this.headerPosition === pos) return;
+
+        // Map: position - css class.
+        validPositions = {
             'top': 'ng_header_position-horizontal-t',
             'bottom': 'ng_header_position-horizontal-b',
             'right': 'ng_header_position-vertical-r',
             'left': 'ng_header_position-vertical-l'
         };
 
-        if ('undefined' === typeof validPositions[position]) {
-            throw new Error('GameWindow.placeHeader: invalid header position: ' +
-                            position  + '.');
+        if ('undefined' === typeof validPositions[pos]) {
+            node.err('GameWindow.setHeaderPosition: invalid header ' +
+                     'position: ' + pos  + '.');
+            return;
         }
         if (!this.headerElement) {
-            throw new Error('GameWindow.placeHeader: headerElement not found.');
-        } 
-
+            throw new Error('GameWindow.setHeaderPosition: headerElement ' +
+                            'not found.');
+        }
 
         W.removeClass(this.headerElement, 'ng_header_position-[a-z\-]*');
-        W.addClass(this.headerElement, validPositions[position]);
+        W.addClass(this.headerElement, validPositions[pos]);
+
+        oldPos = this.headerPosition;
+
+        // Store the new position in a reference variable 
+        // **before** adaptFrame2HeaderPosition is called
+        this.headerPosition = pos;
 
         if (this.frameElement) {
-            W.removeClass(this.frameElement, 'ng_mainframe-header-[a-z\-]*');
-            switch(position) {
-            case 'right':
-            case 'left':
-                W.addClass(this.frameElement, 'ng_mainframe-header-vertical');
-                break;
-            case 'top':                
-                W.addClass(this.frameElement, 'ng_mainframe-header-horizontal');
-                this.getFrameRoot().insertBefore(this.headerElement,
-                                                 this.frameElement);
-                break;
-            case 'bottom':
-                W.addClass(this.frameElement, 'ng_mainframe-header-horizontal');
-                this.headerElement.parentNode.insertBefore(this.frameElement,
-                                                           this.headerElement);
-                break;
-            }
-
-        }        
+            adaptFrame2HeaderPosition(this, oldPos);
+        }
     };
 
     /**
@@ -886,11 +919,11 @@
         if (!J.isElement(root)) {
             throw new Error('GameWindow.setHeader: invalid root element.');
         }
- 
+
         this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
-            
+
         return this.headerElement;
     };
 
@@ -903,12 +936,12 @@
      */
     GameWindow.prototype.getHeader = function() {
         if (!this.headerElement) {
-            this.headerElement = this.headerName ? 
+            this.headerElement = this.headerName ?
                 document.getElementById(this.headerName) : null;
         }
         return this.headerElement;
     };
-    
+
     /**
      * ### GameWindow.getHeaderName
      *
@@ -956,7 +989,7 @@
         this.headerRoot = null;
     };
 
-    /**    
+    /**
      * ### GameWindow.clearHeader
      *
      * Clears the content of the header
@@ -1077,7 +1110,7 @@
      *
      * @param {function} cb Optional. The function to call once the test if
      *   finished. It will be called regardless of success or failure.
-     * @param {string} uri Optional. The URI to test. Defaults,  
+     * @param {string} uri Optional. The URI to test. Defaults,
      *   '/pages/testpage.htm';
      *
      * @see GameWindow.cacheSupported
@@ -1115,7 +1148,7 @@
      * Loads the HTML content of the given URI(s) into the cache
      *
      * If caching is not supported by the browser, the callback will be
-     * executed anyway. 
+     * executed anyway.
      *
      * @param {string|array} uris The URI(s) to cache
      * @param {function} callback Optional. The function to call once the
@@ -1219,7 +1252,7 @@
     GameWindow.prototype.clearCache = function() {
         this.cache = {};
     };
-  
+
     /**
      * ### GameWindow.getElementById
      *
@@ -1318,7 +1351,7 @@
         if (!iframe) {
             throw new Error('GameWindow.loadFrame: no frame found.');
         }
-        
+
         if (!iframeName) {
             throw new Error('GameWindow.loadFrame: frame has no name.');
         }
@@ -1344,7 +1377,7 @@
         // Caching options.
         if (opts.cache) {
             if (opts.cache.loadMode) {
-                
+
                 if (opts.cache.loadMode === 'reload') {
                     loadCache = false;
                 }
@@ -1376,11 +1409,11 @@
             }
         }
 
-        if (this.cacheSupported === null) {            
+        if (this.cacheSupported === null) {
             this.preCacheTest(function() {
                 that.loadFrame(uri, func, opts);
             });
-            return;           
+            return;
         }
 
         if (this.cacheSupported === false) {
@@ -1523,14 +1556,14 @@
             // Load frame from cache:
             iframeDocumentElement.innerHTML = that.cache[uri].contents;
         }
-        
+
         // Update references to frameWindow and frameDocument
         // if this was the frame of the game.
         if (frameName === that.frameName) {
             that.frameWindow = iframe.contentWindow;
             that.frameDocument = that.getIFrameDocument(iframe);
         }
-        
+
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         if (loadCache) {
@@ -1565,11 +1598,11 @@
         var scriptNodes, scriptNode;
 
         contentDocument = W.getIFrameDocument(iframe);
-        
+
         // Old IEs do not have getElementsByClassName.
         scriptNodes = W.getElementsByClassName(contentDocument, 'injectedlib',
                                                'script');
-        
+
         // It was. To check.
         // scriptNodes = contentDocument.getElementsByClassName('injectedlib');
         for (idx = 0; idx < scriptNodes.length; idx++) {
@@ -1676,6 +1709,55 @@
             setTimeout(function() {
                 updateAreLoading.call(that, update);
             }, 300);
+        }
+    }
+
+    /**
+     * ### adaptFrame2HeaderPosition
+     *
+     * Sets a CSS class to the frame element depending on the header position
+     *
+     * The frame element must exists or an error will be thrown.
+     *
+     * @param {GameWindow} W The current GameWindow object
+     * @param {string} W Optional. The previous position of the header
+     */
+    function adaptFrame2HeaderPosition(W, oldHeaderPos) {
+        var position;
+        if (!W.frameElement) {
+            throw new Error('adaptFrame2HeaderPosition: frame not found.');
+        }
+
+        // If no header is found, simulate the 'top' position to better
+        // fit the whole screen.
+        position = W.headerPosition || 'top';
+
+        // When we move from bottom to any other configuration, we need
+        // to move the header before the frame.
+        if (oldHeaderPos === 'bottom' && position !== 'bottom') {
+             W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+        }
+
+        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z\-]*');
+        switch(position) {
+        case 'right':
+        case 'left':
+            W.addClass(W.frameElement, 'ng_mainframe-header-vertical');
+            break;
+        case 'top':
+            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
+            // There might be no header yet.
+            if (W.headerElement) {
+                W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+            }
+            break;
+        case 'bottom':
+            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
+            if (W.headerElement) {
+                W.getFrameRoot().insertBefore(W.headerElement,
+                                              W.frameElement.nextSibling);
+            }
+            break;
         }
     }
 

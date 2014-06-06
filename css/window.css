@@ -17,17 +17,18 @@ body {
 }
 
 iframe#ng_mainframe {
-    height: 100%;
     border: 0;
     padding: 10px;
 }
 
 .ng_mainframe-header-vertical {
+    height: 100%;
     float: left;
     width: 88%;
 }
 
 .ng_mainframe-header-horizontal {
+    height: 88%;
     width: 98%;
     clear: both;
 }
