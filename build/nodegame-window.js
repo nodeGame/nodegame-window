@@ -447,6 +447,9 @@
         if (this.conf.disableRightClick) {
             this.disableRightClick()
         }
+        else if (this.conf.disableRightClick === false) {
+            this.enableRightClick();
+        }
 
         this.setStateLevel('INITIALIZED');
     };
@@ -1004,6 +1007,7 @@
         this.headerElement = null;
         this.headerName = null;
         this.headerRoot = null;
+        this.headerPosition = null;
     };
 
     /**
@@ -1904,7 +1908,7 @@
     };
 
     /**
-     * ## GameWindow.disableRightClick
+     * ### GameWindow.disableRightClick
      *
      * Disables the right click in the main page and in the iframe, if found 
      *
@@ -1920,7 +1924,7 @@
     };
 
     /**
-     * ## GameWindow.enableRightClick
+     * ### GameWindow.enableRightClick
      *
      * Enables the right click in the main page and in the iframe, if found 
      *
