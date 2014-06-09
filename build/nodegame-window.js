@@ -2237,14 +2237,14 @@
             node.off('REALLY_DONE', event_REALLY_DONE);
             node.off('STEPPING', event_STEPPING);
             node.off('PLAYING', event_PLAYING);
-            node.off('RESUMED', event_PAUSED);
+            node.off('PAUSED', event_PAUSED);
             node.off('RESUMED', event_RESUMED);
         }
         else {
             node.on('REALLY_DONE', event_REALLY_DONE);
             node.on('STEPPING', event_STEPPING);
             node.on('PLAYING', event_PLAYING);
-            node.on('RESUMED', event_PAUSED);
+            node.on('PAUSED', event_PAUSED);
             node.on('RESUMED', event_RESUMED);
         }
     };
