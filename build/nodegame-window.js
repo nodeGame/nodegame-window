@@ -2116,7 +2116,7 @@
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a grey layer and displays a message
+ * Covers the screen with a grey layer, disables inputs, and displays a message
  *
  * www.nodegame.org
  * ---
@@ -2136,7 +2136,6 @@
     // Helper functions
 
     var inputTags, len;
-
     inputTags = ['button', 'select', 'textarea', 'input'];
     len = inputTags.length;
 
@@ -2255,6 +2254,8 @@
          * ### WaitScreen.beforePauseText
          *
          * Flag if the screen should stay locked after a RESUMED event
+         *
+         * Contains the value of the innerHTML attribute of the waiting div
          */
         this.beforePauseInnerHTML = null;
 
@@ -2376,13 +2377,12 @@
                 this.waitingDiv.style.display = 'none';
             }
         }
-        // Re-enables all input forms in the page.        
+        // Re-enables all previously locked input forms in the page.        
         i = -1, len = this.lockedInputs.length;
         for ( ; ++i < len ; ) {
             this.lockedInputs[i].removeAttribute('disabled');            
         }
         this.lockedInputs = [];
-
     };
 
     /**
@@ -3630,6 +3630,48 @@
 
     Table.log = node.log;
 
+    // ## Helper Functions
+
+    function insertCell(content, dims, y, z, i, j, h) {
+        //Table.log('content');
+        //Table.log(x + ' ' + y + ' ' + z);
+        //Table.log(i + ' ' + j + ' ' + h);
+        var cell;
+        cell = {};
+        cell[dims[0]] = i; // i always defined
+        cell[dims[1]] = (j) ? y + j : y;
+        cell[dims[2]] = (h) ? z + h : z;
+        cell.content = content;
+        //Table.log(cell);
+        this.insert(new Cell(cell));
+        this.updatePointer(dims[0], cell[dims[0]]);
+        this.updatePointer(dims[1], cell[dims[1]]);
+        this.updatePointer(dims[2], cell[dims[2]]);
+    }
+
+    // Create a cell element (td,th...)
+    // and fill it with the return value of a
+    // render value.
+    function fromCell2TD(cell, el) {
+        var TD, content;
+        if (!cell) return;
+        el = el || 'td';
+        TD = document.createElement(el);
+        content = this.htmlRenderer.render(cell);        
+        TD.appendChild(content);
+        if (cell.className) TD.className = cell.className;
+        return TD;
+    };
+
+    function checkDim123(dims) {
+        var i, len;
+        i = -1, len = dims.length;
+        for ( ; ++i < len ; ) {
+            if ('undefined' === typeof dims[i]) return false;
+        }
+        return true;
+    }
+
     /**
      * Table constructor
      *
@@ -3872,13 +3914,6 @@
         this.footer = this._addSpecial(footer, 'footer');
     };
 
-    Table._checkDim123 = function(dims) {
-        var t = Table.H.slice(0);
-        for (var i=0; i< dims.length; i++) {
-            if (!J.removeElement(dims[i],t)) return false;
-        }
-        return true;
-    };
 
     /**
      * Updates the reference to the foremost element in the table.
@@ -3900,10 +3935,15 @@
     };
 
     Table.prototype._add = function(data, dims, x, y, z) {
+        var cell;
+        var i, lenI, J, lenJ, h, lenH;
+
         if (!data) return false;
+
+        // TODO: check if we need this. Dims could always be x,y,z.
         if (dims) {
-            if (!Table._checkDim123(dims)) {
-                Table.log('Invalid value for dimensions. Accepted only: x,y,z.');
+            if (!checkDim123(dims)) {
+                Table.log('Table._add: invalid dimension found.');
                 return false;
             }
         }
@@ -3911,64 +3951,44 @@
             dims = Table.H;
         }
 
-        var insertCell = function(content) {
-            //Table.log('content');
-            //Table.log(x + ' ' + y + ' ' + z);
-            //Table.log(i + ' ' + j + ' ' + h);
-
-            var cell = {};
-            cell[dims[0]] = i; // i always defined
-            cell[dims[1]] = (j) ? y + j : y;
-            cell[dims[2]] = (h) ? z + h : z;
-            cell.content = content;
-            //Table.log(cell);
-            this.insert(new Cell(cell));
-            this.updatePointer(dims[0], cell[dims[0]]);
-            this.updatePointer(dims[1], cell[dims[1]]);
-            this.updatePointer(dims[2], cell[dims[2]]);
-        };
-
-        // By default, only the second dimension is incremented
+        // By default, only the second dimension is incremented.
         x = x || this.pointers[dims[0]];
         y = y || this.pointers[dims[1]] + 1;
         z = z || this.pointers[dims[2]];
 
         if ('object' !== typeof data) data = [data];
 
-        var cell = null;
+        cell = null;
+
         // Loop Dim1
-        for (var i = 0; i < data.length; i++) {
-            //Table.log('data_i');
-            //Table.log(data[i]);
+        i = -1, lenI = data.length;
+        for ( ; ++i < lenI ; ) {
+            
             if (data[i] instanceof Array) {
-                // Loop Dim2
-                for (var j = 0; j < data[i].length; j++) {
-                    //Table.log(data[i]);
-                    if (data[i][j] instanceof Array) {
-                        //Table.log(data[i][j]);
-                        //Table.log(typeof data[i][j]);
+
+                // Loop Dim2.
+                j = -1,lenJ = data[i].length;
+                for ( ; ++j < lenJ ; ) {
+                  
+                    if (data[i][j] instanceof Array) {                   
                         // Loop Dim3
-                        for (var h = 0; h < data[i][j].length; h++) {
-                            //Table.log('Here h');
-                            insertCell.call(this, data[i][j][h]);
+                        h = -1, lenH = data[i][j].length;
+                        for ( ; ++h < lenH ; ) {
+                            insertCell.call(this, data[i][j][h], dims, y, z, i, j);
                         }
-                        h=0; // reset h
+                        h = 0; // reset h
                     }
                     else {
-                        //Table.log('Here j');
-                        insertCell.call(this, data[i][j]);
+                        insertCell.call(this, data[i][j], dims, y, z, i, j, h);
                     }
                 }
-                j=0; // reset j
+                j = 0; // reset j
             }
             else {
-                //Table.log('Here i');
-                insertCell.call(this, data[i]);
+                insertCell.call(this, data[i], dims, y, z, i);
             }
         }
 
-        //Table.log('After insert');
-        //Table.log(this.db);
 
         // TODO: if coming from addRow or Column this should be done only at the end
         if (this.auto_update) {
@@ -3978,57 +3998,44 @@
     };
 
     Table.prototype.add = function(data, x, y) {
+        var cell, res;
         if (!data) return;
-        var cell = (data instanceof Cell) ? data : new Cell({
+        cell = (data instanceof Cell) ? data : new Cell({
             x: x,
             y: y,
             content: data
         });
-        var result = this.insert(cell);
-
-        if (result) {
+        res = this.insert(cell);
+        if (res) {
             this.updatePointer('x',x);
             this.updatePointer('y',y);
         }
-        return result;
+        return res;
     };
 
+    // TODO: check data properly
     Table.prototype.addColumn = function(data, x, y) {
         if (!data) return false;
         return this._add(data, Table.V, x, y);
     };
 
+    // TODO: check data properly
     Table.prototype.addRow = function(data, x, y) {
         if (!data) return false;
         return this._add(data, Table.H, x, y);
     };
 
-    //Table.prototype.bind = function(dim, property) {
-    //this.binds[property] = dim;
-    //};
 
     // TODO: Only 2D for now
     // TODO: improve algorithm, rewrite
     Table.prototype.parse = function() {
         var TABLE, TR, TD, THEAD, TBODY, TFOOT;
-        var i, trid, f, old_x, old_left;
-        var diff, j;
+        var i, j, len;
+        var trid, f, old_x, old_left;
+        var diff;
 
-        // Create a cell element (td,th...)
-        // and fill it with the return value of a
-        // render value.
-        var fromCell2TD = function(cell, el) {
-            var TD, content;
-            if (!cell) return;
-            el = el || 'td';
-            TD = document.createElement(el);
-            content = this.htmlRenderer.render(cell);
-            //var content = (!J.isNode(c) || !J.isElement(c)) ? document.createTextNode(c) : c;
-            TD.appendChild(content);
-            if (cell.className) TD.className = cell.className;
-            return TD;
-        };
-
+        // TODO: we could find a better way to update a table, instead of
+        // removing and re-inserting everything.
         if (this.table) {
             while (this.table.hasChildNodes()) {
                 this.table.removeChild(this.table.firstChild);
@@ -4045,12 +4052,12 @@
             if (this.left && this.left.length > 0) {
                 TR.appendChild(document.createElement('th'));
             }
-            for (i=0; i < this.header.length; i++) {
+            i = -1, len = this.header.length;
+            for ( ; ++i < len ; ) {
                 TR.appendChild(fromCell2TD.call(this, this.header[i], 'th'));
             }
             THEAD.appendChild(TR);
             TABLE.appendChild(THEAD);
-            i = 0;
         }
 
         // BODY
@@ -4059,19 +4066,21 @@
 
             this.sort(['y','x']); // z to add first
             trid = -1;
+
             // TODO: What happens if the are missing at the beginning ??
             f = this.first();
             old_x = f.x;
             old_left = 0;
 
-            for (i=0; i < this.db.length; i++) {
-                //console.log('INSIDE TBODY LOOP');
-                //console.log(this.id);
+
+            i = -1, len = this.db.length;
+            for ( ; ++i < len ; ) {
+
                 if (trid !== this.db[i].y) {
                     TR = document.createElement('tr');
                     TBODY.appendChild(TR);
                     trid = this.db[i].y;
-                    //Table.log(trid);
+
                     old_x = f.x - 1; // must start exactly from the first
 
                     // Insert left header, if any.
