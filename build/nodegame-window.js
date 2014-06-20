@@ -3235,7 +3235,6 @@
      *  }
      *
      * @param {object} options Optional. Configuration object
-     *
      */
     HTMLRenderer.prototype.init = function(options) {
         options = options || this.options;
@@ -3628,21 +3627,15 @@
     Table.H = ['x', 'y', 'z'];
     Table.V = ['y', 'x', 'z'];
 
-    Table.log = node.log;
-
     // ## Helper Functions
 
     function insertCell(content, dims, y, z, i, j, h) {
-        //Table.log('content');
-        //Table.log(x + ' ' + y + ' ' + z);
-        //Table.log(i + ' ' + j + ' ' + h);
         var cell;
         cell = {};
         cell[dims[0]] = i; // i always defined
         cell[dims[1]] = (j) ? y + j : y;
         cell[dims[2]] = (h) ? z + h : z;
         cell.content = content;
-        //Table.log(cell);
         this.insert(new Cell(cell));
         this.updatePointer(dims[0], cell[dims[0]]);
         this.updatePointer(dims[1], cell[dims[1]]);
@@ -3657,20 +3650,11 @@
         if (!cell) return;
         el = el || 'td';
         TD = document.createElement(el);
-        content = this.htmlRenderer.render(cell);        
+        content = this.htmlRenderer.render(cell);
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
         return TD;
     };
-
-    function checkDim123(dims) {
-        var i, len;
-        i = -1, len = dims.length;
-        for ( ; ++i < len ; ) {
-            if ('undefined' === typeof dims[i]) return false;
-        }
-        return true;
-    }
 
     /**
      * Table constructor
@@ -3682,8 +3666,10 @@
      */
     function Table(options, data) {
         options = options || {};
+
         // Updates indexes on the fly.
         if (!options.update) options.update = {};
+
         if ('undefined' === typeof options.update.indexes) {
             options.update.indexes = true;
         }
@@ -3706,38 +3692,72 @@
             });
         }
 
-        this.defaultDim1 = options.defaultDim1 || 'x';
-        this.defaultDim2 = options.defaultDim2 || 'y';
-        this.defaultDim3 = options.defaultDim3 || 'z';
-
-        this.table = options.table || document.createElement('table');
-        this.id = options.id ||
-            'table_' + Math.round(Math.random() * 1000);
-
-        this.auto_update = 'undefined' !== typeof options.auto_update ?
-            options.auto_update : false;
-
-        // Class for missing cells.
+        /**
+         * ## Table.missing
+         *
+         * Class name for missing cells.
+         *
+         */
         this.missing = options.missing || 'missing';
+
+        /**
+         * ## Table.pointers
+         *
+         * References to last inserted cell coordinates
+         */
         this.pointers = {
             x: options.pointerX || 0,
             y: options.pointerY || 0,
             z: options.pointerZ || 0
         };
 
+        /**
+         * ## Table.header
+         *
+         * Array containing the header elements of the table
+         */
         this.header = [];
+
+        /**
+         * ## Table.footer
+         *
+         * Array containing the footer elements of the table
+         */
         this.footer = [];
 
+        /**
+         * ## Table.left
+         *
+         * Array containing elements to keep on the left border of the table
+         */
         this.left = [];
+
+        /**
+         * ## Table.right
+         *
+         * Array containing elements to keep on the right border of the table
+         */
         this.right = [];
+
+        /**
+         * ## Table.table
+         *
+         * Reference to the HTMLElement Table
+         */
+        this.table = options.table || document.createElement('table');
 
         if ('undefined' !== typeof options.id) {
             this.table.id = options.id;
-            this.id = options.id;
         }
-        if (options.className) {
+
+        if ('undefined' !== typeof options.className) {
             this.table.className = options.className;
         }
+
+
+        // TODO: see if we need it here
+        this.auto_update = 'undefined' !== typeof options.auto_update ?
+            options.auto_update : false;
 
         // Init renderer.
         this.initRenderer(options.render);
@@ -3761,7 +3781,7 @@
             if ('object' === typeof el.content) {
                 tbl = new Table();
                 for (key in el.content) {
-                    if (el.content.hasOwnProperty(key)){
+                    if (el.content.hasOwnProperty(key)) {
                         tbl.addRow([key,el.content[key]]);
                     }
                 }
@@ -3800,89 +3820,6 @@
     };
 
     /**
-     * ## Table.addClass
-     *
-     * Adds a CSS class to each element cell in the table
-     *
-     * @param {string|array} The name of the class/classes.
-     *
-     * return {Table} This instance for chaining.
-     */
-    Table.prototype.addClass = function(className) {
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.addClass: className must be string or ' +
-                                'array.');
-        }
-        if (J.isArray(className)) {
-            className = className.join(' ');
-        }
-
-        this.each(function(el) {
-            W.addClass(el, className);
-        });
-
-        if (this.auto_update) {
-            this.parse();
-        }
-
-        return this;
-    };
-
-    /**
-     * ## Table.removeClass
-     *
-     * Removes a CSS class from each element cell in the table
-     *
-     * @param {string|array} The name of the class/classes.
-     *
-     * return {Table} This instance for chaining.
-     */
-    Table.prototype.removeClass = function(className) {
-        var func;
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.removeClass: className must be string ' +
-                                'or array.');
-        }
-
-        if (J.isArray(className)) {
-            func = function(el, className) {
-                for (var i = 0; i < className.length; i++) {
-                    W.removeClass(el, className[i]);
-                }
-            };
-        }
-        else {
-            func = W.removeClass;
-        }
-
-        this.each(function(el) {
-            func.call(this, el, className);
-        });
-
-        if (this.auto_update) {
-            this.parse();
-        }
-
-        return this;
-    };
-
-    
-    Table.prototype._addSpecial = function(data, type) {
-        var out, i;
-        if (!data) return;
-        type = type || 'header';
-        if ('object' !== typeof data) {
-            return {content: data, type: type};
-        }
-
-        out = [];
-        for (i = 0; i < data.length; i++) {
-            out.push({content: data[i], type: type});
-        }
-        return out;
-    };
-
-    /**
      * ## Table.setHeader
      *
      * Set the headers for the table
@@ -3914,101 +3851,123 @@
         this.footer = this._addSpecial(footer, 'footer');
     };
 
-
     /**
-     * Updates the reference to the foremost element in the table.
+     * Table.updatePointer
      *
-     * @param
+     * Updates the reference to the foremost element in the table
+     *
+     * The pointer is updated only if the suggested value is larger than
+     * the current one
+     *
+     * @param {string} The name of pointer ('x', 'y', 'z')
+     * @param {number} The new value for the pointer
+     * @return {boolean|number} The updated value of the pointer, or FALSE,
+     *   if an invalid pointer was selected
+     *
+     * @see Table.pointers
      */
     Table.prototype.updatePointer = function(pointer, value) {
-        if (!pointer) return false;
-        if (!J.in_array(pointer, Table.H)) {
-            Table.log('Cannot update invalid pointer: ' + pointer, 'ERR');
+        if ('undefined' === typeof this.pointers[pointer]) {
+            node.err('Table.updatePointer: invalid pointer: ' + pointer);
             return false;
         }
 
         if (value > this.pointers[pointer]) {
             this.pointers[pointer] = value;
-            return true;
         }
-
+        return this.pointers[pointer];
     };
 
+    Table.prototype._addSpecial = function(data, type) {
+        var out, i;
+        if (!data) return;
+        type = type || 'header';
+        if ('object' !== typeof data) {
+            return {content: data, type: type};
+        }
+
+        out = [];
+        for (i = 0; i < data.length; i++) {
+            out.push({content: data[i], type: type});
+        }
+        return out;
+    };
+
+    /**
+     * ## Table._add
+     *
+     *  
+     * @api private
+     */
     Table.prototype._add = function(data, dims, x, y, z) {
         var cell;
-        var i, lenI, J, lenJ, h, lenH;
-
-        if (!data) return false;
-
-        // TODO: check if we need this. Dims could always be x,y,z.
-        if (dims) {
-            if (!checkDim123(dims)) {
-                Table.log('Table._add: invalid dimension found.');
-                return false;
-            }
-        }
-        else {
-            dims = Table.H;
-        }
+        var i, lenI, j, lenJ, h, lenH;
 
         // By default, only the second dimension is incremented.
         x = x || this.pointers[dims[0]];
         y = y || this.pointers[dims[1]] + 1;
         z = z || this.pointers[dims[2]];
 
-        if ('object' !== typeof data) data = [data];
+        if (!J.isArray(data)) data = [data];
 
         cell = null;
 
-        // Loop Dim1
+        // Loop Dim 1.
         i = -1, lenI = data.length;
         for ( ; ++i < lenI ; ) {
-            
-            if (data[i] instanceof Array) {
 
-                // Loop Dim2.
-                j = -1,lenJ = data[i].length;
+            if (!J.isArray(data[i])) {
+                 insertCell.call(this, data[i], dims, y, z, i);
+            }
+            else {
+                
+                // Loop Dim 2.
+                j = -1, lenJ = data[i].length;
                 for ( ; ++j < lenJ ; ) {
-                  
-                    if (data[i][j] instanceof Array) {                   
-                        // Loop Dim3
+
+                    if (!J.isArray(data[i][j])) {
+                        insertCell.call(this, data[i][j], dims, y, z, i, j, h);
+                    }
+                    else {
+                        // Loop Dim 3.
                         h = -1, lenH = data[i][j].length;
                         for ( ; ++h < lenH ; ) {
                             insertCell.call(this, data[i][j][h], dims, y, z, i, j);
                         }
-                        h = 0; // reset h
-                    }
-                    else {
-                        insertCell.call(this, data[i][j], dims, y, z, i, j, h);
+                        // Reset h.
+                        h = 0;
                     }
                 }
-                j = 0; // reset j
-            }
-            else {
-                insertCell.call(this, data[i], dims, y, z, i);
+                // Reset j.
+                j = 0;
             }
         }
 
-
-        // TODO: if coming from addRow or Column this should be done only at the end
         if (this.auto_update) {
             this.parse(true);
         }
 
     };
 
-    Table.prototype.add = function(data, x, y) {
+    /**
+     * ## Table.add
+     *
+     * Adds a single cell to the table
+     *
+     * @param {Cell|object} content The content of the cell or Cell object 
+     */
+    Table.prototype.add = function(content, x, y) {
         var cell, res;
-        if (!data) return;
-        cell = (data instanceof Cell) ? data : new Cell({
+        if (!content) return;
+        cell = (content instanceof Cell) ? content : new Cell({
             x: x,
             y: y,
-            content: data
+            content: content
         });
         res = this.insert(cell);
         if (res) {
-            this.updatePointer('x',x);
-            this.updatePointer('y',y);
+            this.updatePointer('x', x);
+            this.updatePointer('y', y);
         }
         return res;
     };
@@ -4160,18 +4119,90 @@
         }
     };
 
-    // Cell Class
+
+
+    /**
+     * ## Table.addClass
+     *
+     * Adds a CSS class to each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.addClass = function(className) {
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.addClass: className must be string or ' +
+                                'array.');
+        }
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+
+        this.each(function(el) {
+            W.addClass(el, className);
+        });
+
+        if (this.auto_update) {
+            this.parse();
+        }
+
+        return this;
+    };
+
+    /**
+     * ## Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.removeClass = function(className) {
+        var func;
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.removeClass: className must be string ' +
+                                'or array.');
+        }
+
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
+                }
+            };
+        }
+        else {
+            func = W.removeClass;
+        }
+
+        this.each(function(el) {
+            func.call(this, el, className);
+        });
+
+        if (this.auto_update) {
+            this.parse();
+        }
+
+        return this;
+    };
+
+
+    // # Cell Class
+
     Cell.prototype = new Entity();
     Cell.prototype.constructor = Cell;
 
     /**
-     * ## Cell.
+     * ## Cell constructor
      *
-     * Creates a new Cell
+     * Creates a new Table Cell
      *
      * @param {object} cell An object containing the coordinates in the table
      *
      * @see Entity
+     * @see Table
      */
     function Cell(cell) {
         Entity.call(this, cell);
