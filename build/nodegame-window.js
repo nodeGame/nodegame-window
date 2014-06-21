@@ -3624,19 +3624,21 @@
     Table.prototype = new NDDB();
     Table.prototype.constructor = Table;
 
-    Table.H = ['x', 'y'];
-    Table.V = ['y', 'x'];
-
     // ## Helper Functions
 
-    // Create a cell element (td,th...)
-    // and fill it with the return value of a
-    // render value.
-    function fromCell2TD(cell, el){
+    /**
+     * ## fromCell2TD
+     *
+     * Create a cell element (td, th, etc.) and renders its content
+     *
+     * @param {Cell} cell The cell to transform in element
+     * @param {string} tagName The name of the tag. Defaults, 'td'
+     */
+    function fromCell2TD(cell, tagName) {
         var TD, content;
         if (!cell) return;
-        el = el || 'td';
-        TD = document.createElement(el);
+        tagName = tagName || 'td';
+        TD = document.createElement(tagName);
         content = this.htmlRenderer.render(cell);
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
@@ -3742,8 +3744,8 @@
 
 
         // TODO: see if we need it here
-        this.auto_update = 'undefined' !== typeof options.auto_update ?
-            options.auto_update : false;
+        this.autoParse = 'undefined' !== typeof options.autoParse ?
+            options.autoParse : false;
 
         // Init renderer.
         this.initRenderer(options.render);
@@ -3752,7 +3754,10 @@
     /**
      * Table.initRenderer
      *
-     * Inits the `HTMLRenderer` object and adds a renderer for objects.
+     * Creates the `HTMLRenderer` object and adds a renderer for objects.
+     *
+     * Every cell in the table will be rendered according to the criteria
+     * added to the renderer object
      *
      * @param {object} options Optional. Configuration for the renderer
      *
@@ -3808,31 +3813,35 @@
     /**
      * ## Table.setHeader
      *
-     * Set the headers for the table
+     * Sets the names of the header elements on top of the table
      *
-     * @param {string|array} Array of strings representing the header
+     * @param {string|array} Array of strings representing the names
+     *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
         this.header = this._addSpecial(header, 'header');
     };
 
-    Table.prototype.add2Header = function(header) {
-        this.header = this.header.concat(this._addSpecial(header));
-    };
-
+    /**
+     * ## Table.setLeft
+     *
+     * Sets the element of a column that will be added to the left of the table
+     *
+     * @param {string|array} Array of strings representing the names
+     *   of the left elements
+     */
     Table.prototype.setLeft = function(left) {
         this.left = this._addSpecial(left, 'left');
     };
 
-    Table.prototype.add2Left = function(left) {
-        this.left = this.left.concat(this._addSpecial(left, 'left'));
-    };
-
-    // TODO: setRight
-    //Table.prototype.setRight = function(left) {
-    //  this.right = this._addSpecial(left, 'right');
-    //};
-
+    /**
+     * ## Table.setFooter
+     *
+     * Sets the names of the footer elements at the bottom of the table
+     *
+     * @param {string|array} Array of strings representing the names
+     *   of the footer elements
+     */
     Table.prototype.setFooter = function(footer) {
         this.footer = this._addSpecial(footer, 'footer');
     };
@@ -3843,7 +3852,7 @@
      * Updates the reference to the foremost element in the table
      *
      * The pointer is updated only if the suggested value is larger than
-     * the current one
+     * the current one.
      *
      * @param {string} The name of pointer ('x', 'y')
      * @param {number} The new value for the pointer
@@ -3925,8 +3934,8 @@
             }
         }
 
-        if (this.auto_update) {
-            this.parse(true);
+        if (this.autoParse) {
+            this.parse();
         }
 
     };
@@ -3986,109 +3995,8 @@
     Table.prototype.getCurrPointer = function(dim, value) {
         if ('undefined' !== typeof value) return value;
         return this.pointers[dim] === null ? 0 : this.pointers[dim];
-    };   
-    
-    // TODO: improve algorithm, rewrite
-    Table.prototype.parse = function() {
-        var TABLE, TR, TD, THEAD, TBODY, TFOOT;
-        var i, j, len;
-        var trid, f, old_x, old_left;
-        var diff;
+    };       
 
-        // TODO: we could find a better way to update a table, instead of
-        // removing and re-inserting everything.
-        if (this.table) {
-            while (this.table.hasChildNodes()) {
-                this.table.removeChild(this.table.firstChild);
-            }
-        }
-
-        TABLE = this.table;
-
-        // HEADER
-        if (this.header && this.header.length > 0) {
-            THEAD = document.createElement('thead');
-            TR = document.createElement('tr');
-            // Add an empty cell to balance the left header column.
-            if (this.left && this.left.length > 0) {
-                TR.appendChild(document.createElement('th'));
-            }
-            i = -1, len = this.header.length;
-            for ( ; ++i < len ; ) {
-                TR.appendChild(fromCell2TD.call(this, this.header[i], 'th'));
-            }
-            THEAD.appendChild(TR);
-            TABLE.appendChild(THEAD);
-        }
-
-        // BODY
-        if (this.size()) {
-            TBODY = document.createElement('tbody');
-
-            this.sort(['x','y']);
-
-            // Forces to create a new TR element.
-            trid = -1;
-
-            // TODO: What happens if the are missing at the beginning ??
-            f = this.first();
-            old_x = f.x;
-            old_left = 0;
-
-
-            i = -1, len = this.db.length;
-            for ( ; ++i < len ; ) {
-
-                if (trid !== this.db[i].x) {
-                    TR = document.createElement('tr');
-                    TBODY.appendChild(TR);
-
-                    // Keep a reference to current TR idx.
-                    trid = this.db[i].x;
-
-                    old_x = f.x - 1; // must start exactly from the first
-
-                    // Insert left header, if any.
-                    if (this.left && this.left.length) {
-                        TD = document.createElement('td');
-                        //TD.className = this.missing;
-                        TR.appendChild(fromCell2TD.call(this, this.left[old_left]));
-                        old_left++;
-                    }
-                }
-
-                // Insert missing cells.
-                if (this.db[i].x > old_x + 1) {
-                    diff = this.db[i].x - (old_x + 1);
-                    for (j = 0; j < diff; j++ ) {
-                        TD = document.createElement('td');
-                        TD.className = this.missing;
-                        TR.appendChild(TD);
-                    }
-                }
-                // Normal Insert.
-                TR.appendChild(fromCell2TD.call(this, this.db[i]));
-
-                // Update old refs.
-                old_x = this.db[i].x;
-            }
-            TABLE.appendChild(TBODY);
-        }
-
-
-        // FOOTER.
-        if (this.footer && this.footer.length > 0) {
-            TFOOT = document.createElement('tfoot');
-            TR = document.createElement('tr');
-            for (i=0; i < this.header.length; i++) {
-                TR.appendChild(fromCell2TD.call(this, this.footer[i]));
-            }
-            TFOOT.appendChild(TR);
-            TABLE.appendChild(TFOOT);
-        }
-
-        return TABLE;
-    };
   // TODO: improve algorithm, rewrite
     Table.prototype.parse = function() {
         var TABLE, TR, TD, THEAD, TBODY, TFOOT;
@@ -4107,11 +4015,11 @@
         TABLE = this.table;
 
         // HEADER
-        if (this.header && this.header.length > 0) {
+        if (this.header && this.header.length) {
             THEAD = document.createElement('thead');
             TR = document.createElement('tr');
             // Add an empty cell to balance the left header column.
-            if (this.left && this.left.length > 0) {
+            if (this.left && this.left.length) {
                 TR.appendChild(document.createElement('th'));
             }
             i = -1, len = this.header.length;
@@ -4178,10 +4086,19 @@
 
 
         // FOOTER.
-        if (this.footer && this.footer.length > 0) {
+        if (this.footer && this.footer.length) {
             TFOOT = document.createElement('tfoot');
             TR = document.createElement('tr');
-            for (i=0; i < this.header.length; i++) {
+
+            
+            if (this.header && this.header.length) {
+                TD = document.createElement('td');
+                TD.className = this.missing;
+                TR.appendChild(TD);
+            }
+
+            i = -1, len = this.footer.length;
+            for ( ; ++i < len ; ) {
                 TR.appendChild(fromCell2TD.call(this, this.footer[i]));
             }
             TFOOT.appendChild(TR);
@@ -4249,7 +4166,7 @@
             W.addClass(el, className);
         });
 
-        if (this.auto_update) {
+        if (this.autoParse) {
             this.parse();
         }
 
@@ -4287,7 +4204,7 @@
             func.call(this, el, className);
         });
 
-        if (this.auto_update) {
+        if (this.autoParse) {
             this.parse();
         }
 
@@ -4311,10 +4228,22 @@
      * @see Table
      */
     function Cell(cell) {
+        // Adds property: className and content.
         Entity.call(this, cell);
-        this.x = ('undefined' !== typeof cell.x) ? cell.x : null;
-        this.y = ('undefined' !== typeof cell.y) ? cell.y : null;
-        this.z = ('undefined' !== typeof cell.z) ? cell.z : null;
+        
+        /**
+         * ## Cell.x
+         *
+         * The row number 
+         */
+        this.x = 'undefined' !== typeof cell.x ? cell.x : null;
+
+        /**
+         * ## Cell.y
+         *
+         * The column number 
+         */
+        this.y = 'undefined' !== typeof cell.y ? cell.y : null;
     }
 
 })(
