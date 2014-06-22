@@ -3661,8 +3661,8 @@
      *
      * Parses an array of data and returns an array of cells
      *
-     * @param {array} data The array of cells to add
-     * @return {array}
+     * @param {array} data Array containing data to transform into cells
+     * @return {array} out The array of cells
      */
     function addSpecialCells(data) {
         var out, i, len;
@@ -3673,7 +3673,6 @@
         }
         return out;
     };
-
 
     /**
      * ## Table constructor
@@ -3885,7 +3884,6 @@
         if ('number' !== typeof row) {
             throw new TypeError('Table.getTr: row must be number.');
         }
-
         cell = this.get(row, 0);
         if (!cell) return false;
         return cell.HTMLElement.parentNode;
@@ -3914,7 +3912,7 @@
      */
     Table.prototype.setLeft = function(left) {
         if (!validateInput('setLeft', left, null, null, true)) return;
-        this.left =  addSpecialCells(left);
+        this.left = addSpecialCells(left);
     };
 
     /**
@@ -3927,7 +3925,7 @@
      */
     Table.prototype.setFooter = function(footer) {
         if (!validateInput('setFooter', footer, null, null, true)) return;
-        this.footer =  addSpecialCells(footer);
+        this.footer = addSpecialCells(footer);
     };
 
     /**
