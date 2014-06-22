@@ -3624,29 +3624,59 @@
     Table.prototype = new NDDB();
     Table.prototype.constructor = Table;
 
-    // ## Helper Functions
+    // ## Helper functions
 
     /**
-     * ## fromCell2TD
+     * ## validateInput
      *
-     * Create a cell element (td, th, etc.) and renders its content
+     * Validates user input and throws an error if input is not correct
      *
-     * @param {Cell} cell The cell to transform in element
-     * @param {string} tagName The name of the tag. Defaults, 'td'
+     * @param {string} method The name of the method validating the input
+     * @param {mixed} data The data that will be inserted in the database
+     * @param {number} x Optional. The row index
+     * @param {number} y Optional. The column index
+     * @param {boolean} dataArray TRUE, if data should be an array
+     * @return {boolean} TRUE, if input passes validation
      */
-    function fromCell2TD(cell, tagName) {
-        var TD, content;
-        if (!cell) return;
-        tagName = tagName || 'td';
-        TD = document.createElement(tagName);
-        content = this.htmlRenderer.render(cell);
-        TD.appendChild(content);
-        if (cell.className) TD.className = cell.className;
-        return TD;
+    function validateInput(method, data, x, y, dataArray) {
+
+        if (x && 'number' !== typeof x) {
+            throw new TypeError('Table.' + method + ': x must be number or ' +
+                                'undefined.');
+        }
+        if (y && 'number' !== typeof y) {
+            throw new TypeError('Table.' + method + ': y must be number or ' +
+                                'undefined.');
+        }
+
+        if (dataArray && !J.isArray(data)) {
+            throw new TypeError('Table.' + method + ': data must be array.');
+        }
+
+        return true;
     }
 
     /**
-     * Table constructor
+     * ## addSpecialCells
+     *
+     * Parses an array of data and returns an array of cells
+     *
+     * @param {array} data The array of cells to add
+     * @return {array}
+     */
+    function addSpecialCells(data) {
+        var out, i, len;
+        out = [];
+        i = -1, len = data.length;
+        for ( ; ++i < len ; ) {
+            out.push({content: data[i]});
+        }
+        return out;
+    };
+
+
+    /**
+     * ## Table constructor
      *
      * Creates a new Table object
      *
@@ -3682,14 +3712,6 @@
         }
 
         /**
-         * ## Table.missing
-         *
-         * Class name for missing cells.
-         *
-         */
-        this.missing = options.missing || 'missing';
-
-        /**
          * ## Table.pointers
          *
          * References to last inserted cell coordinates
@@ -3721,13 +3743,6 @@
         this.left = [];
 
         /**
-         * ## Table.right
-         *
-         * Array containing elements to keep on the right border of the table
-         */
-        this.right = [];
-
-        /**
          * ## Table.table
          *
          * Reference to the HTMLElement Table
@@ -3742,8 +3757,23 @@
             this.table.className = options.className;
         }
 
+        /**
+         * ## Table.missingClassName
+         *
+         * Class name for "missing" cells
+         *
+         * "Missing" cells are cells that are added automatically to complete
+         * the table because one or more cells have been added with higher
+         * row and column indexes.
+         */
+        this.missingClassName = options.missingClassName || 'missing';
 
-        // TODO: see if we need it here
+        /**
+         * ## Table.autoParse
+         *
+         * If TRUE, whenever a new cell is added the table is updated.
+         * Defaults, FALSE.
+         */
         this.autoParse = 'undefined' !== typeof options.autoParse ?
             options.autoParse : false;
 
@@ -3782,6 +3812,33 @@
     };
 
     /**
+     * ### Table.renderCell
+     *
+     * Create a cell element (td, th, etc.) and renders its content
+     *
+     * It also adds an internal reference to the newly created TD/TH element
+     *
+     * @param {Cell} cell The cell to transform in element
+     * @param {string} tagName The name of the tag. Defaults, 'td'
+     * @return {HTMLElement} The newly created HTML Element (TD/TH)
+     *
+     * @see Table.htmlRenderer
+     * @see Cell
+     */
+    Table.prototype.renderCell = function(cell, tagName) {
+        var TD, content;
+        if (!cell) return;
+        tagName = tagName || 'td';
+        TD = document.createElement(tagName);
+        content = this.htmlRenderer.render(cell);
+        TD.appendChild(content);
+        if (cell.className) TD.className = cell.className;
+        // Adds a reference inside the cell.
+        cell.HTMLElement = TD;
+        return TD;
+    };
+
+    /**
      * Table.get
      *
      * Returns the element at row column (x,y)
@@ -3811,6 +3868,30 @@
     };
 
     /**
+     * Table.getTR
+     *
+     * Returns the element at row column (x,y)
+     *
+     * @param {number} row The row number
+     * @param {number} col The column number
+     * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
+     * cannot be found.
+     *
+     * @see HTMLRenderer
+     * @see HTMLRenderer.addRenderer
+     */
+    Table.prototype.getTR = function(row) {
+        var cell;
+        if ('number' !== typeof row) {
+            throw new TypeError('Table.getTr: row must be number.');
+        }
+
+        cell = this.get(row, 0);
+        if (!cell) return false;
+        return cell.HTMLElement.parentNode;
+    };
+
+    /**
      * ## Table.setHeader
      *
      * Sets the names of the header elements on top of the table
@@ -3819,7 +3900,8 @@
      *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
-        this.header = this._addSpecial(header, 'header');
+        if (!validateInput('setHeader', header, null, null, true)) return;
+        this.header = addSpecialCells(header);
     };
 
     /**
@@ -3831,7 +3913,8 @@
      *   of the left elements
      */
     Table.prototype.setLeft = function(left) {
-        this.left = this._addSpecial(left, 'left');
+        if (!validateInput('setLeft', left, null, null, true)) return;
+        this.left =  addSpecialCells(left);
     };
 
     /**
@@ -3843,7 +3926,8 @@
      *   of the footer elements
      */
     Table.prototype.setFooter = function(footer) {
-        this.footer = this._addSpecial(footer, 'footer');
+        if (!validateInput('setFooter', footer, null, null, true)) return;
+        this.footer =  addSpecialCells(footer);
     };
 
     /**
@@ -3866,37 +3950,28 @@
             node.err('Table.updatePointer: invalid pointer: ' + pointer);
             return false;
         }
-
         if (this.pointers[pointer] === null || value > this.pointers[pointer]) {
             this.pointers[pointer] = value;
         }
         return this.pointers[pointer];
     };
 
-    Table.prototype._addSpecial = function(data, type) {
-        var out, i;
-        if (!data) return;
-        type = type || 'header';
-        if ('object' !== typeof data) {
-            return {content: data, type: type};
-        }
-
-        out = [];
-        for (i = 0; i < data.length; i++) {
-            out.push({content: data[i], type: type});
-        }
-        return out;
-    };
-
     /**
      * ## Table.addMultiple
      *
+     * Primitive to add multiple cells in column or row form
      *
-     * @api private
+     * @param {array} data The cells to add
+     * @param {string} dim The dimension of followed by the insertion:
+     *   'y' inserts as a row, and 'x' inserts as a column.
+     * @param {number} x Optional. The row at which to start the insertion.
+     *   Defaults, the current x pointer.
+     * @param {number} y Optional. The column at which to start the insertion
+     *   Defaults, the current y pointer.
      */
     Table.prototype.addMultiple = function(data, dim, x, y) {
         var i, lenI, j, lenJ;
-
+        if (!validateInput('addMultiple', data, x, y)) return;
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.addMultiple: dim must be a valid ' +
@@ -3937,7 +4012,6 @@
         if (this.autoParse) {
             this.parse();
         }
-
     };
 
     /**
@@ -3949,20 +4023,20 @@
      */
     Table.prototype.add = function(content, x, y, dim) {
         var cell, x, y;
-        if (!content) return;
+        if (!validateInput('addData', content, x, y)) return;
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.add: dim must be a valid string ' +
                                 '(x, y) or undefined.');
         }
         dim = dim || 'x';
-        
+
         // Horizontal increment: dim === y.
-        x = dim === 'y' ? 
+        x = dim === 'y' ?
             this.getCurrPointer('x', x) : this.getNextPointer('x', x);
         y = dim === 'y' ?
             this.getNextPointer('y', y) : this.getCurrPointer('y', y);
-        
+
         cell = new Cell({
             x: x,
             y: y,
@@ -3975,29 +4049,77 @@
         this.updatePointer('y', y);
     };
 
-    // TODO: check data properly
+    /**
+     * ### Table.addColumn
+     *
+     * Adds a new column into the table
+     *
+     * @param {array} data The array of data to add in column form
+     * @param {number} x Optional. The row to which the column will be added.
+     *   Defaults, row 0.
+     * @param {number} y Optional. The column next to which the new column
+     *   will be added. Defaults, the last column in the table.
+     */
     Table.prototype.addColumn = function(data, x, y) {
-        if (!data) return false;
+        if (!validateInput('addColumn', data, x, y)) return;
         return this.addMultiple(data, 'y', x || 0, this.getNextPointer('y', y));
     };
 
-    // TODO: check data properly
+    /**
+     * ### Table.addRow
+     *
+     * Adds a new rown into the table
+     *
+     * @param {array} data The array of data to add in row form
+     * @param {number} x Optional. The row index at which the new row will be
+     *   added. Defaults, after the last row.
+     * @param {number} y Optional. The column next to which the new row
+     *   will be added. Defaults, column 0.
+     */
     Table.prototype.addRow = function(data, x, y) {
-        if (!data) return false;
+        if (!validateInput('addRow', data, x, y)) return;
         return this.addMultiple(data, 'x', this.getNextPointer('x', x), y || 0);
     };
 
+    /**
+     * ### Table.getNextPointer
+     *
+     * Returns the value of the pointer plus 1 for the requested dimension (x,y)
+     *
+     * @param {string} dim The dimension x or y
+     * @param {value} value Optional. If set, returns this value
+     * @return {number} The requested pointer
+     */
     Table.prototype.getNextPointer = function(dim, value) {
         if ('undefined' !== typeof value) return value;
         return this.pointers[dim] === null ? 0 : this.pointers[dim] + 1;
     };
 
+    /**
+     * ### Table.getCurrPointer
+     *
+     * Returns the value of the pointer for the requested dimension (x,y)
+     *
+     * @param {string} dim The dimension x or y
+     * @param {value} value Optional. If set, returns this value
+     * @return {number} The requested pointer
+     */
     Table.prototype.getCurrPointer = function(dim, value) {
         if ('undefined' !== typeof value) return value;
         return this.pointers[dim] === null ? 0 : this.pointers[dim];
-    };       
+    };
 
-  // TODO: improve algorithm, rewrite
+    /**
+     * ## Table.parse
+     *
+     * Reads cells currently in database and builds up an HTML table
+     *
+     * It destroys the existing table, before parsing the database again.
+     *
+     * @see Table.db
+     * @see Table.table
+     * @see Cell
+     */
     Table.prototype.parse = function() {
         var TABLE, TR, TD, THEAD, TBODY, TFOOT;
         var i, j, len;
@@ -4006,10 +4128,12 @@
 
         // TODO: we could find a better way to update a table, instead of
         // removing and re-inserting everything.
-        if (this.table) {
-            while (this.table.hasChildNodes()) {
-                this.table.removeChild(this.table.firstChild);
-            }
+        if (this.table && this.table.children) {
+            this.table.innerHTML = '';
+            // TODO: which one is faster?
+            // while (this.table.hasChildNodes()) {
+            //     this.table.removeChild(this.table.firstChild);
+            // }
         }
 
         TABLE = this.table;
@@ -4018,13 +4142,14 @@
         if (this.header && this.header.length) {
             THEAD = document.createElement('thead');
             TR = document.createElement('tr');
+
             // Add an empty cell to balance the left header column.
             if (this.left && this.left.length) {
                 TR.appendChild(document.createElement('th'));
             }
             i = -1, len = this.header.length;
             for ( ; ++i < len ; ) {
-                TR.appendChild(fromCell2TD.call(this, this.header[i], 'th'));
+                TR.appendChild(this.renderCell(this.header[i], 'th'));
             }
             THEAD.appendChild(TR);
             TABLE.appendChild(THEAD);
@@ -4061,7 +4186,7 @@
                     if (this.left && this.left.length) {
                         TD = document.createElement('td');
                         //TD.className = this.missing;
-                        TR.appendChild(fromCell2TD.call(this, this.left[old_left]));
+                        TR.appendChild(this.renderCell(this.left[old_left]));
                         old_left++;
                     }
                 }
@@ -4071,12 +4196,12 @@
                     diff = this.db[i].y - (old_y + 1);
                     for (j = 0; j < diff; j++ ) {
                         TD = document.createElement('td');
-                        TD.className = this.missing;
+                        TD.className = this.missingClassName;
                         TR.appendChild(TD);
                     }
                 }
                 // Normal Insert.
-                TR.appendChild(fromCell2TD.call(this, this.db[i]));
+                TR.appendChild(this.renderCell(this.db[i]));
 
                 // Update old refs.
                 old_y = this.db[i].y;
@@ -4090,16 +4215,15 @@
             TFOOT = document.createElement('tfoot');
             TR = document.createElement('tr');
 
-            
+
             if (this.header && this.header.length) {
                 TD = document.createElement('td');
-                TD.className = this.missing;
                 TR.appendChild(TD);
             }
 
             i = -1, len = this.footer.length;
             for ( ; ++i < len ; ) {
-                TR.appendChild(fromCell2TD.call(this, this.footer[i]));
+                TR.appendChild(this.renderCell(this.footer[i]));
             }
             TFOOT.appendChild(TR);
             TABLE.appendChild(TFOOT);
@@ -4142,76 +4266,6 @@
         }
     };
 
-
-
-    /**
-     * ## Table.addClass
-     *
-     * Adds a CSS class to each element cell in the table
-     *
-     * @param {string|array} The name of the class/classes.
-     *
-     * return {Table} This instance for chaining.
-     */
-    Table.prototype.addClass = function(className) {
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.addClass: className must be string or ' +
-                                'array.');
-        }
-        if (J.isArray(className)) {
-            className = className.join(' ');
-        }
-
-        this.each(function(el) {
-            W.addClass(el, className);
-        });
-
-        if (this.autoParse) {
-            this.parse();
-        }
-
-        return this;
-    };
-
-    /**
-     * ## Table.removeClass
-     *
-     * Removes a CSS class from each element cell in the table
-     *
-     * @param {string|array} The name of the class/classes.
-     *
-     * return {Table} This instance for chaining.
-     */
-    Table.prototype.removeClass = function(className) {
-        var func;
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.removeClass: className must be string ' +
-                                'or array.');
-        }
-
-        if (J.isArray(className)) {
-            func = function(el, className) {
-                for (var i = 0; i < className.length; i++) {
-                    W.removeClass(el, className[i]);
-                }
-            };
-        }
-        else {
-            func = W.removeClass;
-        }
-
-        this.each(function(el) {
-            func.call(this, el, className);
-        });
-
-        if (this.autoParse) {
-            this.parse();
-        }
-
-        return this;
-    };
-
-
     // # Cell Class
 
     Cell.prototype = new Entity();
@@ -4230,20 +4284,28 @@
     function Cell(cell) {
         // Adds property: className and content.
         Entity.call(this, cell);
-        
+
         /**
          * ## Cell.x
          *
-         * The row number 
+         * The row number
          */
         this.x = 'undefined' !== typeof cell.x ? cell.x : null;
 
         /**
          * ## Cell.y
          *
-         * The column number 
+         * The column number
          */
         this.y = 'undefined' !== typeof cell.y ? cell.y : null;
+
+        /**
+         * ## Cell.tdElement
+         *
+         * Reference to the TD/TH element, if built already.
+         */
+        this.HTMLElement = cell.HTMLElement || null;
+
     }
 
 })(
