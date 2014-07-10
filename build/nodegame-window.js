@@ -47,8 +47,11 @@
     GameWindow.defaults = {};
 
     // Default settings.
+    GameWindow.defaults.textOnleave = '';
     GameWindow.defaults.promptOnleave = true;
     GameWindow.defaults.noEscape = true;
+    GameWindow.defaults.waitScreen = undefined;
+    GameWindow.defaults.disableRightClick = false;
     GameWindow.defaults.cacheDefaults = {
         loadCache:       true,
         storeCacheNow:   false,
@@ -346,29 +349,6 @@
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
-         * ### GamwWindow.textOnleave
-         *
-         * Text that displayed to the users on the _onbeforeunload_ event
-         *
-         * By default it is null, that means that it is left to the browser
-         * default.
-         *
-         * Notice: some browser do not support displaying a custom text.
-         *
-         * @see GameWindow.promptOnleave
-         */
-        this.textOnleave = null;
-
-        /**
-         * ### GamwWindow.rightClickDisabled
-         *
-         * TRUE, if the right click context menu is disabled
-         *
-         * @see GameWindow.disableRightClick
-         */
-        this.rightClickDisabled = false;
-
-        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -376,21 +356,14 @@
          * @see node.setup
          */
         node.registerSetup('window', function(conf) {
-            conf = conf || {};
-            if ('undefined' === typeof conf.promptOnleave) {
-                conf.promptOnleave = false;
+            if ('object' === typeof conf && !J.isEmpty(conf)) {
+                this.window.init(conf);
+                return conf;
             }
-            if ('undefined' === typeof conf.noEscape) {
-                conf.noEscape = true;
-            }
-
-            this.window.init(conf);
-
-            return conf;
         });
 
         // Init.
-        this.init();
+        this.init(GameWindow.defaults);
     }
 
     // ## GameWindow methods
@@ -407,13 +380,11 @@
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
+debugger;
         this.setStateLevel('INITIALIZING');
         options = options || {};
-        this.conf = J.merge(GameWindow.defaults, options);
+        this.conf = J.merge(this.conf, options);
 
-        if (this.conf.textOnleave) {
-            this.textOnleave = this.conf.textOnleave;
-        }
         if (this.conf.promptOnleave) {
             this.promptOnleave();
         }
@@ -1599,7 +1570,7 @@
             that.frameWindow = iframe.contentWindow;
             that.frameDocument = that.getIFrameDocument(iframe);
             // Disable right click in loaded iframe document, if necessary.
-            if (that.rightClickDisabled) {
+            if (that.conf.rightClickDisabled) {
                 J.disableRightClick(that.frameDocument);
             }
         }
@@ -1847,6 +1818,7 @@
                 return false;
             }
         };
+        this.conf.noEscape = true;
     };
 
     /**
@@ -1862,6 +1834,7 @@
     GameWindow.prototype.restoreEscape = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.document.onkeydown = null;
+        this.conf.noEscape = false;
     };
 
     /**
@@ -1878,7 +1851,7 @@
      */
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
-        text = 'undefined' !== typeof text ? text : this.textOnleave;
+        text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
         
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
@@ -1889,6 +1862,8 @@
             // For Chrome, Safari, IE8+ and Opera 12+
             return text;
         };
+
+        this.conf.promptOnleave = true;
     };
 
     /**
@@ -1905,6 +1880,7 @@
     GameWindow.prototype.restoreOnleave = function(windowObj) {
         windowObj = windowObj || window;
         windowObj.onbeforeunload = null;
+        this.conf.promptOnleave = false;
     };
 
     /**
@@ -1920,7 +1896,7 @@
             J.disableRightClick(this.getFrameDocument());
         }
         J.disableRightClick(document);
-        this.rightClickDisabled = true;
+        this.conf.rightClickDisabled = true;
     };
 
     /**
@@ -1936,7 +1912,7 @@
              J.enableRightClick(this.getFrameDocument());
         }
         J.enableRightClick(document);
-        this.rightClickDisabled = false;
+        this.conf.rightClickDisabled = false;
     };
 
 })(
@@ -2429,6 +2405,7 @@
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
+
 /**
  * # GameWindow selector module
  * Copyright(c) 2014 Stefano Balietti
@@ -3732,12 +3709,13 @@
     function addSpecialCells(data) {
         var out, i, len;
         out = [];
-        i = -1, len = data.length;
+        i = -1;
+        len = data.length;
         for ( ; ++i < len ; ) {
             out.push({content: data[i]});
         }
         return out;
-    };
+    }
 
     /**
      * ## Table constructor
@@ -4052,7 +4030,8 @@
         if (!J.isArray(data)) data = [data];
 
         // Loop Dim 1.
-        i = -1, lenI = data.length;
+        i = -1;
+        lenI = data.length;
         for ( ; ++i < lenI ; ) {
 
             if (!J.isArray(data[i])) {
@@ -4061,7 +4040,8 @@
             }
             else {
                 // Loop Dim 2.
-                j = -1, lenJ = data[i].length;
+                j = -1;
+                lenJ = data[i].length;
                 for ( ; ++j < lenJ ; ) {
                     if (dim === 'x') this.add(data[i][j], x + i, y + j, 'x');
                     else this.add(data[i][j], x + j, y + i, 'y');
@@ -4082,7 +4062,7 @@
      * @param {object} content The content of the cell or Cell object
      */
     Table.prototype.add = function(content, x, y, dim) {
-        var cell, x, y;
+        var cell;
         if (!validateInput('addData', content, x, y)) return;
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
@@ -4207,7 +4187,8 @@
             if (this.left && this.left.length) {
                 TR.appendChild(document.createElement('th'));
             }
-            i = -1, len = this.header.length;
+            i = -1;
+            len = this.header.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.header[i], 'th'));
             }
@@ -4230,7 +4211,8 @@
             old_left = 0;
 
 
-            i = -1, len = this.db.length;
+            i = -1;
+            len = this.db.length;
             for ( ; ++i < len ; ) {
 
                 if (trid !== this.db[i].x) {
@@ -4281,7 +4263,8 @@
                 TR.appendChild(TD);
             }
 
-            i = -1, len = this.footer.length;
+            i = -1;
+            len = this.footer.length;
             for ( ; ++i < len ; ) {
                 TR.appendChild(this.renderCell(this.footer[i]));
             }
