@@ -3657,6 +3657,71 @@
     }
 
     /**
+     * ## Table.addClass
+     *
+     * Adds a CSS class to each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.addClass = function(className) {
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.addClass: className must be string or ' +
+                                'array.');
+        }
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+
+        this.each(function(el) {
+            W.addClass(el, className);
+            if (el.HTMLElement) {
+                el.HTMLElement.className = el.className;
+            }
+        });
+
+        return this;
+    };
+
+    /**
+     * ## Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array} The name of the class/classes.
+     *
+     * return {Table} This instance for chaining.
+     */
+    Table.prototype.removeClass = function(className) {
+        var func;
+        if ('string' !== typeof className && !J.isArray(className)) {
+            throw new TypeError('Table.removeClass: className must be string ' +
+                                'or array.');
+        }
+
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
+                }
+            };
+        }
+        else {
+            func = W.removeClass;
+        }
+
+        this.each(function(el) {
+            func.call(this, el, className);
+            if (el.HTMLElement) {
+                el.HTMLElement.className = el.className;
+            }
+        });
+
+        return this;
+    };
+
+    /**
      * ## addSpecialCells
      *
      * Parses an array of data and returns an array of cells
@@ -3694,16 +3759,16 @@
 
         NDDB.call(this, options, data);
 
-        if (!this.row) {
-            this.index('row', function(c) {
-                return c.x;
-            });
-        }
-        if (!this.col) {
-            this.index('col', function(c) {
-                return c.y;
-            });
-        }
+        //if (!this.row) {
+        //    this.view('row', function(c) {
+        //        return c.x;
+        //    });
+        //}
+        //if (!this.col) {
+        //    this.view('col', function(c) {
+        //        return c.y;
+        //    });
+        //}
         if (!this.rowcol) {
             this.index('rowcol', function(c) {
                 return c.x + '_' + c.y;
@@ -3840,7 +3905,7 @@
     /**
      * Table.get
      *
-     * Returns the element at row column (x,y)
+     * Returns the element at row column (row,col)
      *
      * @param {number} row The row number
      * @param {number} col The column number
@@ -3857,10 +3922,10 @@
         }
 
         if ('undefined' === typeof row) {
-            return this.col.get(col);
+            return this.select('y', '=', col);
         }
         if ('undefined' === typeof col) {
-            return this.row.get(row);
+            return this.select('x', '=', row);
         }
 
         return this.rowcol.get(row + '_' + col);
@@ -3869,15 +3934,11 @@
     /**
      * Table.getTR
      *
-     * Returns the element at row column (x,y)
+     * Returns a reference to the TR element at row (row)
      *
      * @param {number} row The row number
-     * @param {number} col The column number
      * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
-     * cannot be found.
-     *
-     * @see HTMLRenderer
-     * @see HTMLRenderer.addRenderer
+     *   cannot be found.
      */
     Table.prototype.getTR = function(row) {
         var cell;
@@ -3886,6 +3947,7 @@
         }
         cell = this.get(row, 0);
         if (!cell) return false;
+        if (!cell.HTMLElement) return false;
         return cell.HTMLElement.parentNode;
     };
 
