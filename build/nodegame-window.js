@@ -356,10 +356,11 @@
          * @see node.setup
          */
         node.registerSetup('window', function(conf) {
-            if ('object' === typeof conf && !J.isEmpty(conf)) {
+            conf = J.merge(W.conf, conf);
+            //if ('object' === typeof conf && !J.isEmpty(conf)) {
                 this.window.init(conf);
                 return conf;
-            }
+            //}
         });
 
         // Init.
@@ -380,7 +381,6 @@
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
-debugger;
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
