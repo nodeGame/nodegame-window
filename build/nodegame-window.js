@@ -381,6 +381,9 @@
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
+        var stageLevels;
+        var stageLevel;
+
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -405,6 +408,25 @@
                 this.waitScreen = null;
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
+
+
+            stageLevels = node.constants.stageLevels;
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel !== stageLevels.UNINITIALIZED) {
+                if (node.game.paused) {
+                    this.lockScreen(this.waitScreen.defaultTexts.paused);
+                }
+                else {
+                    if (stageLevel === stageLevels.DONE) {
+                        this.lockScreen(this.waitScreen.defaultTexts.waiting);
+                    }
+                    else if (stageLevel !== stageLevels.PLAYING) {
+                        this.lockScreen(this.waitScreen.defaultTexts.stepping);
+                    }
+                }
+            }
+
+
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -416,7 +438,7 @@
         }
 
         if (this.conf.disableRightClick) {
-            this.disableRightClick()
+            this.disableRightClick();
         }
         else if (this.conf.disableRightClick === false) {
             this.enableRightClick();
@@ -874,7 +896,7 @@
                             'not found.');
         }
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z\-]*');
+        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
         W.addClass(this.headerElement, validPositions[pos]);
 
         oldPos = this.headerPosition;
@@ -1749,7 +1771,7 @@
              W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z\-]*');
+        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
         case 'right':
         case 'left':
@@ -2142,6 +2164,7 @@
     }
 
     function event_REALLY_DONE(text) {
+console.log('*** REALLY_DONE:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.waiting;
         if (W.isScreenLocked()) {
             W.waitScreen.updateText(text);
@@ -2152,6 +2175,7 @@
     }
 
     function event_STEPPING(text) {
+console.log('*** STEPPING:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.stepping;
         if (W.isScreenLocked()) {
             W.waitScreen.updateText(text);
@@ -2162,12 +2186,14 @@
     }
 
     function event_PLAYING() {
+console.log('*** PLAYING:', node.game.getStageLevel(), node.game.paused);
         if (W.isScreenLocked()) {
             W.unlockScreen();
         }
     }
 
     function event_PAUSED(text) {
+console.log('*** PAUSED:', node.game.getStageLevel(), node.game.paused);
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML = 
@@ -2180,6 +2206,7 @@
     }
 
     function event_RESUMED() {
+console.log('*** RESUMED:', node.game.getStageLevel(), node.game.paused);
         if (W.isScreenLocked()) {
             if (W.waitScreen.beforePauseInnerHTML !== null) {
                 W.waitScreen.updateText(W.waitScreen.beforePauseInnerHTML);
