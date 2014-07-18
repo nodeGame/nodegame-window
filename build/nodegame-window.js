@@ -381,6 +381,9 @@
      * @param {object} options Optional. Configuration options
      */
     GameWindow.prototype.init = function(options) {
+        var stageLevels;
+        var stageLevel;
+
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -405,6 +408,22 @@
                 this.waitScreen = null;
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
+
+            stageLevels = node.constants.stageLevels;
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel !== stageLevels.UNINITIALIZED) {
+                if (node.game.paused) {
+                    this.lockScreen(this.waitScreen.defaultTexts.paused);
+                }
+                else {
+                    if (stageLevel === stageLevels.DONE) {
+                        this.lockScreen(this.waitScreen.defaultTexts.waiting);
+                    }
+                    else if (stageLevel !== stageLevels.PLAYING) {
+                        this.lockScreen(this.waitScreen.defaultTexts.stepping);
+                    }
+                }
+            }
         }
         else if (this.waitScreen) {
             this.waitScreen.destroy();
@@ -416,7 +435,7 @@
         }
 
         if (this.conf.disableRightClick) {
-            this.disableRightClick()
+            this.disableRightClick();
         }
         else if (this.conf.disableRightClick === false) {
             this.enableRightClick();
@@ -874,7 +893,7 @@
                             'not found.');
         }
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z\-]*');
+        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
         W.addClass(this.headerElement, validPositions[pos]);
 
         oldPos = this.headerPosition;
@@ -1749,7 +1768,7 @@
              W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z\-]*');
+        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
         case 'right':            
             W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
@@ -2280,11 +2299,11 @@
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
-        node.on('REALLY_DONE', event_REALLY_DONE);
-        node.on('STEPPING', event_STEPPING);
-        node.on('PLAYING', event_PLAYING);
-        node.on('PAUSED', event_PAUSED);
-        node.on('RESUMED', event_RESUMED);
+        node.events.ee.game.on('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.on('STEPPING', event_STEPPING);
+        node.events.ee.game.on('PLAYING', event_PLAYING);
+        node.events.ee.game.on('PAUSED', event_PAUSED);
+        node.events.ee.game.on('RESUMED', event_RESUMED);
         this.enabled = true;
     };
 
@@ -2295,11 +2314,11 @@
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
-        node.off('REALLY_DONE', event_REALLY_DONE);
-        node.off('STEPPING', event_STEPPING);
-        node.off('PLAYING', event_PLAYING);
-        node.off('PAUSED', event_PAUSED);
-        node.off('RESUMED', event_RESUMED);
+        node.events.ee.game.off('REALLY_DONE', event_REALLY_DONE);
+        node.events.ee.game.off('STEPPING', event_STEPPING);
+        node.events.ee.game.off('PLAYING', event_PLAYING);
+        node.events.ee.game.off('PAUSED', event_PAUSED);
+        node.events.ee.game.off('RESUMED', event_RESUMED);
         this.enabled = false;    
     };
 
@@ -2394,7 +2413,9 @@
      */
     WaitScreen.prototype.destroy = function() {
         if (W.isScreenLocked()) {
+            W.setScreenLevel('UNLOCKING');
             this.unlock();
+            W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
             this.waitingDiv.parentNode.removeChild(this.waitingDiv);
