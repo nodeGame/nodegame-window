@@ -58,7 +58,7 @@ program
 		console.log('Building documentation for nodegame-window v.' + version);
 		// http://nodejs.org/api.html#_child_processes
 		try{
-			var dockerDir = J.resolveModuleDir('docker');
+			var dockerDir = J.resolveModuleDir('docker', rootDir);
 		}
 		catch(e) {
 			console.log('module Docker not found. Cannot build doc. Do \'npm install docker\' to fix it.');

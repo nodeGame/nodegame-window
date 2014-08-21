@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ui-behavior.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "lib/modules/ui-behavior.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#gamewindow%20ui%20behavior%20module">GameWindow UI Behavior module</a>
+      </div>
+      <div class="heading h2">
+        <a href="#http%3A%2F%2Fwww.nodegame.org">http://www.nodegame.org</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.noescape">GameWindow.noEscape</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.restoreescape">GameWindow.restoreEscape</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.promptonleave">GameWindow.promptOnleave</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.restoreonleave">GameWindow.restoreOnleave</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.disablerightclick">GameWindow.disableRightClick</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.enablerightclick">GameWindow.enableRightClick</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow%20ui%20behavior%20module">
+  <h1>
+    <a href="#gamewindow%20ui%20behavior%20module" name="gamewindow%20ui%20behavior%20module" class="pilcrow">&#182;</a>
+    GameWindow UI Behavior module
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p>Handles default behavior of the browser on certain DOM Events.</p>
+
+
+<div class="pilwrap" id="http%3A%2F%2Fwww.nodegame.org">
+  <h2>
+    <a href="#http%3A%2F%2Fwww.nodegame.org" name="http%3A%2F%2Fwww.nodegame.org" class="pilcrow">&#182;</a>
+    <a href='http://www.nodegame.org'>http://www.nodegame.org</a>
+  </h2>
+</div>
+
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.noescape">
+  <h3>
+    <a href="#gamewindow.noescape" name="gamewindow.noescape" class="pilcrow">&#182;</a>
+    GameWindow.noEscape
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Binds the ESC key to a function that always returns FALSE</p>
+
+<p>This prevents socket.io to break the connection with the server.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">windowObj</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The window container in which
+  to bind the ESC key</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
+        <span class="nx">windowObj</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">keyCode</span> <span class="o">=</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">)</span> <span class="o">?</span> <span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">keyCode</span> <span class="o">===</span> <span class="mi">27</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.restoreescape">
+  <h3>
+    <a href="#gamewindow.restoreescape" name="gamewindow.restoreescape" class="pilcrow">&#182;</a>
+    GameWindow.restoreEscape
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes the the listener on the ESC key</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">windowObj</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The window container in which
+  to bind the ESC key</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.noEscape()
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
+        <span class="nx">windowObj</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.promptonleave">
+  <h3>
+    <a href="#gamewindow.promptonleave" name="gamewindow.promptonleave" class="pilcrow">&#182;</a>
+    GameWindow.promptOnleave
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Captures the onbeforeunload event and warns the user that leaving the
+page may halt the game.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">windowObj</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The window container in which
+  to bind the ESC key</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">text</span>
+      <span class="dox_type">string</span>
+      <span>Optional. A text to be displayed with the alert</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href="https://developer.mozilla.org/en/DOM/window.onbeforeunload
+">https://developer.mozilla.org/en/DOM/window.onbeforeunload
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">textOnleave</span><span class="p">;</span>
+        
+        <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>For IE&lt;8 and Firefox prior to version 4</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
+            <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>For Chrome, Safari, IE8+ and Opera 12+</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">return</span> <span class="nx">text</span><span class="p">;</span>
+        <span class="p">};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.restoreonleave">
+  <h3>
+    <a href="#gamewindow.restoreonleave" name="gamewindow.restoreonleave" class="pilcrow">&#182;</a>
+    GameWindow.restoreOnleave
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes the onbeforeunload event listener</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">windowObj</span>
+      <span class="dox_type">object</span>
+      <span>Optional. The window container in which
+  to bind the ESC key</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.promptOnleave</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <a href="https://developer.mozilla.org/en/DOM/window.onbeforeunload
+">https://developer.mozilla.org/en/DOM/window.onbeforeunload
+</a>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
+        <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.disablerightclick">
+  <h3>
+    <a href="#gamewindow.disablerightclick" name="gamewindow.disablerightclick" class="pilcrow">&#182;</a>
+    GameWindow.disableRightClick
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Disables the right click in the main page and in the iframe, if found </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.enableRightClick</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.disableRightClick
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">J</span><span class="p">.</span><span class="nx">disableRightClick</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">());</span>
+        <span class="p">}</span>
+        <span class="nx">J</span><span class="p">.</span><span class="nx">disableRightClick</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">rightClickDisabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.enablerightclick">
+  <h3>
+    <a href="#gamewindow.enablerightclick" name="gamewindow.enablerightclick" class="pilcrow">&#182;</a>
+    GameWindow.enableRightClick
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Enables the right click in the main page and in the iframe, if found </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.disableRightClick</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.enableRightClick
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
+             <span class="nx">J</span><span class="p">.</span><span class="nx">enableRightClick</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">());</span>
+        <span class="p">}</span>
+        <span class="nx">J</span><span class="p">.</span><span class="nx">enableRightClick</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">rightClickDisabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="p">})(</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>GameWindow works only in the browser environment. The reference
+to the node.js module object is for testing purpose only</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

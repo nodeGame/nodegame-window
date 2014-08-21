@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'listeners/listeners.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "listeners/listeners.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -18,8 +18,11 @@
     </div>
     <div id="tree"></div>
     <div id="headings">
+      <div class="heading h1">
+        <a href="#gamewindow%20listeners">GameWindow listeners</a>
+      </div>
       <div class="heading h2">
-        <a href="#game-incoming-listeners">Game incoming listeners</a>
+        <a href="#www.nodegame.org">www.nodegame.org</a>
       </div>
     </div>
   </div>
@@ -28,64 +31,80 @@
 <table cellpadding="0" cellspacing="0">
   <tbody>
       <tr>
-        <td class="docs">
-<div class="pilwrap" id="game-incoming-listeners">
-  <h2>
-    <a href="#game-incoming-listeners" class="pilcrow">&#182;</a>
-    Game incoming listeners
-  </h2>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow%20listeners">
+  <h1>
+    <a href="#gamewindow%20listeners" name="gamewindow%20listeners" class="pilcrow">&#182;</a>
+    GameWindow listeners
+  </h1>
 </div>
 
 
-<p>Incoming listeners are fired in response to incoming messages</p>
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body">
+<div class="pilwrap" id="www.nodegame.org">
+  <h2>
+    <a href="#www.nodegame.org" name="www.nodegame.org" class="pilcrow">&#182;</a>
+    www.nodegame.org
+  </h2>
+</div>
+
+  </div>
+</div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-  
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;nodegame-window: node object not found.&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;window object not found.&#39;</span><span class="p">,</span> <span class="s1">&#39;nodegame-window&#39;</span><span class="p">);</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAME_CREATED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nb">window</span><span class="p">);</span>
-  <span class="p">});</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;HIDE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot hide element &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;: could not find element &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;with id &#39;</span> <span class="o">+</span> <span class="nx">idOrObj</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">idOrObj</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;: idOrObj must be string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39; or HTML Element.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="p">;</span>    
-  <span class="p">});</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;SHOW&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot show element &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s1">&#39;visible&#39;</span><span class="p">;</span> 
-  <span class="p">});</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cannot toggle element &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
-      <span class="k">return</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">===</span> <span class="s1">&#39;visible&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s1">&#39;visible&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-  </pre></div>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAME_CREATED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">W</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nb">window</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;HIDE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.HIDE&#39;</span><span class="p">);</span>
+        <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;SHOW&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.SHOW&#39;</span><span class="p">);</span>
+        <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.TOGGLE&#39;</span><span class="p">);</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -93,12 +112,15 @@
 <div class="pilwrap">
   <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
 </div>
-<p>Disable all the input forms found within a given id element</p>
+<p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_DISABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>      
-  <span class="p">});</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_DISABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">});</span>
+    
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -106,12 +128,15 @@
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
-<p>Disable all the input forms found within a given id element</p>
+<p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_ENABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-  <span class="p">});</span>
-  </pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_ENABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="p">});</span>
+    
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -119,28 +144,19 @@
 <div class="pilwrap">
   <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
-<p>Disable all the input forms found within a given id element</p>
+<p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>  <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-  <span class="p">});</span>
-  
-  <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node-window: listeners added&#39;</span><span class="p">);</span>
-  
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">});</span>
+    
+    <span class="nx">node</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;node-window: listeners added.&#39;</span><span class="p">);</span>
+    
 <span class="p">})(</span>
-  <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="kc">undefined</span>
- <span class="p">,</span>  <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">:</span> <span class="kc">undefined</span>      
-<span class="p">);</span> </pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
-</div>
-<!-- ends nodegame-window listener -->
-        </td>
-        <td class="code highlight"><div class="highlight"><pre></pre></div>
+    <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="kc">undefined</span>
+<span class="p">);</span>
+</pre></div>
         </td>
       </tr>
   </tbody>
