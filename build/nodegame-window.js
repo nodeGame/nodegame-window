@@ -898,7 +898,7 @@
 
         oldPos = this.headerPosition;
 
-        // Store the new position in a reference variable 
+        // Store the new position in a reference variable
         // **before** adaptFrame2HeaderPosition is called
         this.headerPosition = pos;
 
@@ -1770,7 +1770,7 @@
 
         W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
-        case 'right':            
+        case 'right':
             W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
             break;
         case 'left':
@@ -1873,7 +1873,7 @@
     GameWindow.prototype.promptOnleave = function(windowObj, text) {
         windowObj = windowObj || window;
         text = 'undefined' !== typeof text ? text : this.conf.textOnleave;
-        
+
         windowObj.onbeforeunload = function(e) {
             e = e || window.event;
             // For IE<8 and Firefox prior to version 4
@@ -1907,7 +1907,7 @@
     /**
      * ### GameWindow.disableRightClick
      *
-     * Disables the right click in the main page and in the iframe, if found 
+     * Disables the right click in the main page and in the iframe, if found
      *
      * @see GameWindow.enableRightClick
      * @see JSUS.disableRightClick
@@ -1923,7 +1923,7 @@
     /**
      * ### GameWindow.enableRightClick
      *
-     * Enables the right click in the main page and in the iframe, if found 
+     * Enables the right click in the main page and in the iframe, if found
      *
      * @see GameWindow.disableRightClick
      * @see JSUS.enableRightClick
@@ -1950,7 +1950,7 @@
  *
  * Locks / Unlocks the screen.
  *
- * The _screen_ represents all the user can see on screen. 
+ * The _screen_ represents all the user can see on screen.
  * It includes the _frame_ area, but also the _header_.
  *
  * http://www.nodegame.org
@@ -1964,7 +1964,7 @@
 
     var GameWindow = node.GameWindow;
     var screenLevels = node.constants.screenLevels;
-    
+
     /**
      * ### GameWindow.lockScreen
      *
@@ -2079,7 +2079,7 @@
 
     node.on('TOGGLE', function(idOrObj) {
         var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-        
+
         if (el.style.display === 'none') {
             el.style.display = '';
         }
@@ -2092,19 +2092,19 @@
     node.on('INPUT_DISABLE', function(id) {
         W.toggleInputs(id, true);
     });
-    
+
     // Disable all the input forms found within a given id element.
     node.on('INPUT_ENABLE', function(id) {
         W.toggleInputs(id, false);
     });
-    
+
     // Disable all the input forms found within a given id element.
     node.on('INPUT_TOGGLE', function(id) {
         W.toggleInputs(id);
     });
-    
+
     node.log('node-window: listeners added.');
-    
+
 })(
     'undefined' !== typeof node ? node : undefined
 );
@@ -2145,11 +2145,11 @@
      * be re-activated later.
      *
      * @param {Document|Element} container The target to scan for input tags
-     *  
+     *
      * @api private
      */
     function lockUnlockedInputs(container) {
-        var j, i, inputs, nInputs;       
+        var j, i, inputs, nInputs;
         for (j = -1; ++j < len; ) {
             inputs = container.getElementsByTagName(inputTags[j]);
             nInputs = inputs.length;
@@ -2191,13 +2191,13 @@
     function event_PAUSED(text) {
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
-            W.waitScreen.beforePauseInnerHTML = 
+            W.waitScreen.beforePauseInnerHTML =
                 W.waitScreen.waitingDiv.innerHTML;
             W.waitScreen.updateText(text);
         }
         else {
             W.lockScreen(text);
-        }            
+        }
     }
 
     function event_RESUMED() {
@@ -2259,7 +2259,7 @@
         /**
          * ### WaitScreen.enabled
          *
-         * Flag is TRUE if the listeners are registered 
+         * Flag is TRUE if the listeners are registered
          *
          * @see WaitScreen.enable
          */
@@ -2282,7 +2282,7 @@
         /**
          * ## WaitScreen.lockedInputs
          *
-         * List of locked inputs by the _lock_ method 
+         * List of locked inputs by the _lock_ method
          *
          * @see WaitScreen.lock
          */
@@ -2319,7 +2319,7 @@
         node.events.ee.game.off('PLAYING', event_PLAYING);
         node.events.ee.game.off('PAUSED', event_PAUSED);
         node.events.ee.game.off('RESUMED', event_RESUMED);
-        this.enabled = false;    
+        this.enabled = false;
     };
 
     /**
@@ -2343,11 +2343,11 @@
         if ('undefined' === typeof document.getElementsByTagName) {
             node.warn('WaitScreen.lock: cannot lock inputs.');
         }
-        // Disables all input forms in the page.        
+        // Disables all input forms in the page.
         lockUnlockedInputs(document);
-        frameDoc = W.getFrameDocument(); 
+        frameDoc = W.getFrameDocument();
         if (frameDoc) lockUnlockedInputs(frameDoc);
-        
+
         if (!this.waitingDiv) {
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
@@ -2357,7 +2357,7 @@
 	if (this.waitingDiv.style.display === 'none') {
 	    this.waitingDiv.style.display = '';
 	}
-	this.waitingDiv.innerHTML = text;        
+	this.waitingDiv.innerHTML = text;
     };
 
     /**
@@ -2374,10 +2374,10 @@
                 this.waitingDiv.style.display = 'none';
             }
         }
-        // Re-enables all previously locked input forms in the page.        
+        // Re-enables all previously locked input forms in the page.
         i = -1, len = this.lockedInputs.length;
         for ( ; ++i < len ; ) {
-            this.lockedInputs[i].removeAttribute('disabled');            
+            this.lockedInputs[i].removeAttribute('disabled');
         }
         this.lockedInputs = [];
     };
@@ -2443,7 +2443,7 @@
 (function(window, node) {
 
     "use strict";
-    
+
     var J = node.JSUS;
     var constants = node.constants;
     var GameWindow = node.GameWindow;
@@ -2664,7 +2664,7 @@
 
     var J = node.JSUS;
     var DOM = J.get('DOM');
-    
+
     /**
      * ### GameWindow.getScreen
      *
@@ -2928,7 +2928,7 @@
      */
     GameWindow.prototype.getEventButton =
     function(event, text, id, attributes) {
-    
+
         var b;
         if ('string' !== typeof event) {
             throw new TypeError('GameWindow.getEventButton: event must ' +
@@ -2977,7 +2977,7 @@
     /**
      * ## toggleInputs
      *
-     * @api private 
+     * @api private
      */
     function toggleInputs(state, container) {
         var inputTags, j, len, i, inputs, nInputs;
@@ -3252,7 +3252,7 @@
 
         this.tm.addTrigger(function(el) {
             if (!el) return;
-            if (el.content && el.content.parse 
+            if (el.content && el.content.parse
                 && 'function' === typeof el.content.parse) {
                 var html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
@@ -3362,7 +3362,7 @@
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an HTML list that can be manipulated by an api. 
+ * Creates an HTML list that can be manipulated by an api.
  *
  * www.nodegame.org
  * ---
@@ -3370,49 +3370,49 @@
 (function(exports, node) {
 
     "use strict";
-    
+
     var JSUS = node.JSUS;
     var NDDB = node.NDDB;
 
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
-    
+
     exports.List = List;
-    
+
     List.prototype = new NDDB();
-    List.prototype.constructor = List;  
-    
+    List.prototype.constructor = List;
+
     function List(options, data) {
         options = options || {};
         this.options = options;
-        
-        NDDB.call(this, options, data); 
-        
+
+        NDDB.call(this, options, data);
+
         this.id = options.id || 'list_' + Math.round(Math.random() * 1000);
-        
+
         this.DL = null;
         this.auto_update = this.options.auto_update || false;
-        this.htmlRenderer = null; 
+        this.htmlRenderer = null;
         this.lifo = false;
-        
+
         this.init(this.options);
     }
-    
+
     // TODO: improve init
     List.prototype.init = function(options) {
         options = options || this.options;
-        
+
         this.FIRST_LEVEL = options.first_level || 'dl';
         this.SECOND_LEVEL = options.second_level || 'dt';
         this.THIRD_LEVEL = options.third_level || 'dd';
-        
+
         this.last_dt = 0;
         this.last_dd = 0;
         this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
             : this.auto_update;
-        
+
         var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
-        
+
         this.globalCompare = function(o1, o2) {
             if (!o1 && !o2) return 0;
             if (!o2) return 1;
@@ -3436,9 +3436,9 @@
                 if (o1.nddbid > o2.nddbid) return -1;
             }
             return 0;
-        }; 
-        
-        
+        };
+
+
         this.DL = options.list || document.createElement(this.FIRST_LEVEL);
         this.DL.id = options.id || this.id;
         if (options.className) {
@@ -3447,12 +3447,12 @@
         if (this.options.title) {
             this.DL.appendChild(document.createTextNode(options.title));
         }
-        
+
         // was
         //this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});
         this.htmlRenderer = new HTMLRenderer(options.render);
     };
-    
+
     List.prototype._add = function(node) {
         if (!node) return;
         //              console.log('about to add node');
@@ -3462,16 +3462,16 @@
             this.parse();
         }
     };
-    
+
     List.prototype.addDT = function(elem, dt) {
         if ('undefined' === typeof elem) return;
         this.last_dt++;
-        dt = ('undefined' !== typeof dt) ? dt: this.last_dt;  
+        dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
         this.last_dd = 0;
         var node = new Node({dt: dt, content: elem});
         return this._add(node);
     };
-    
+
     List.prototype.addDD = function(elem, dt, dd) {
         if ('undefined' === typeof elem) return;
         dt = ('undefined' !== typeof dt) ? dt: this.last_dt;
@@ -3479,12 +3479,12 @@
         var node = new Node({dt: dt, dd: dd, content: elem});
         return this._add(node);
     };
-    
+
     List.prototype.parse = function() {
         this.sort();
         var old_dt = null;
         var old_dd = null;
-        
+
         var appendDT = function() {
             var node = document.createElement(this.SECOND_LEVEL);
             this.DL.appendChild(node);
@@ -3492,7 +3492,7 @@
             old_dt = node;
             return node;
         };
-        
+
         var appendDD = function() {
             var node = document.createElement(this.THIRD_LEVEL);
             //                  if (old_dd) {
@@ -3507,7 +3507,7 @@
             //                  old_dt = node;
             return node;
         };
-        
+
         // Reparse all every time
         // TODO: improve this
         if (this.DL) {
@@ -3518,7 +3518,7 @@
                 this.DL.appendChild(document.createTextNode(this.options.title));
             }
         }
-        
+
         for (var i=0; i<this.db.length; i++) {
             var el = this.db[i];
             var node;
@@ -3530,19 +3530,19 @@
                 node = appendDD.call(this);
             }
             var content = this.htmlRenderer.render(el);
-            node.appendChild(content);          
-        }        
+            node.appendChild(content);
+        }
         return this.DL;
     };
-    
+
     List.prototype.getRoot = function() {
         return this.DL;
     };
-    
+
     // Cell Class
     Node.prototype = new Entity();
     Node.prototype.constructor = Node;
-    
+
     function Node (node) {
         Entity.call(this, node);
         this.dt = ('undefined' !== typeof node.dt) ? node.dt : null;
@@ -3550,9 +3550,9 @@
             this.dd = node.dd;
         }
     }
-    
+
 })(
-    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports, 
+    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports,
     ('undefined' !== typeof node) ? node : module.parent.exports
 );
 

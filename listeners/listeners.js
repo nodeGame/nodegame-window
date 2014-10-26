@@ -45,7 +45,7 @@
 
     node.on('TOGGLE', function(idOrObj) {
         var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-        
+
         if (el.style.display === 'none') {
             el.style.display = '';
         }
@@ -58,19 +58,19 @@
     node.on('INPUT_DISABLE', function(id) {
         W.toggleInputs(id, true);
     });
-    
+
     // Disable all the input forms found within a given id element.
     node.on('INPUT_ENABLE', function(id) {
         W.toggleInputs(id, false);
     });
-    
+
     // Disable all the input forms found within a given id element.
     node.on('INPUT_TOGGLE', function(id) {
         W.toggleInputs(id);
     });
-    
+
     node.log('node-window: listeners added.');
-    
+
 })(
     'undefined' !== typeof node ? node : undefined
 );

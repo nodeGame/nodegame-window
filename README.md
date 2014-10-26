@@ -34,9 +34,9 @@ node make.js build -B // Bare (minimal) build, about 8Kb minified
 
     Commands:
 
-      clean 
+      clean
       Removes all files from build folder
-    
+
       build [options] [options]
       Creates a nodegame-window custom build
 
