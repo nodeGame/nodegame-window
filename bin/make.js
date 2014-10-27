@@ -2,7 +2,7 @@
 
 /**
  * # nodegame-client make script
- * 
+ *
  */
 
 /**
@@ -32,14 +32,14 @@ var buildDir = rootDir + 'build/';
 program
   .version(version);
 
-program  
+program
 	.command('clean')
 	.description('Removes all files from build folder')
 	.action(function(){
 		cleanDir(buildDir);
 });
 
-program  
+program
 	.command('build [options]')
 	.description('Creates a nodegame-window custom build')
 	.option('-B, --bare', 'bare naked nodegame-window (only core)')

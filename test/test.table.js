@@ -14,8 +14,8 @@ module.exports.window = window;
 //
 //module.exports.JSUS = JSUS;
 //module.exports.NDDB = NDDB;
-	
-// Requiring and exporting nodeGame 
+
+// Requiring and exporting nodeGame
 var node = require('./../node_modules/nodegame-client');
 
 module.exports.node = node;
@@ -26,7 +26,7 @@ var	GameWindow = require('./../lib/GameWindow.js'),
 
 node.window.HTMLRenderer = HTMLRenderer;
 
-// TABLE    
+// TABLE
 var Table = require('./../lib/Table.js').Table;
 
 var clients = ['a','b','c','d'];
@@ -67,7 +67,7 @@ var hashable = [
                     title: "Olympia",
                     year: 1863
                 },
-                             
+
 ];
 
 var not_hashable = [
@@ -104,17 +104,17 @@ describe('Table setup:', function() {
 	before(function(){
 		table = new Table();
 	});
-	
+
 	it('length should be 0', function(){
 		table.length.should.be.eql(0);
 	});
-	
+
 	it('all pointers should be 0', function(){
 		table.pointers.x.should.be.eql(0);
 		table.pointers.y.should.be.eql(0);
 		table.pointers.z.should.be.eql(0);
 	});
-	
+
 });
 
 
@@ -122,36 +122,36 @@ describe('Table setup:', function() {
 
 
 describe('Table Operations:', function() {
-	
+
 	describe('Adding a column:', function() {
 		before(function(){
 			table = new Table();
 			table.addColumn(col1);
 		});
-		
+
 		it('length should be equal to column.length', function(){
 			table.length.should.equal(col1.length);
 		});
-		
+
 		it('#parse()', function() {
 			table.parse();
 //			table.table.childNodes.length.should.be.eql(col1.length);
 //			console.log(table.table);
 //			util.inspect(table.table);
-			
+
 //			for (var i in table.table.childNodes) {
 //				if (table.table.childNodes.hasOwnProperty(i))
 //					console.log(table.table.childNodes[i].innerHTML);
 //					console.log('---------');
 //			}
 		});
-		
+
 	});
-	
+
 //	describe('Adding two extra columns:', function() {
 //		table.addColumn(col2);
 //		table.addColumn(col3);
-//		
+//
 ////		it('', function(){
 ////			db.get(1).should.equal(false);
 ////		});
@@ -165,7 +165,7 @@ describe('Table and Hash:', function() {
 	//return o.painter;
 	//}
 	//table.h('painter', hashPainter);
-	
+
 //	it('length should be 0', function(){
 //		table.length.should.be.eql(0);
 //	});
