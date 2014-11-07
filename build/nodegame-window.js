@@ -1344,6 +1344,8 @@
      *
      * Warning: Security policies may block this method if the content is
      * coming from another domain.
+     * Notice: If called multiple times within the same stage/step, it will
+     * the `VisualTimer` widget to reload the timer.
      *
      * @param {string} uri The uri to load
      * @param {function} func Optional. The function to call once the DOM is
@@ -2108,6 +2110,7 @@
 })(
     'undefined' !== typeof node ? node : undefined
 );
+
 /**
  * # WaitScreen for nodeGame Window
  * Copyright(c) 2014 Stefano Balietti
@@ -2164,11 +2167,13 @@
 
     function event_REALLY_DONE(text) {
         text = text || W.waitScreen.defaultTexts.waiting;
-        if (W.isScreenLocked()) {
-            W.waitScreen.updateText(text);
-        }
-        else {
-            W.lockScreen(text);
+        if (!node.game.shouldStep()) {
+            if (W.isScreenLocked()) {
+                W.waitScreen.updateText(text);
+            }
+            else {
+                W.lockScreen(text);
+            }
         }
     }
 
@@ -3115,6 +3120,7 @@
     };
 
 })(node.window);
+
 /**
  * # HTMLRenderer
  * Copyright(c) 2014 Stefano Balietti
@@ -3357,6 +3363,7 @@
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof node) ? node : module.parent.exports.node
 );
+
 /**
  * # List class for nodeGame window
  * Copyright(c) 2014 Stefano Balietti
