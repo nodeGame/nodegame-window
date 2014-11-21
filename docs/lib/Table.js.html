@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/Table.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#table">Table</a>
+      </div>
+      <div class="heading h2">
+        <a href="#helper%20functions">Helper functions</a>
+      </div>
+      <div class="heading h3">
+        <a href="#validateinput">validateInput</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.addclass">Table.addClass</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.removeclass">Table.removeClass</a>
+      </div>
+      <div class="heading h3">
+        <a href="#addspecialcells">addSpecialCells</a>
+      </div>
+      <div class="heading h2">
+        <a href="#table%20constructor">Table constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.pointers">Table.pointers</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.header">Table.header</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.footer">Table.footer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.left">Table.left</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.table">Table.table</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.missingclassname">Table.missingClassName</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.autoparse">Table.autoParse</a>
+      </div>
+      <div class="heading h2">
+        <a href="#table%20methods">Table methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.initrenderer">Table.initRenderer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.rendercell">Table.renderCell</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.get">Table.get</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.gettr">Table.getTR</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.setheader">Table.setHeader</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.setleft">Table.setLeft</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.setfooter">Table.setFooter</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.updatepointer">Table.updatePointer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.addmultiple">Table.addMultiple</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.add">Table.add</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.addcolumn">Table.addColumn</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.addrow">Table.addRow</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.getnextpointer">Table.getNextPointer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.getcurrpointer">Table.getCurrPointer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.parse">Table.parse</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.resetpointers">Table.resetPointers</a>
+      </div>
+      <div class="heading h3">
+        <a href="#table.clear">Table.clear</a>
+      </div>
+      <div class="heading h1">
+        <a href="#cell">Cell</a>
+      </div>
+      <div class="heading h2">
+        <a href="#cell%20constructor">Cell constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#cell.x">Cell.x</a>
+      </div>
+      <div class="heading h3">
+        <a href="#cell.y">Cell.y</a>
+      </div>
+      <div class="heading h3">
+        <a href="#cell.tdelement">Cell.tdElement</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table">
+  <h1>
+    <a href="#table" name="table" class="pilcrow">&#182;</a>
+    Table
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p>Creates an HTML table that can be manipulated by an api.</p>
+
+<p>www.nodegame.org</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Table</span> <span class="o">=</span> <span class="nx">Table</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">Table</span><span class="p">.</span><span class="nx">Cell</span> <span class="o">=</span> <span class="nx">Cell</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">NDDB</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">NDDB</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">HTMLRenderer</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">HTMLRenderer</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">Entity</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">Entity</span><span class="p">;</span>
+
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">NDDB</span><span class="p">();</span>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Table</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper%20functions">
+  <h2>
+    <a href="#helper%20functions" name="helper%20functions" class="pilcrow">&#182;</a>
+    Helper functions
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="validateinput">
+  <h3>
+    <a href="#validateinput" name="validateinput" class="pilcrow">&#182;</a>
+    validateInput
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Validates user input and throws an error if input is not correct</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">method</span>
+      <span class="dox_type">string</span>
+      <span>The name of the method validating the input</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">mixed</span>
+      <span>The data that will be inserted in the database</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The row index</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The column index</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">dataArray</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if data should be an array</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if input passes validation</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">validateInput</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">dataArray</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: x must be number or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">y</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: y must be number or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dataArray</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;: data must be array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.addclass">
+  <h3>
+    <a href="#table.addclass" name="table.addclass" class="pilcrow">&#182;</a>
+    Table.addClass
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a CSS class to each element cell in the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">className</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>The name of the class/classes</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Table</span>
+      <span>This instance for chaining</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addClass</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.addClass: className must be string or &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">className</span> <span class="o">=</span> <span class="nx">className</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.removeclass">
+  <h3>
+    <a href="#table.removeclass" name="table.removeclass" class="pilcrow">&#182;</a>
+    Table.removeClass
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes a CSS class from each element cell in the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">className</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>The name of the class/classes</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">Table</span>
+      <span>This instance for chaining</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeClass</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">func</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.removeClass: className must be string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or array.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">className</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">func</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="addspecialcells">
+  <h3>
+    <a href="#addspecialcells" name="addspecialcells" class="pilcrow">&#182;</a>
+    addSpecialCells
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Parses an array of data and returns an array of cells</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>Array containing data to transform into cells</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">array</span>
+      <span>The array of cells</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">content</span><span class="o">:</span> <span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]});</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table%20constructor">
+  <h2>
+    <a href="#table%20constructor" name="table%20constructor" class="pilcrow">&#182;</a>
+    Table constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new Table object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration for NDDB</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>Optional. Array of initial items</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">Table</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Updates indexes on the fly.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">)</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="p">{};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">update</span><span class="p">.</span><span class="nx">indexes</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">NDDB</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>if (!this.row) {
+   this.view('row', function(c) {
+       return c.x;
+   });
+}
+if (!this.col) {
+   this.view('col', function(c) {
+       return c.y;
+   });
+}</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rowcol</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">(</span><span class="s1">&#39;rowcol&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.pointers">
+  <h3>
+    <a href="#table.pointers" name="table.pointers" class="pilcrow">&#182;</a>
+    Table.pointers
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>References to last inserted cell coordinates</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">x</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pointerX</span> <span class="o">||</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pointerY</span> <span class="o">||</span> <span class="kc">null</span>
+        <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.header">
+  <h3>
+    <a href="#table.header" name="table.header" class="pilcrow">&#182;</a>
+    Table.header
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array containing the header elements of the table</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.footer">
+  <h3>
+    <a href="#table.footer" name="table.footer" class="pilcrow">&#182;</a>
+    Table.footer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array containing the footer elements of the table</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">footer</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.left">
+  <h3>
+    <a href="#table.left" name="table.left" class="pilcrow">&#182;</a>
+    Table.left
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Array containing elements to keep on the left border of the table</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.table">
+  <h3>
+    <a href="#table.table" name="table.table" class="pilcrow">&#182;</a>
+    Table.table
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the HTMLElement Table</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">table</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">table</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.missingclassname">
+  <h3>
+    <a href="#table.missingclassname" name="table.missingclassname" class="pilcrow">&#182;</a>
+    Table.missingClassName
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Class name for "missing" cells</p>
+
+<p>"Missing" cells are cells that are added automatically to complete
+the table because one or more cells have been added with higher
+row and column indexes.</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">missingClassName</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">missingClassName</span> <span class="o">||</span> <span class="s1">&#39;missing&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.autoparse">
+  <h3>
+    <a href="#table.autoparse" name="table.autoparse" class="pilcrow">&#182;</a>
+    Table.autoParse
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>If TRUE, whenever a new cell is added the table is updated.
+Default: FALSE</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">autoParse</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">autoParse</span> <span class="o">?</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">autoParse</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>Init renderer.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">initRenderer</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="table%20methods">
+  <h2>
+    <a href="#table%20methods" name="table%20methods" class="pilcrow">&#182;</a>
+    Table methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.initrenderer">
+  <h3>
+    <a href="#table.initrenderer" name="table.initrenderer" class="pilcrow">&#182;</a>
+    Table.initRenderer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Creates the <code>HTMLRenderer</code> object and adds a renderer for objects</p>
+
+<p>Every cell in the table will be rendered according to the criteria
+added to the renderer object.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration for the renderer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">HTMLRenderer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">HTMLRenderer.addRenderer
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">htmlRenderer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HTMLRenderer</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">htmlRenderer</span><span class="p">.</span><span class="nx">addRenderer</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">tbl</span><span class="p">,</span> <span class="nx">key</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">tbl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Table</span><span class="p">();</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">tbl</span><span class="p">.</span><span class="nx">addRow</span><span class="p">([</span><span class="nx">key</span><span class="p">,</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">[</span><span class="nx">key</span><span class="p">]]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">tbl</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.rendercell">
+  <h3>
+    <a href="#table.rendercell" name="table.rendercell" class="pilcrow">&#182;</a>
+    Table.renderCell
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Create a cell element (td, th, etc.) and renders its content</p>
+
+<p>It also adds an internal reference to the newly created TD/TH element</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cell</span>
+      <span class="dox_type">Cell</span>
+      <span>The cell to transform in element</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">tagName</span>
+      <span class="dox_type">string</span>
+      <span>The name of the tag. Default: 'td'</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The newly created HTML Element (TD/TH)</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Table.htmlRenderer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Cell
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">renderCell</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">TD</span><span class="p">,</span> <span class="nx">content</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cell</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+        <span class="nx">tagName</span> <span class="o">=</span> <span class="nx">tagName</span> <span class="o">||</span> <span class="s1">&#39;td&#39;</span><span class="p">;</span>
+        <span class="nx">TD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="p">);</span>
+        <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">htmlRenderer</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">cell</span><span class="p">);</span>
+        <span class="nx">TD</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cell</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="nx">TD</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>Adds a reference inside the cell.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span> <span class="o">=</span> <span class="nx">TD</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">TD</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.get">
+  <h3>
+    <a href="#table.get" name="table.get" class="pilcrow">&#182;</a>
+    Table.get
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the element at row column (row,col)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">row</span>
+      <span class="dox_type">number</span>
+      <span>The row number</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">col</span>
+      <span class="dox_type">number</span>
+      <span>The column number</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">HTMLRenderer</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">HTMLRenderer.addRenderer
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="nx">col</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">row</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.get: row must be number.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">col</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">col</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.get: col must be number.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">col</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">col</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">row</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">rowcol</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">row</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">col</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.gettr">
+  <h3>
+    <a href="#table.gettr" name="table.gettr" class="pilcrow">&#182;</a>
+    Table.getTR
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns a reference to the TR element at row (row)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">row</span>
+      <span class="dox_type">number</span>
+      <span>The row number</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span class="dox_type">boolean</span>
+      <span>The requested TR object, or FALSE if it
+  cannot be found</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTR</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cell</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;number&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.getTr: row must be number.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">cell</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cell</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.setheader">
+  <h3>
+    <a href="#table.setheader" name="table.setheader" class="pilcrow">&#182;</a>
+    Table.setHeader
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the names of the header elements on top of the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">header</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Array of strings representing the names
+  of the header elements</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">header</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setHeader&#39;</span><span class="p">,</span> <span class="nx">header</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">header</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.setleft">
+  <h3>
+    <a href="#table.setleft" name="table.setleft" class="pilcrow">&#182;</a>
+    Table.setLeft
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the element of a column that will be added to the left of the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">left</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Array of strings representing the names
+  of the left elements</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setLeft</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">left</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setLeft&#39;</span><span class="p">,</span> <span class="nx">left</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">left</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.setfooter">
+  <h3>
+    <a href="#table.setfooter" name="table.setfooter" class="pilcrow">&#182;</a>
+    Table.setFooter
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Sets the names of the footer elements at the bottom of the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">footer</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">array</span>
+      <span>Array of strings representing the names
+  of the footer elements</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setFooter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">footer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setFooter&#39;</span><span class="p">,</span> <span class="nx">footer</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">footer</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">footer</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.updatepointer">
+  <h3>
+    <a href="#table.updatepointer" name="table.updatepointer" class="pilcrow">&#182;</a>
+    Table.updatePointer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Updates the reference to the foremost element in the table</p>
+
+<p>The pointer is updated only if the suggested value is larger than
+the current one.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">pointer</span>
+      <span class="dox_type">string</span>
+      <span>The name of pointer ('x', 'y')</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">value</span>
+      <span class="dox_type">number</span>
+      <span>The new value for the pointer</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span class="dox_type">number</span>
+      <span>The updated value of the pointer, or FALSE,
+  if an invalid pointer was selected</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Table.pointers
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updatePointer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pointer</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">pointer</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;Table.updatePointer: invalid pointer: &#39;</span> <span class="o">+</span> <span class="nx">pointer</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">pointer</span><span class="p">]</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">pointer</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">pointer</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.addmultiple">
+  <h3>
+    <a href="#table.addmultiple" name="table.addmultiple" class="pilcrow">&#182;</a>
+    Table.addMultiple
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Primitive to add multiple cells in column or row form</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>The cells to add</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">dim</span>
+      <span class="dox_type">string</span>
+      <span>The dimension of followed by the insertion:
+  'y' inserts as a row, and 'x' inserts as a column.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The row at which to start the insertion.
+  Default: the current x pointer</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The column at which to start the insertion.
+  Default: the current y pointer</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addMultiple</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">dim</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lenI</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">lenJ</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;addMultiple&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">dim</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">dim</span><span class="p">)</span> <span class="o">||</span>
+            <span class="p">(</span><span class="nx">dim</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.addMultiple: dim must be a valid &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string (x, y) or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">dim</span> <span class="o">=</span> <span class="nx">dim</span> <span class="o">||</span> <span class="s1">&#39;x&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+</div>
+<p>Horizontal increment: dim === y.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">x</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrPointer</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="nx">y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNextPointer</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+</div>
+<p>By default, only the second dimension is incremented, so we move</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">x</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">?</span> <span class="nx">x</span> <span class="o">:</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">.</span><span class="nx">x</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+        <span class="nx">y</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span> <span class="o">?</span> <span class="nx">y</span> <span class="o">:</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">.</span><span class="nx">y</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[</span><span class="nx">data</span><span class="p">];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+</div>
+<p>Loop Dim 1.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="nx">lenI</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lenI</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">dim</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">);</span>
+                <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+</div>
+<p>Loop Dim 2.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                <span class="nx">lenJ</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">lenJ</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">dim</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">y</span> <span class="o">+</span> <span class="nx">j</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">);</span>
+                    <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">y</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.add">
+  <h3>
+    <a href="#table.add" name="table.add" class="pilcrow">&#182;</a>
+    Table.add
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a single cell to the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">content</span>
+      <span class="dox_type">object</span>
+      <span>The content of the cell or Cell object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">dim</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cell</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;addData&#39;</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">dim</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">dim</span><span class="p">)</span> <span class="o">||</span>
+            <span class="p">(</span><span class="nx">dim</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.add: dim must be a valid string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;(x, y) or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">dim</span> <span class="o">=</span> <span class="nx">dim</span> <span class="o">||</span> <span class="s1">&#39;x&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-34" id="section-34">&#182;</a>
+</div>
+<p>Horizontal increment: dim === y.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nx">dim</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">getCurrPointer</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNextPointer</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="nx">y</span> <span class="o">=</span> <span class="nx">dim</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span> <span class="o">?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">getNextPointer</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getCurrPointer</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+
+        <span class="nx">cell</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cell</span><span class="p">({</span>
+            <span class="nx">x</span><span class="o">:</span> <span class="nx">x</span><span class="p">,</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nx">y</span><span class="p">,</span>
+            <span class="nx">content</span><span class="o">:</span> <span class="nx">content</span>
+        <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">cell</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">updatePointer</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">updatePointer</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.addcolumn">
+  <h3>
+    <a href="#table.addcolumn" name="table.addcolumn" class="pilcrow">&#182;</a>
+    Table.addColumn
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new column into the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>The array of data to add in column form</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The row to which the column will be added.
+  Default: row 0</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The column next to which the new column
+  will be added. Default: the last column in the table</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addColumn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;addColumn&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">addMultiple</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">x</span> <span class="o">||</span> <span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNextPointer</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">));</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.addrow">
+  <h3>
+    <a href="#table.addrow" name="table.addrow" class="pilcrow">&#182;</a>
+    Table.addRow
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Adds a new row into the table</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">data</span>
+      <span class="dox_type">array</span>
+      <span>The array of data to add in row form</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">x</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The row index at which the new row will be
+  added. Default: after the last row</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">y</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The column next to which the new row
+  will be added. Default: column 0</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;addRow&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">addMultiple</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getNextPointer</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">),</span> <span class="nx">y</span> <span class="o">||</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.getnextpointer">
+  <h3>
+    <a href="#table.getnextpointer" name="table.getnextpointer" class="pilcrow">&#182;</a>
+    Table.getNextPointer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the value of the pointer plus 1 for the requested dimension (x,y)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">dim</span>
+      <span class="dox_type">string</span>
+      <span>The dimension x or y</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">value</span>
+      <span class="dox_type">value</span>
+      <span>Optional. If set, returns this value</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The requested pointer</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getNextPointer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dim</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.getcurrpointer">
+  <h3>
+    <a href="#table.getcurrpointer" name="table.getcurrpointer" class="pilcrow">&#182;</a>
+    Table.getCurrPointer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Returns the value of the pointer for the requested dimension (x,y)</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">dim</span>
+      <span class="dox_type">string</span>
+      <span>The dimension x or y</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">value</span>
+      <span class="dox_type">value</span>
+      <span>Optional. If set, returns this value</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The requested pointer</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getCurrPointer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dim</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">value</span><span class="p">)</span> <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">]</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span><span class="p">[</span><span class="nx">dim</span><span class="p">];</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.parse">
+  <h3>
+    <a href="#table.parse" name="table.parse" class="pilcrow">&#182;</a>
+    Table.parse
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reads cells currently in database and builds up an HTML table</p>
+
+<p>It destroys the existing table, before parsing the database again.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Table.db</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Table.table</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Cell
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">TABLE</span><span class="p">,</span> <span class="nx">TR</span><span class="p">,</span> <span class="nx">TD</span><span class="p">,</span> <span class="nx">THEAD</span><span class="p">,</span> <span class="nx">TBODY</span><span class="p">,</span> <span class="nx">TFOOT</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">trid</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">old_y</span><span class="p">,</span> <span class="nx">old_left</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">diff</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+</div>
+<p>TODO: we could find a better way to update a table, instead of
+removing and re-inserting everything.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">table</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+</div>
+<p>TODO: which one is faster?
+while (this.table.hasChildNodes()) {
+    this.table.removeChild(this.table.firstChild);
+}</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="p">}</span>
+
+        <span class="nx">TABLE</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">table</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+</div>
+<p>HEADER</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">THEAD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;thead&#39;</span><span class="p">);</span>
+            <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+</div>
+<p>Add an empty cell to balance the left header column.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">left</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;th&#39;</span><span class="p">));</span>
+            <span class="p">}</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderCell</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="s1">&#39;th&#39;</span><span class="p">));</span>
+            <span class="p">}</span>
+            <span class="nx">THEAD</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TR</span><span class="p">);</span>
+            <span class="nx">TABLE</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">THEAD</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+</div>
+<p>BODY</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">TBODY</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tbody&#39;</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">sort</span><span class="p">([</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+</div>
+<p>Forces to create a new TR element.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">trid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+</div>
+<p>TODO: What happens if the are missing at the beginning ??</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">first</span><span class="p">();</span>
+            <span class="nx">old_y</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
+            <span class="nx">old_left</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">trid</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+                    <span class="nx">TBODY</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TR</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+</div>
+<p>Keep a reference to current TR idx.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="nx">trid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">x</span><span class="p">;</span>
+
+                    <span class="nx">old_y</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// must start exactly from the first</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+</div>
+<p>Insert left header, if any.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">left</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">TD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+</div>
+<p>TD.className = this.missing;</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                        <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderCell</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">left</span><span class="p">[</span><span class="nx">old_left</span><span class="p">]));</span>
+                        <span class="nx">old_left</span><span class="o">++</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+</div>
+<p>Insert missing cells.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">old_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">diff</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">y</span> <span class="o">-</span> <span class="p">(</span><span class="nx">old_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">diff</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">TD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">);</span>
+                        <span class="nx">TD</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">missingClassName</span><span class="p">;</span>
+                        <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TD</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+</div>
+<p>Normal Insert.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderCell</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+</div>
+<p>Update old refs.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+                <span class="nx">old_y</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">y</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">TABLE</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TBODY</span><span class="p">);</span>
+        <span class="p">}</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+</div>
+<p>FOOTER.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">footer</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">footer</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">TFOOT</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tfoot&#39;</span><span class="p">);</span>
+            <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">TD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">);</span>
+                <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TD</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">footer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">TR</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">renderCell</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">footer</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+            <span class="p">}</span>
+            <span class="nx">TFOOT</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TR</span><span class="p">);</span>
+            <span class="nx">TABLE</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TFOOT</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">TABLE</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.resetpointers">
+  <h3>
+    <a href="#table.resetpointers" name="table.resetpointers" class="pilcrow">&#182;</a>
+    Table.resetPointers
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reset all pointers to 0 or to the value of the input parameter</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">pointers</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Objects contains the new pointers</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">resetPointers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pointers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">pointers</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">pointers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Table.resetPointers: pointers must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">pointers</span> <span class="o">=</span> <span class="nx">pointers</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">pointers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">x</span><span class="o">:</span> <span class="nx">pointers</span><span class="p">.</span><span class="nx">pointerX</span> <span class="o">||</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nx">pointers</span><span class="p">.</span><span class="nx">pointerY</span> <span class="o">||</span> <span class="mi">0</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.clear">
+  <h3>
+    <a href="#table.clear" name="table.clear" class="pilcrow">&#182;</a>
+    Table.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes all entries and indexes, and resets the pointers</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">confirm</span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, to confirm the operation.</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">NDDB.clear
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">confirm</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">NDDB</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">confirm</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">resetPointers</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="cell">
+  <h1>
+    <a href="#cell" name="cell" class="pilcrow">&#182;</a>
+    Cell
+  </h1>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="nx">Cell</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">();</span>
+    <span class="nx">Cell</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Cell</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="cell%20constructor">
+  <h2>
+    <a href="#cell%20constructor" name="cell%20constructor" class="pilcrow">&#182;</a>
+    Cell constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new Table Cell</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">cell</span>
+      <span class="dox_type">object</span>
+      <span>An object containing the coordinates in the table</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Entity</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">Table
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">Cell</span><span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
+</div>
+<p>Adds property: className and content.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">Entity</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">cell</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="cell.x">
+  <h3>
+    <a href="#cell.x" name="cell.x" class="pilcrow">&#182;</a>
+    Cell.x
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The row number</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">x</span> <span class="o">?</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">x</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="cell.y">
+  <h3>
+    <a href="#cell.y" name="cell.y" class="pilcrow">&#182;</a>
+    Cell.y
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The column number</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">y</span> <span class="o">?</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">y</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="cell.tdelement">
+  <h3>
+    <a href="#cell.tdelement" name="cell.tdelement" class="pilcrow">&#182;</a>
+    Cell.tdElement
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Reference to the TD/TH element, if built already</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">HTMLElement</span> <span class="o">=</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+
+    <span class="p">}</span>
+
+<span class="p">})(</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">||</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

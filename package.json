@@ -1,0 +1,37 @@
+{
+  "name": "nodegame-window",
+  "description": "Provides a handy API to interface nodeGame with the browser window, and to load nodeGame widgets.",
+  "version": "0.9.0",
+  "keywords": [ "nodegame", "window", "browser", "widgets" ],
+  "author": "Stefano Balietti <futur.dorko@gmail.com>",
+  "licenses": [
+    { "type": "MIT" }
+  ],
+  "dependencies": {
+    "JSUS": ">= 0.6.1",
+    "NDDB": ">= 0.4.1",
+    "commander": "1.0.0",
+    "smoosh": "0.4.0"
+  },
+  "devDependencies": {
+    "mocha": ">= 0.3.0",
+    "should": ">= 0.5.1",
+    "jsdom" : ">= 0.2.14",
+    "docker": "0.2.2",
+    "nodegame-client": ">= 0.5.0"
+  },
+  "optionalDependecies": {
+    "docker": "0.2.2",
+    "nodegame-client": ">= 0.5.0"
+  },
+  "engines": { "node":  ">= 0.2.3" },
+  "main": "GameWindow.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodeGame/nodegame-window.git"
+  },
+  "scripts": {
+    "test": "make test",
+    "prepublish": "node bin/make.js build -a"
+  }
+}

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTMLRenderer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../", thisFile = "lib/HTMLRenderer.js", defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#htmlrenderer">HTMLRenderer</a>
+      </div>
+      <div class="heading h2">
+        <a href="#global%20scope">Global scope</a>
+      </div>
+      <div class="heading h2">
+        <a href="#htmlrenderer%20constructor">HTMLRenderer constructor</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.options">HTMLRenderer.options</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.tm">HTMLRenderer.tm</a>
+      </div>
+      <div class="heading h2">
+        <a href="#htmlrenderer%20methods">HTMLRenderer methods</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.init">HTMLRenderer.init</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.reset">HTMLRenderer.reset</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.adddefaultpipeline">HTMLRenderer.addDefaultPipeline</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.clear">HTMLRenderer.clear</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.addrenderer">HTMLRenderer.addRenderer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.removerenderer">HTMLRenderer.removeRenderer</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.render">HTMLRenderer.render</a>
+      </div>
+      <div class="heading h3">
+        <a href="#htmlrenderer.size">HTMLRenderer.size</a>
+      </div>
+      <div class="heading h1">
+        <a href="#entity">Entity</a>
+      </div>
+      <div class="heading h2">
+        <a href="#entity%20constructor">Entity constructor</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer">
+  <h1>
+    <a href="#htmlrenderer" name="htmlrenderer" class="pilcrow">&#182;</a>
+    HTMLRenderer
+  </h1>
+</div>
+
+
+<p>Copyright(c) 2014 Stefano Balietti
+MIT Licensed</p>
+  </div>
+  <div class="body"><p>Renders javascript objects into HTML following a pipeline
+of decorator functions</p>
+
+<p>The default pipeline always looks for a <code>content</code> property and
+performs the following operations:</p>
+
+<ul>
+<li>if it is already an HTML element, returns it;</li>
+<li>if it contains a  #parse() method, tries to invoke it to generate HTML;</li>
+<li>if it is an object, tries to render it as a table of key:value pairs;</li>
+<li>finally, creates an HTML text node with it and returns it</li>
+</ul>
+
+<p>Depends on the nodegame-client add-on TriggerManager</p>
+
+<p>www.nodegame.org</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="global%20scope">
+  <h2>
+    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
+    Global scope
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
+    <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">TriggerManager</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;HTMLRenderer requires node.TriggerManager to load.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">HTMLRenderer</span> <span class="o">=</span> <span class="nx">HTMLRenderer</span><span class="p">;</span>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">Entity</span> <span class="o">=</span> <span class="nx">Entity</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer%20constructor">
+  <h2>
+    <a href="#htmlrenderer%20constructor" name="htmlrenderer%20constructor" class="pilcrow">&#182;</a>
+    HTMLRenderer constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instance of HTMLRenderer</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>A configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">HTMLRenderer</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="htmlrenderer.options">
+  <h3>
+    <a href="#htmlrenderer.options" name="htmlrenderer.options" class="pilcrow">&#182;</a>
+    HTMLRenderer.options
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="htmlrenderer.tm">
+  <h3>
+    <a href="#htmlrenderer.tm" name="htmlrenderer.tm" class="pilcrow">&#182;</a>
+    HTMLRenderer.tm
+  </h3>
+</div>
+
+
+<p>TriggerManager instance</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TriggerManager</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="htmlrenderer%20methods">
+  <h2>
+    <a href="#htmlrenderer%20methods" name="htmlrenderer%20methods" class="pilcrow">&#182;</a>
+    HTMLRenderer methods
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.init">
+  <h3>
+    <a href="#htmlrenderer.init" name="htmlrenderer.init" class="pilcrow">&#182;</a>
+    HTMLRenderer.init
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Configures the HTMLRenderer instance</p>
+
+<p>Takes the configuration as an input parameter or
+recycles the settings in <code>this.options</code>.</p>
+
+<p>The configuration object is of the type</p>
+
+<div class='highlight'><pre><code language=''>var options = {
+    returnAt: 'first',  // or 'last'
+    render: [ myFunc, myFunc2 ]
+}
+</code></pre></div>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">options</span>
+      <span class="dox_type">object</span>
+      <span>Optional. Configuration object</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">returnAt</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">returnAt</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pipeline</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pipeline</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.reset">
+  <h3>
+    <a href="#htmlrenderer.reset" name="htmlrenderer.reset" class="pilcrow">&#182;</a>
+    HTMLRenderer.reset
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deletes all registered render function and restores the default
+pipeline</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultPipeline</span><span class="p">();</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.adddefaultpipeline">
+  <h3>
+    <a href="#htmlrenderer.adddefaultpipeline" name="htmlrenderer.adddefaultpipeline" class="pilcrow">&#182;</a>
+    HTMLRenderer.addDefaultPipeline
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers the set of default render functions</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultPipeline</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">){</span>
+            <span class="k">return</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">div</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;:\t&#39;</span> <span class="o">+</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                        <span class="nx">div</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">str</span><span class="p">));</span>
+                        <span class="nx">div</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;br&#39;</span><span class="p">));</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">div</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span>
+                <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="o">||</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">isNode</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="o">||</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">isNode</span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.clear">
+  <h3>
+    <a href="#htmlrenderer.clear" name="htmlrenderer.clear" class="pilcrow">&#182;</a>
+    HTMLRenderer.clear
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Deletes all registered render functions</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">clear</span>
+      <span class="dox_type">boolean</span>
+      <span>Whether to confirm the clearing</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if clearing is successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="nx">clear</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.addrenderer">
+  <h3>
+    <a href="#htmlrenderer.addrenderer" name="htmlrenderer.addrenderer" class="pilcrow">&#182;</a>
+    HTMLRenderer.addRenderer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Registers a new render function</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">renderer</span>
+      <span class="dox_type">function</span>
+      <span>The function to add</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">pos</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The position of the renderer in the
+  pipeline</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if insertion is successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">pos</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.removerenderer">
+  <h3>
+    <a href="#htmlrenderer.removerenderer" name="htmlrenderer.removerenderer" class="pilcrow">&#182;</a>
+    HTMLRenderer.removeRenderer
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Removes a render function from the pipeline</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">renderer</span>
+      <span class="dox_type">function</span>
+      <span>The function to remove</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if removal is successful</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">removeTrigger</span><span class="p">(</span><span class="nx">renderer</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.render">
+  <h3>
+    <a href="#htmlrenderer.render" name="htmlrenderer.render" class="pilcrow">&#182;</a>
+    HTMLRenderer.render
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Runs the pipeline of render functions on a target object</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">o</span>
+      <span class="dox_type">object</span>
+      <span>The target object</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">object</span>
+      <span>The target object after exiting the pipeline</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">TriggerManager.pullTriggers
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">pullTriggers</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="htmlrenderer.size">
+  <h3>
+    <a href="#htmlrenderer.size" name="htmlrenderer.size" class="pilcrow">&#182;</a>
+    HTMLRenderer.size
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Counts the number of render functions in the pipeline</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">number</span>
+      <span>The number of render functions in the pipeline</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="entity">
+  <h1>
+    <a href="#entity" name="entity" class="pilcrow">&#182;</a>
+    Entity
+  </h1>
+</div>
+
+  </div>
+  <div class="body"><p>Abstract representation of an HTML entity</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="entity%20constructor">
+  <h2>
+    <a href="#entity%20constructor" name="entity%20constructor" class="pilcrow">&#182;</a>
+    Entity constructor
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Creates a new instace of Entity</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">e</span>
+      <span class="dox_type">object</span>
+      <span>The object to transform in entity</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">})(</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">||</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
+<span class="p">);</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

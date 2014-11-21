@@ -1,0 +1,8 @@
+npm-debug.log
+.settings
+_*
+.project
+*~
+node_modules/
+\#*
+.\#*
