@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>nodegame-window by nodeGame</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>nodegame-window</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/nodeGame/nodegame-window">View the Project on GitHub <small>nodeGame/nodegame-window</small></a></p>
+        <ul>
+          <li><a href="https://github.com/nodeGame/nodegame-window/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/nodeGame/nodegame-window/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/nodeGame/nodegame-window">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="nodegame-window-gamewindow" class="anchor" href="#nodegame-window-gamewindow" aria-hidden="true"><span class="octicon octicon-link"></span></a>nodegame-window: GameWindow</h1>
+
+<p>GameWindow provides a handy API to interface nodeGame with the browser window.</p>
+
+<p>Creates a custom root element inside the HTML page, and insert an iframe element inside it.</p>
+
+<p>Dynamic content can be loaded inside the iframe without losing the javascript state inside the page.</p>
+
+<p>Loads and unloads special javascript/HTML snippets, called widgets, in the page.</p>
+
+<p>Defines a number of predefined profiles associated with special configuration of widgets.</p>
+
+<p>Depends on nodeGame-client and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
+Widgets can have custom dependencies, which are checked internally by the GameWindow engine.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>TODO</p>
+
+<h2>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h2>
+
+<p>You can create a custom nodegame-window build using the make.js file in the bin directory.</p>
+
+<div class="highlight highlight-javascript"><pre>node make.js build <span class="pl-k">-</span>a <span class="pl-c">// Full build, about 20Kb minified</span>
+node make.js build <span class="pl-k">-</span>B <span class="pl-c">// Bare (minimal) build, about 8Kb minified</span></pre></div>
+
+<h2>
+<a id="make-help" class="anchor" href="#make-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make help</h2>
+
+<p>Usage: make.js [options] [command]</p>
+
+<pre><code>Commands:
+
+  clean
+  Removes all files from build folder
+
+  build [options] [options]
+  Creates a nodegame-window custom build
+
+Options:
+
+  -h, --help     output usage information
+  -V, --version  output the version number
+
+
+Usage: build [options] [options]
+
+Options:
+
+  -h, --help           output usage information
+  -B, --bare           bare naked nodegame-window (only core)
+  -a, --all            full build of nodegame-window (default)
+  -C, --clean          clean build directory
+  -A, --analyse        analyse build
+  -o, --output &lt;file&gt;  output file (without .js)
+</code></pre>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (C) 2014 Stefano Balietti</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/nodeGame">nodeGame</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
