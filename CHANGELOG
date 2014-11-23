@@ -1,4 +1,7 @@
 # nodegame-window change log
 
+## 0.9.1
+ - Wait Screen is not displayed if the are no more steps in the sequence
+
 ## 0.9.0
  - Change log of new version starts here
