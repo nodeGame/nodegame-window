@@ -19,10 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#list%20class%20for%20nodegame%20window">List class for nodeGame window</a>
-      </div>
-      <div class="heading h2">
-        <a href="#www.nodegame.org">www.nodegame.org</a>
+        <a href="#list">List</a>
       </div>
     </div>
   </div>
@@ -33,10 +30,10 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="list%20class%20for%20nodegame%20window">
+<div class="pilwrap" id="list">
   <h1>
-    <a href="#list%20class%20for%20nodegame%20window" name="list%20class%20for%20nodegame%20window" class="pilcrow">&#182;</a>
-    List class for nodeGame window
+    <a href="#list" name="list" class="pilcrow">&#182;</a>
+    List
   </h1>
 </div>
 
@@ -44,16 +41,9 @@
 <p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p>Creates an HTML list that can be manipulated by an api. </p>
+  <div class="body"><p>Creates an HTML list that can be manipulated by an api</p>
 
-
-<div class="pilwrap" id="www.nodegame.org">
-  <h2>
-    <a href="#www.nodegame.org" name="www.nodegame.org" class="pilcrow">&#182;</a>
-    www.nodegame.org
-  </h2>
-</div>
-
+<p>www.nodegame.org</p>
   </div>
 </div>
         </td>
@@ -109,10 +99,11 @@ MIT Licensed</p>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">last_dt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">last_dd</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">auto_update</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">auto_update</span><span class="p">)</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">auto_update</span>
-            <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">auto_update</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">auto_update</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">auto_update</span><span class="p">)</span> <span class="o">?</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">auto_update</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">auto_update</span><span class="p">;</span>
 
-        <span class="kd">var</span> <span class="nx">lifo</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lifo</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lifo</span><span class="p">)</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lifo</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">lifo</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">lifo</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lifo</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">lifo</span><span class="p">)</span> <span class="o">?</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">lifo</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">lifo</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -294,7 +285,8 @@ TODO: improve this</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">title</span><span class="p">));</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span>
+                    <span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">title</span><span class="p">));</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -353,7 +345,8 @@ TODO: improve this</p>
     <span class="p">}</span>
 
 <span class="p">})(</span>
-    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="p">((</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">:</span> <span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="p">((</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">.</span><span class="nb">window</span><span class="p">)</span> <span class="o">?</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nb">window</span> <span class="o">:</span> <span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span>
 <span class="p">);</span>
 </pre></div>

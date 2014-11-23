@@ -19,10 +19,7 @@
     <div id="tree"></div>
     <div id="headings">
       <div class="heading h1">
-        <a href="#gamewindow%20extras">GameWindow extras</a>
-      </div>
-      <div class="heading h2">
-        <a href="#http%3A%2F%2Fwww.nodegame.org">http://www.nodegame.org</a>
+        <a href="#extra">extra</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.getscreen">GameWindow.getScreen</a>
@@ -57,7 +54,7 @@
       <div class="heading h2">
         <a href="#helper%20functions">Helper Functions</a>
       </div>
-      <div class="heading h2">
+      <div class="heading h3">
         <a href="#toggleinputs">toggleInputs</a>
       </div>
     </div>
@@ -69,10 +66,10 @@
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamewindow%20extras">
+<div class="pilwrap" id="extra">
   <h1>
-    <a href="#gamewindow%20extras" name="gamewindow%20extras" class="pilcrow">&#182;</a>
-    GameWindow extras
+    <a href="#extra" name="extra" class="pilcrow">&#182;</a>
+    extra
   </h1>
 </div>
 
@@ -80,14 +77,9 @@
 <p>Copyright(c) 2014 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body">
-<div class="pilwrap" id="http%3A%2F%2Fwww.nodegame.org">
-  <h2>
-    <a href="#http%3A%2F%2Fwww.nodegame.org" name="http%3A%2F%2Fwww.nodegame.org" class="pilcrow">&#182;</a>
-    <a href='http://www.nodegame.org'>http://www.nodegame.org</a>
-  </h2>
-</div>
+  <div class="body"><p>GameWindow extras</p>
 
+<p><a href='http://www.nodegame.org'>http://www.nodegame.org</a></p>
   </div>
 </div>
         </td>
@@ -271,8 +263,8 @@ If no root element is specified, the default screen is used.</p>
             <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span>
-                <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.writeln: could not determine where to write.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.writeln: &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;could not determine where to write.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">DOM</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">br</span><span class="p">);</span>
     <span class="p">};</span>
@@ -301,7 +293,7 @@ If no root element is specified, the default screen is used.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">prefix</span>
       <span class="dox_type">string</span>
-      <span>Optional. A prefix to use</span>
+      <span>Optional. The prefix to use</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -363,7 +355,7 @@ disabled or enabled (and not toggled).</p>
       <span class="dox_tag_name">id</span>
       <span class="dox_type">string</span>
       <span>Optional. The id of the element container
-  of the forms. Defaults, the whole page, including the frame document</span>
+  of the forms. Default: the whole page, including the frame document</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">disabled</span>
@@ -393,7 +385,8 @@ disabled or enabled (and not toggled).</p>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toggleInputs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">container</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;GameWindow.toggleInputs: getElementsByTagName not found.&#39;</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span>
+                <span class="s1">&#39;GameWindow.toggleInputs: getElementsByTagName not found.&#39;</span><span class="p">);</span>
             <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -510,7 +503,7 @@ starts from the beginning.</p>
       <span class="dox_tag_name">len</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum length of the loading dots.
-  Defaults, 5</span>
+  Default: 5</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
@@ -522,7 +515,7 @@ starts from the beginning.</p>
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
       <span>An object containing two properties: the span element
-  and a method stop, that clears the interval.</span>
+  and a method stop, that clears the interval</span>
     </div>
   </div>
 </div>
@@ -598,13 +591,13 @@ starts from the beginning.</p>
       <span class="dox_tag_name">root</span>
       <span class="dox_type">HTMLElement</span>
       <span>The element to which the loading dots will be
-  appended.</span>
+  appended</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">len</span>
       <span class="dox_type">number</span>
       <span>Optional. The maximum length of the loading dots.
-  Defaults, 5</span>
+  Default: 5</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">id</span>
@@ -615,7 +608,7 @@ starts from the beginning.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span>The span with the loading dots.</span>
+      <span>The span with the loading dots</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -794,10 +787,10 @@ in the current screen.</p>
         <td class="docs"><div class="dox">
   <div class="summary">
 <div class="pilwrap" id="toggleinputs">
-  <h2>
+  <h3>
     <a href="#toggleinputs" name="toggleinputs" class="pilcrow">&#182;</a>
     toggleInputs
-  </h2>
+  </h3>
 </div>
 
   </div>
@@ -806,7 +799,8 @@ in the current screen.</p>
   <div class="details">
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">private</span>
+      <span class="dox_type">private
+</span>
     </div>
   </div>
 </div>

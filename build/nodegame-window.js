@@ -4,7 +4,7 @@
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
- * browser window.
+ * browser window
  *
  * Creates a custom root element inside the HTML page, and insert an
  * iframe element inside it.
@@ -15,7 +15,6 @@
  * Defines a number of profiles associated with special page layout.
  *
  * Depends on JSUS and nodegame-client.
- * ---
  */
 (function(window, node) {
 
@@ -24,7 +23,7 @@
     var J = node.JSUS;
 
     if (!J) {
-        throw new Error('GameWindow: JSUS object not found. Aborting');
+        throw new Error('GameWindow: JSUS object not found. Aborting.');
     }
 
     var DOM = J.get('DOM');
@@ -130,7 +129,7 @@
     /**
      * ## GameWindow constructor
      *
-     * Creates the GameWindow object.
+     * Creates the GameWindow object
      *
      * @see GameWindow.init
      */
@@ -148,8 +147,6 @@
 
         node.log('node-window: loading...');
 
-        // ## GameWindow properties
-
         /**
          * ### GameWindow.frameName
          *
@@ -162,7 +159,7 @@
          *
          * A reference to the iframe object of type _HTMLIFrameElement_
          *
-         * You can this element also by:
+         * You can get this element also by:
          *
          * - document.getElementById(this.frameName)
          *
@@ -235,7 +232,7 @@
          *
          * The relative position of the header on the screen
          *
-         * Available positions: 'top', 'bottom', 'left', 'right'
+         * Available positions: 'top', 'bottom', 'left', 'right'.
          *
          * @see GameWindow.setHeaderPosition
          */
@@ -336,9 +333,9 @@
         this.waitScreen = null;
 
         /**
-         * ### GamwWindow.screenState
+         * ### GameWindow.screenState
          *
-         * Levels describing whether the user can interact with the frame.
+         * Level describing whether the user can interact with the frame
          *
          * The _screen_ represents all the user can see on screen.
          * It includes the _frame_ area, but also the _header_.
@@ -675,11 +672,12 @@
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
      * @param {Element} root Optional. The HTML element to which the iframe
-     *   will be appended. Defaults, this.frameRoot or document.body.
-     * @param {string} frameName Optional. The name of the iframe. Defaults,
-     *   'ng_mainframe'.
+     *   will be appended. Default: this.frameRoot or document.body
+     * @param {string} frameName Optional. The name of the iframe. Default:
+     *   'ng_mainframe'
      * @param {boolean} force Optional. Will create the frame even if an
-     *   existing one is found. Defaults, FALSE.
+     *   existing one is found. Default: FALSE
+     *
      * @return {IFrameElement} The newly created iframe
      *
      * @see GameWindow.frameElement
@@ -732,10 +730,12 @@
      *
      * Sets the new default frame and update other references
      *
-     * @param {IFrameElement} iframe. The new default frame.
-     * @param {string} frameName The name of the iframe.
-     * @param {Element} root The HTML element to which the iframe is appended.
+     * @param {IFrameElement} iframe The new default frame
+     * @param {string} frameName The name of the iframe
+     * @param {Element} root The HTML element to which the iframe is appended
+     *
      * @return {IFrameElement} The new default iframe
+     *
      * @see GameWindow.generateFrame
      */
     GameWindow.prototype.setFrame = function(iframe, iframeName, root) {
@@ -797,15 +797,16 @@
     /**
      * ### GameWindow.generateHeader
      *
-     * Adds a a div element and sets it as the header of the page.
+     * Adds a a div element and sets it as the header of the page
      *
      * @param {Element} root Optional. The HTML element to which the header
-     *   will be appended. Defaults, _ document.body_ or
-     *   _document.lastElementChild_.
+     *   will be appended. Default: _document.body_ or
+     *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Defaults, 'gn_header'..
+     *   Default: 'gn_header'
      * @param {boolean} force Optional. Will create the header even if an
-     *   existing one is found. Defaults, FALSE.
+     *   existing one is found. Default: FALSE
+     *
      * @return {Element} The header element
      */
     GameWindow.prototype.generateHeader = function(root, headerName, force) {
@@ -852,12 +853,13 @@
     /**
      * ### GameWindow.setHeaderPosition
      *
-     * Set header's position on the screen.
-     *
-     * Available positions: 'top', 'bottom', 'left', 'right'.
+     * Sets the header's position on the screen
      *
      * Positioning of the frame element is also affected, if existing, or if
      * added later.
+     *
+     * @param {string} position New position, one of
+     *   'top', 'bottom', 'left', 'right'
      *
      * @see GameWindow.generateHeader
      * @see GameWindow.headerPosition
@@ -912,16 +914,18 @@
      *
      * Sets the new header element and update related references
      *
-     * @param {Element} header. The new header.
-     * @param {string} headerName The name of the header.
-     * @param {Element} root The HTML element to which the header is appended.
+     * @param {Element} header The new header
+     * @param {string} headerName The name of the header
+     * @param {Element} root The HTML element to which the header is appended
+     *
      * @return {Element} The new header
      *
      * @see GameWindow.generateHeader
      */
     GameWindow.prototype.setHeader = function(header, headerName, root) {
         if (!J.isElement(header)) {
-            throw new Error('GameWindow.setHeader: header must be HTMLElement.');
+            throw new Error(
+                    'GameWindow.setHeader: header must be HTMLElement.');
         }
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.setHeader: headerName must be string.');
@@ -1025,7 +1029,7 @@
      * - PLAYER: header + frame
      * - SOLO_PLAYER: (like player without header)
      *
-     * @param {string} type The type of setup
+     * @param {string} profile The setup profile
      */
     GameWindow.prototype.setupFrame = function(profile) {
 
@@ -1128,16 +1132,16 @@
     };
 
     /**
-     * ### GameWindow.preCache
+     * ### GameWindow.preCacheTest
      *
-     * Tests wether preChace is supported by the browser.
+     * Tests wether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
      * @param {function} cb Optional. The function to call once the test if
      *   finished. It will be called regardless of success or failure.
-     * @param {string} uri Optional. The URI to test. Defaults,
-     *   '/pages/testpage.htm';
+     * @param {string} uri Optional. The URI to test. Default:
+     *   '/pages/testpage.htm'
      *
      * @see GameWindow.cacheSupported
      */
@@ -1287,6 +1291,7 @@
      * Looks first into the iframe and then into the rest of the page.
      *
      * @param {string} id The id of the element
+     *
      * @return {Element|null} The element in the page, or null if none is found
      *
      * @see GameWindow.getElementsByTagName
@@ -1313,6 +1318,7 @@
      * Looks first into the iframe and then into the rest of the page.
      *
      * @param {string} tag The tag of the elements
+     *
      * @return {array|null} The elements in the page, or null if none is found
      *
      * @see GameWindow.getElementById
@@ -1333,7 +1339,7 @@
      * The third parameter is an options object with the following fields
      * (any fields left out assume the default setting):
      *
-     *  - cache (object): Caching options.  Fields:
+     *  - cache (object): Caching options. Fields:
      *      * loadMode (string):
      *          'cache' (default; get the page from cache if possible),
      *          'reload' (reload page without the cache)
@@ -1432,7 +1438,7 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode + '.');
+                            'store mode: ' + opts.cache.storeMode + '.');
                 }
             }
         }
@@ -1548,7 +1554,7 @@
         }
     };
 
-    /* Private helper functions follow */
+    // ## Helper functions
 
     /**
      * ### handleFrameLoad
@@ -1807,14 +1813,15 @@
 );
 
 /**
- * # GameWindow UI Behavior module
+ * # ui-behavior
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
+ *
+ * GameWindow UI Behavior module
  *
  * Handles default behavior of the browser on certain DOM Events.
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -1864,7 +1871,7 @@
      * ### GameWindow.promptOnleave
      *
      * Captures the onbeforeunload event and warns the user that leaving the
-     * page may halt the game.
+     * page may halt the game
      *
      * @param {object} windowObj Optional. The window container in which
      *   to bind the ESC key
@@ -1946,17 +1953,16 @@
 );
 
 /**
- * # GameWindow Screen Locker
+ * # lockScreen
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Locks / Unlocks the screen.
+ * Locks / Unlocks the screen
  *
  * The _screen_ represents all the user can see on screen.
  * It includes the _frame_ area, but also the _header_.
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -2020,7 +2026,9 @@
     /**
      * ### GameWindow.isScreenLocked
      *
-     * TRUE, if the screen is locked.
+     * Checks whether the screen is locked
+     *
+     * @return {boolean} TRUE if the screen is locked
      *
      * @see GameWindow.screenState
      */
@@ -2035,12 +2043,13 @@
 );
 
 /**
- * # GameWindow listeners
+ * # listeners
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * GameWindow listeners
+ *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 
@@ -2112,14 +2121,13 @@
 );
 
 /**
- * # WaitScreen for nodeGame Window
+ * # WaitScreen
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a grey layer, disables inputs, and displays a message
+ * Covers the screen with a gray layer, disables inputs, and displays a message
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window) {
 
@@ -2133,7 +2141,7 @@
     WaitScreen.version = '0.7.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
-    // Helper functions
+    // ## Helper functions
 
     var inputTags, len;
     inputTags = ['button', 'select', 'textarea', 'input'];
@@ -2222,7 +2230,7 @@
      *
      * Instantiates a new WaitScreen object
      *
-     * @param {object} options Optional. Configuration options.
+     * @param {object} options Optional. Configuration options
      */
     function WaitScreen(options) {
         options = options || {};
@@ -2230,11 +2238,11 @@
         /**
          * ### WaitScreen.id
          *
-         * The id of _waitingDiv_. Defaults, 'ng_waitScreen'
+         * The id of _waitingDiv_. Default: 'ng_waitScreen'
          *
          * @see WaitScreen.waitingDiv
          */
-	this.id = options.id || 'ng_waitScreen';
+        this.id = options.id || 'ng_waitScreen';
 
         /**
          * ### WaitScreen.root
@@ -2250,14 +2258,14 @@
          *
          * Reference to the HTML Element that actually locks the screen
          */
-	this.waitingDiv = null;
+        this.waitingDiv = null;
 
         /**
          * ### WaitScreen.beforePauseText
          *
          * Flag if the screen should stay locked after a RESUMED event
          *
-         * Contains the value of the innerHTML attribute of the waiting div
+         * Contains the value of the innerHTML attribute of the waiting div.
          */
         this.beforePauseInnerHTML = null;
 
@@ -2275,7 +2283,7 @@
          *
          * Default texts for default events
          */
-	this.defaultTexts = {
+        this.defaultTexts = {
             waiting: options.waitingText ||
                 'Waiting for other players to be done...',
             stepping: options.steppingText ||
@@ -2300,7 +2308,7 @@
     /**
      * ### WaitScreen.enable
      *
-     * Register default event listeners
+     * Registers default event listeners
      */
     WaitScreen.prototype.enable = function() {
         if (this.enabled) return;
@@ -2315,7 +2323,7 @@
     /**
      * ### WaitScreen.disable
      *
-     * Unregister default event listeners
+     * Unregisters default event listeners
      */
     WaitScreen.prototype.disable = function() {
         if (!this.enabled) return;
@@ -2332,13 +2340,13 @@
      *
      * Locks the screen
      *
-     * Overlays a grey div on top of the page and disables all inputs
+     * Overlays a gray div on top of the page and disables all inputs.
      *
      * If called on an already locked screen, the previous text is destroyed.
      * Use `WaitScreen.updateText` to modify an existing text.
      *
      * @param {string} text Optional. If set, displays the text on top of the
-     *   grey string
+     *   gray string
      *
      * @see WaitScreen.unlock
      * @see WaitScren.updateText
@@ -2357,18 +2365,18 @@
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
             }
-	    this.waitingDiv = W.addDiv(this.root, this.id);
-	}
-	if (this.waitingDiv.style.display === 'none') {
-	    this.waitingDiv.style.display = '';
-	}
-	this.waitingDiv.innerHTML = text;
+            this.waitingDiv = W.addDiv(this.root, this.id);
+        }
+        if (this.waitingDiv.style.display === 'none') {
+            this.waitingDiv.style.display = '';
+        }
+        this.waitingDiv.innerHTML = text;
     };
 
     /**
      * ### WaitScreen.unlock
      *
-     * Removes the overlayed grey div and re-enables the inputs on the page
+     * Removes the overlayed gray div and re-enables the inputs on the page
      *
      * @see WaitScreen.lock
      */
@@ -2394,7 +2402,7 @@
      *
      * @param {string} text The text to be displayed
      * @param {boolean} append Optional. If TRUE, the text is appended. By
-     *   defaults the old text is replaced.
+     *   default the old text is replaced
      */
     WaitScreen.prototype.updateText = function(text, append) {
         append = append || false;
@@ -2435,15 +2443,14 @@
 );
 
 /**
- * # GameWindow selector module
+ * # selector
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame.
+ * nodeGame
  *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -2459,6 +2466,7 @@
      * Creates an HTML select element populated with the data of other players
      *
      * @param {string} id Optional. The id of the element
+     *
      * @return The newly created select element
      *
      * @see GameWindow.addRecipientSelector
@@ -2485,6 +2493,7 @@
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {boolean} FALSE if no valid root element is found, TRUE otherwise
      *
      * @see GameWindow.addRecipientSelector
@@ -2504,7 +2513,7 @@
     /**
      * ### GameWindow.addStandardRecipients
      *
-     * Adds valid _to_ recipient options to a specified select element.
+     * Adds valid _to_ recipient options to a specified select element
      *
      * @param {object} toSelector An HTML `<select>` element
      *
@@ -2576,6 +2585,7 @@
      * (SET,GET,SAY,SHOW*) as options
      *
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.addActionSelector
@@ -2596,6 +2606,7 @@
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.getActionSelector
@@ -2615,6 +2626,7 @@
      * (HI,TXT,DATA, etc.) as options
      *
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.addActionSelector
@@ -2637,6 +2649,7 @@
      *
      * @param {Element} root The root element
      * @param {string} id The id of the selector
+     *
      * @return {Element} The newly created selector
      *
      * @see GameWindow.getTargetSelector
@@ -2654,12 +2667,13 @@
 );
 
 /**
- * # GameWindow extras
+ * # extra
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * GameWindow extras
+ *
  * http://www.nodegame.org
- * ---
  */
 (function(window, node) {
 
@@ -2706,6 +2720,7 @@
      *
      * @param {string|object} text The content to write
      * @param {Element|string} root Optional. The root element or its id
+     *
      * @return {string|object} The content written
      *
      * @see GameWindow.writeln
@@ -2734,6 +2749,7 @@
      *
      * @param {string|object} text The content to write
      * @param {Element|string} root Optional. The root element or its id
+     *
      * @return {string|object} The content written
      *
      * @see GameWindow.write
@@ -2746,8 +2762,8 @@
             root = this.getScreen();
         }
         if (!root) {
-            throw new
-                Error('GameWindow.writeln: could not determine where to write.');
+            throw new Error('GameWindow.writeln: ' +
+                            'could not determine where to write.');
         }
         return DOM.writeln(root, text, br);
     };
@@ -2759,7 +2775,8 @@
      *
      * Overrides JSUS.DOM.generateUniqueId.
      *
-     * @param {string} prefix Optional. A prefix to use
+     * @param {string} prefix Optional. The prefix to use
+     *
      * @return {string} The generated id
      *
      * @experimental
@@ -2793,9 +2810,10 @@
      * disabled or enabled (and not toggled).
      *
      * @param {string} id Optional. The id of the element container
-     *   of the forms. Defaults, the whole page, including the frame document
+     *   of the forms. Default: the whole page, including the frame document
      * @param {boolean} disabled Optional. Forces all the inputs to be either
      *   disabled or enabled (not toggled)
+     *
      * @return {boolean} FALSE, if the method could not be executed
      *
      * @see GameWindow.getFrameDocument
@@ -2804,7 +2822,8 @@
     GameWindow.prototype.toggleInputs = function(id, disabled) {
         var container;
         if (!document.getElementsByTagName) {
-            node.err('GameWindow.toggleInputs: getElementsByTagName not found.');
+            node.err(
+                'GameWindow.toggleInputs: getElementsByTagName not found.');
             return false;
         }
         if (id && 'string' === typeof id) {
@@ -2861,10 +2880,11 @@
      * Gives the impression of a loading time.
      *
      * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
+     *   Default: 5
      * @param {string} id Optional The id of the span
+     *
      * @return {object} An object containing two properties: the span element
-     *   and a method stop, that clears the interval.
+     *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
         var span_dots, i, limit, intervalId;
@@ -2908,11 +2928,12 @@
      * _loading dots_ element.
      *
      * @param {HTMLElement} root The element to which the loading dots will be
-     *   appended.
+     *   appended
      * @param {number} len Optional. The maximum length of the loading dots.
-     *   Defaults, 5
+     *   Default: 5
      * @param {string} id Optional The id of the span
-     * @return {object} The span with the loading dots.
+     *
+     * @return {object} The span with the loading dots
      *
      * @see GameWindow.getLoadingDots
      */
@@ -2929,6 +2950,7 @@
      * @param {string} text Optional. The text on the button
      * @param {string} id The id of the button
      * @param {object} attributes Optional. The attributes of the button
+     *
      * @return {Element} The newly created button
      */
     GameWindow.prototype.getEventButton =
@@ -2959,6 +2981,7 @@
      * @param {Element} root Optional. The root element
      * @param {string} id The id of the button
      * @param {object} attributes Optional. The attributes of the button
+     *
      * @return {Element} The newly created button
      *
      * @see GameWindow.getEventButton
@@ -2980,7 +3003,7 @@
     // ## Helper Functions
 
     /**
-     * ## toggleInputs
+     * ### toggleInputs
      *
      * @api private
      */
@@ -3022,14 +3045,13 @@
 })();
 
 /**
- * # Canvas class for nodeGame window
+ * # Canvas
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an HTML canvas that can be manipulated by an api.
+ * Creates an HTML canvas that can be manipulated by an api
  *
  * www.nodegame.org
- * ---
  */
 (function(exports) {
 
@@ -3062,7 +3084,8 @@
 
             var radius = settings.radius || 100;
             //console.log(settings);
-            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius + ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
+            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
+            //    ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -3089,7 +3112,8 @@
             var to_y =  Math.sin(angle) * length + settings.y;
             //console.log('aa ' + to_x + ' ' + to_y);
 
-            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x + ', ' + to_y + ')');
+            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x +
+            //            ', ' + to_y + ')');
             //console.log('Length: ' + length + ', Angle: ' + angle );
 
             this.ctx.lineWidth = settings.lineWidth || 1;
@@ -3127,7 +3151,7 @@
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
- * of decorator functions.
+ * of decorator functions
  *
  * The default pipeline always looks for a `content` property and
  * performs the following operations:
@@ -3140,7 +3164,6 @@
  * Depends on the nodegame-client add-on TriggerManager
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window, node) {
 
@@ -3168,11 +3191,9 @@
      * @param {object} options A configuration object
      */
     function HTMLRenderer (options) {
-
-        // ## Public properties
-
-        // ### TriggerManager.options
+        // ### HTMLRenderer.options
         this.options = options || {};
+
         // ### HTMLRenderer.tm
         // TriggerManager instance
         this.tm = new TriggerManager();
@@ -3180,7 +3201,7 @@
         this.init(this.options);
     }
 
-    //## HTMLRenderer methods
+    // ## HTMLRenderer methods
 
     /**
      * ### HTMLRenderer.init
@@ -3192,12 +3213,12 @@
      *
      * The configuration object is of the type
      *
-     *  var options = {
-     *          returnAt: 'first', // or 'last'
-     *          render: [ myFunc,
-     *                            myFunc2
-     *          ],
-     *  }
+     * ```
+     * var options = {
+     *     returnAt: 'first',  // or 'last'
+     *     render: [ myFunc, myFunc2 ]
+     * }
+     * ```
      *
      * @param {object} options Optional. Configuration object
      */
@@ -3223,7 +3244,6 @@
      *
      * Deletes all registered render function and restores the default
      * pipeline
-     *
      */
     HTMLRenderer.prototype.reset = function() {
         this.clear(true);
@@ -3234,7 +3254,6 @@
      * ### HTMLRenderer.addDefaultPipeline
      *
      * Registers the set of default render functions
-     *
      */
     HTMLRenderer.prototype.addDefaultPipeline = function() {
         this.tm.addTrigger(function(el){
@@ -3281,7 +3300,8 @@
      *
      * Deletes all registered render functions
      *
-     * @param {boolean} clear TRUE, to confirm the clearing
+     * @param {boolean} clear Whether to confirm the clearing
+     *
      * @return {boolean} TRUE, if clearing is successful
      */
     HTMLRenderer.prototype.clear = function(clear) {
@@ -3294,7 +3314,9 @@
      * Registers a new render function
      *
      * @param {function} renderer The function to add
-     * @param {number} pos Optional. The position of the renderer in the pipeline
+     * @param {number} pos Optional. The position of the renderer in the
+     *   pipeline
+     *
      * @return {boolean} TRUE, if insertion is successful
      */
     HTMLRenderer.prototype.addRenderer = function(renderer, pos) {
@@ -3307,6 +3329,7 @@
      * Removes a render function from the pipeline
      *
      * @param {function} renderer The function to remove
+     *
      * @return {boolean} TRUE, if removal is successful
      */
     HTMLRenderer.prototype.removeRenderer = function(renderer) {
@@ -3319,6 +3342,7 @@
      * Runs the pipeline of render functions on a target object
      *
      * @param {object} o The target object
+     *
      * @return {object} The target object after exiting the pipeline
      *
      * @see TriggerManager.pullTriggers
@@ -3342,7 +3366,6 @@
      * # Entity
      *
      * Abstract representation of an HTML entity
-     *
      */
 
     /**
@@ -3350,7 +3373,7 @@
      *
      * Creates a new instace of Entity
      *
-     * @param {object} The object to transform in entity
+     * @param {object} e The object to transform in entity
      */
     function Entity(e) {
         e = e || {};
@@ -3365,14 +3388,13 @@
 );
 
 /**
- * # List class for nodeGame window
+ * # List
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
- * Creates an HTML list that can be manipulated by an api.
+ * Creates an HTML list that can be manipulated by an api
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, node) {
 
@@ -3415,10 +3437,11 @@
 
         this.last_dt = 0;
         this.last_dd = 0;
-        this.auto_update = ('undefined' !== typeof options.auto_update) ? options.auto_update
-            : this.auto_update;
+        this.auto_update = ('undefined' !== typeof options.auto_update) ?
+            options.auto_update : this.auto_update;
 
-        var lifo = this.lifo = ('undefined' !== typeof options.lifo) ? options.lifo : this.lifo;
+        var lifo = this.lifo = ('undefined' !== typeof options.lifo) ?
+            options.lifo : this.lifo;
 
         this.globalCompare = function(o1, o2) {
             if (!o1 && !o2) return 0;
@@ -3522,7 +3545,8 @@
                 this.DL.removeChild(this.DL.firstChild);
             }
             if (this.options.title) {
-                this.DL.appendChild(document.createTextNode(this.options.title));
+                this.DL.appendChild(
+                    document.createTextNode(this.options.title));
             }
         }
 
@@ -3559,19 +3583,19 @@
     }
 
 })(
-    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ? node.window : node) : module.parent.exports,
+    ('undefined' !== typeof node) ? (('undefined' !== typeof node.window) ?
+        node.window : node) : module.parent.exports,
     ('undefined' !== typeof node) ? node : module.parent.exports
 );
 
 /**
- * # Table class for nodeGame window
+ * # Table
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
  *
  * www.nodegame.org
- * ---
  */
 (function(exports, window, node) {
 
@@ -3593,7 +3617,7 @@
     // ## Helper functions
 
     /**
-     * ## validateInput
+     * ### validateInput
      *
      * Validates user input and throws an error if input is not correct
      *
@@ -3602,6 +3626,7 @@
      * @param {number} x Optional. The row index
      * @param {number} y Optional. The column index
      * @param {boolean} dataArray TRUE, if data should be an array
+     *
      * @return {boolean} TRUE, if input passes validation
      */
     function validateInput(method, data, x, y, dataArray) {
@@ -3623,13 +3648,13 @@
     }
 
     /**
-     * ## Table.addClass
+     * ### Table.addClass
      *
      * Adds a CSS class to each element cell in the table
      *
-     * @param {string|array} The name of the class/classes.
+     * @param {string|array} className The name of the class/classes
      *
-     * return {Table} This instance for chaining.
+     * @return {Table} This instance for chaining
      */
     Table.prototype.addClass = function(className) {
         if ('string' !== typeof className && !J.isArray(className)) {
@@ -3651,13 +3676,13 @@
     };
 
     /**
-     * ## Table.removeClass
+     * ### Table.removeClass
      *
      * Removes a CSS class from each element cell in the table
      *
-     * @param {string|array} The name of the class/classes.
+     * @param {string|array} className The name of the class/classes
      *
-     * return {Table} This instance for chaining.
+     * @return {Table} This instance for chaining
      */
     Table.prototype.removeClass = function(className) {
         var func;
@@ -3688,12 +3713,13 @@
     };
 
     /**
-     * ## addSpecialCells
+     * ### addSpecialCells
      *
      * Parses an array of data and returns an array of cells
      *
      * @param {array} data Array containing data to transform into cells
-     * @return {array} out The array of cells
+     *
+     * @return {array} The array of cells
      */
     function addSpecialCells(data) {
         var out, i, len;
@@ -3743,7 +3769,7 @@
         }
 
         /**
-         * ## Table.pointers
+         * ### Table.pointers
          *
          * References to last inserted cell coordinates
          */
@@ -3753,28 +3779,28 @@
         };
 
         /**
-         * ## Table.header
+         * ### Table.header
          *
          * Array containing the header elements of the table
          */
         this.header = [];
 
         /**
-         * ## Table.footer
+         * ### Table.footer
          *
          * Array containing the footer elements of the table
          */
         this.footer = [];
 
         /**
-         * ## Table.left
+         * ### Table.left
          *
          * Array containing elements to keep on the left border of the table
          */
         this.left = [];
 
         /**
-         * ## Table.table
+         * ### Table.table
          *
          * Reference to the HTMLElement Table
          */
@@ -3789,7 +3815,7 @@
         }
 
         /**
-         * ## Table.missingClassName
+         * ### Table.missingClassName
          *
          * Class name for "missing" cells
          *
@@ -3800,10 +3826,10 @@
         this.missingClassName = options.missingClassName || 'missing';
 
         /**
-         * ## Table.autoParse
+         * ### Table.autoParse
          *
          * If TRUE, whenever a new cell is added the table is updated.
-         * Defaults, FALSE.
+         * Default: FALSE
          */
         this.autoParse = 'undefined' !== typeof options.autoParse ?
             options.autoParse : false;
@@ -3812,13 +3838,15 @@
         this.initRenderer(options.render);
     }
 
+    // ## Table methods
+
     /**
-     * Table.initRenderer
+     * ### Table.initRenderer
      *
-     * Creates the `HTMLRenderer` object and adds a renderer for objects.
+     * Creates the `HTMLRenderer` object and adds a renderer for objects
      *
      * Every cell in the table will be rendered according to the criteria
-     * added to the renderer object
+     * added to the renderer object.
      *
      * @param {object} options Optional. Configuration for the renderer
      *
@@ -3850,7 +3878,8 @@
      * It also adds an internal reference to the newly created TD/TH element
      *
      * @param {Cell} cell The cell to transform in element
-     * @param {string} tagName The name of the tag. Defaults, 'td'
+     * @param {string} tagName The name of the tag. Default: 'td'
+     *
      * @return {HTMLElement} The newly created HTML Element (TD/TH)
      *
      * @see Table.htmlRenderer
@@ -3870,7 +3899,7 @@
     };
 
     /**
-     * Table.get
+     * ### Table.get
      *
      * Returns the element at row column (row,col)
      *
@@ -3899,13 +3928,14 @@
     };
 
     /**
-     * Table.getTR
+     * ### Table.getTR
      *
      * Returns a reference to the TR element at row (row)
      *
      * @param {number} row The row number
+     *
      * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
-     *   cannot be found.
+     *   cannot be found
      */
     Table.prototype.getTR = function(row) {
         var cell;
@@ -3919,11 +3949,11 @@
     };
 
     /**
-     * ## Table.setHeader
+     * ### Table.setHeader
      *
      * Sets the names of the header elements on top of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} header Array of strings representing the names
      *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
@@ -3932,11 +3962,11 @@
     };
 
     /**
-     * ## Table.setLeft
+     * ### Table.setLeft
      *
      * Sets the element of a column that will be added to the left of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} left Array of strings representing the names
      *   of the left elements
      */
     Table.prototype.setLeft = function(left) {
@@ -3945,11 +3975,11 @@
     };
 
     /**
-     * ## Table.setFooter
+     * ### Table.setFooter
      *
      * Sets the names of the footer elements at the bottom of the table
      *
-     * @param {string|array} Array of strings representing the names
+     * @param {string|array} footer Array of strings representing the names
      *   of the footer elements
      */
     Table.prototype.setFooter = function(footer) {
@@ -3958,15 +3988,16 @@
     };
 
     /**
-     * Table.updatePointer
+     * ### Table.updatePointer
      *
      * Updates the reference to the foremost element in the table
      *
      * The pointer is updated only if the suggested value is larger than
      * the current one.
      *
-     * @param {string} The name of pointer ('x', 'y')
-     * @param {number} The new value for the pointer
+     * @param {string} pointer The name of pointer ('x', 'y')
+     * @param {number} value The new value for the pointer
+     *
      * @return {boolean|number} The updated value of the pointer, or FALSE,
      *   if an invalid pointer was selected
      *
@@ -3984,7 +4015,7 @@
     };
 
     /**
-     * ## Table.addMultiple
+     * ### Table.addMultiple
      *
      * Primitive to add multiple cells in column or row form
      *
@@ -3992,9 +4023,9 @@
      * @param {string} dim The dimension of followed by the insertion:
      *   'y' inserts as a row, and 'x' inserts as a column.
      * @param {number} x Optional. The row at which to start the insertion.
-     *   Defaults, the current x pointer.
-     * @param {number} y Optional. The column at which to start the insertion
-     *   Defaults, the current y pointer.
+     *   Default: the current x pointer
+     * @param {number} y Optional. The column at which to start the insertion.
+     *   Default: the current y pointer
      */
     Table.prototype.addMultiple = function(data, dim, x, y) {
         var i, lenI, j, lenJ;
@@ -4044,7 +4075,7 @@
     };
 
     /**
-     * ## Table.add
+     * ### Table.add
      *
      * Adds a single cell to the table
      *
@@ -4085,9 +4116,9 @@
      *
      * @param {array} data The array of data to add in column form
      * @param {number} x Optional. The row to which the column will be added.
-     *   Defaults, row 0.
+     *   Default: row 0
      * @param {number} y Optional. The column next to which the new column
-     *   will be added. Defaults, the last column in the table.
+     *   will be added. Default: the last column in the table
      */
     Table.prototype.addColumn = function(data, x, y) {
         if (!validateInput('addColumn', data, x, y)) return;
@@ -4097,13 +4128,13 @@
     /**
      * ### Table.addRow
      *
-     * Adds a new rown into the table
+     * Adds a new row into the table
      *
      * @param {array} data The array of data to add in row form
      * @param {number} x Optional. The row index at which the new row will be
-     *   added. Defaults, after the last row.
+     *   added. Default: after the last row
      * @param {number} y Optional. The column next to which the new row
-     *   will be added. Defaults, column 0.
+     *   will be added. Default: column 0
      */
     Table.prototype.addRow = function(data, x, y) {
         if (!validateInput('addRow', data, x, y)) return;
@@ -4117,6 +4148,7 @@
      *
      * @param {string} dim The dimension x or y
      * @param {value} value Optional. If set, returns this value
+     *
      * @return {number} The requested pointer
      */
     Table.prototype.getNextPointer = function(dim, value) {
@@ -4131,6 +4163,7 @@
      *
      * @param {string} dim The dimension x or y
      * @param {value} value Optional. If set, returns this value
+     *
      * @return {number} The requested pointer
      */
     Table.prototype.getCurrPointer = function(dim, value) {
@@ -4139,7 +4172,7 @@
     };
 
     /**
-     * ## Table.parse
+     * ### Table.parse
      *
      * Reads cells currently in database and builds up an HTML table
      *
@@ -4265,7 +4298,7 @@
     };
 
     /**
-     * ## Table.resetPointers
+     * ### Table.resetPointers
      *
      * Reset all pointers to 0 or to the value of the input parameter
      *
@@ -4284,7 +4317,7 @@
     };
 
     /**
-     * ## Table.clear
+     * ### Table.clear
      *
      * Removes all entries and indexes, and resets the pointers
      *
@@ -4298,7 +4331,7 @@
         }
     };
 
-    // # Cell Class
+    // # Cell
 
     Cell.prototype = new Entity();
     Cell.prototype.constructor = Cell;
@@ -4318,23 +4351,23 @@
         Entity.call(this, cell);
 
         /**
-         * ## Cell.x
+         * ### Cell.x
          *
          * The row number
          */
         this.x = 'undefined' !== typeof cell.x ? cell.x : null;
 
         /**
-         * ## Cell.y
+         * ### Cell.y
          *
          * The column number
          */
         this.y = 'undefined' !== typeof cell.y ? cell.y : null;
 
         /**
-         * ## Cell.tdElement
+         * ### Cell.tdElement
          *
-         * Reference to the TD/TH element, if built already.
+         * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
 

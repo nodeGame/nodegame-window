@@ -1,10 +1,11 @@
 /**
- * # GameWindow listeners
+ * # listeners
  * Copyright(c) 2014 Stefano Balietti
  * MIT Licensed
  *
+ * GameWindow listeners
+ *
  * www.nodegame.org
- * ---
  */
 (function(node) {
 

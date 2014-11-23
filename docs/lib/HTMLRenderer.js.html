@@ -22,19 +22,13 @@
         <a href="#htmlrenderer">HTMLRenderer</a>
       </div>
       <div class="heading h2">
-        <a href="#www.nodegame.org">www.nodegame.org</a>
-      </div>
-      <div class="heading h2">
         <a href="#global%20scope">Global scope</a>
       </div>
       <div class="heading h2">
         <a href="#htmlrenderer%20constructor">HTMLRenderer constructor</a>
       </div>
-      <div class="heading h2">
-        <a href="#public%20properties">Public properties</a>
-      </div>
       <div class="heading h3">
-        <a href="#triggermanager.options">TriggerManager.options</a>
+        <a href="#htmlrenderer.options">HTMLRenderer.options</a>
       </div>
       <div class="heading h3">
         <a href="#htmlrenderer.tm">HTMLRenderer.tm</a>
@@ -93,7 +87,7 @@
 MIT Licensed</p>
   </div>
   <div class="body"><p>Renders javascript objects into HTML following a pipeline
-of decorator functions.</p>
+of decorator functions</p>
 
 <p>The default pipeline always looks for a <code>content</code> property and
 performs the following operations:</p>
@@ -107,14 +101,7 @@ performs the following operations:</p>
 
 <p>Depends on the nodegame-client add-on TriggerManager</p>
 
-
-<div class="pilwrap" id="www.nodegame.org">
-  <h2>
-    <a href="#www.nodegame.org" name="www.nodegame.org" class="pilcrow">&#182;</a>
-    www.nodegame.org
-  </h2>
-</div>
-
+<p>www.nodegame.org</p>
   </div>
 </div>
         </td>
@@ -180,38 +167,22 @@ performs the following operations:</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">HTMLRenderer</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
 
-
 </pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="public%20properties">
-  <h2>
-    <a href="#public%20properties" name="public%20properties" class="pilcrow">&#182;</a>
-    Public properties
-  </h2>
-</div>
-
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="triggermanager.options">
+<div class="pilwrap" id="htmlrenderer.options">
   <h3>
-    <a href="#triggermanager.options" name="triggermanager.options" class="pilcrow">&#182;</a>
-    TriggerManager.options
+    <a href="#htmlrenderer.options" name="htmlrenderer.options" class="pilcrow">&#182;</a>
+    HTMLRenderer.options
   </h3>
 </div>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre>
         <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
 
 </pre></div>
         </td>
@@ -272,12 +243,11 @@ recycles the settings in <code>this.options</code>.</p>
 
 <p>The configuration object is of the type</p>
 
-<p>var options = {
-         returnAt: 'first', // or 'last'
-         render: [ myFunc,
-                           myFunc2
-         ],
- }</p>
+<div class='highlight'><pre><code language=''>var options = {
+    returnAt: 'first',  // or 'last'
+    render: [ myFunc, myFunc2 ]
+}
+</code></pre></div>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -415,7 +385,7 @@ pipeline</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">clear</span>
       <span class="dox_type">boolean</span>
-      <span>TRUE, to confirm the clearing</span>
+      <span>Whether to confirm the clearing</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -458,7 +428,8 @@ pipeline</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">pos</span>
       <span class="dox_type">number</span>
-      <span>Optional. The position of the renderer in the pipeline</span>
+      <span>Optional. The position of the renderer in the
+  pipeline</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -628,9 +599,9 @@ pipeline</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">The</span>
+      <span class="dox_tag_name">e</span>
       <span class="dox_type">object</span>
-      <span>object to transform in entity</span>
+      <span>The object to transform in entity</span>
     </div>
   </div>
 </div>
