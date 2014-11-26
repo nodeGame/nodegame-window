@@ -28,64 +28,14 @@
       </header>
       <section>
         <h1>
-<a id="nodegame-window-gamewindow" class="anchor" href="#nodegame-window-gamewindow" aria-hidden="true"><span class="octicon octicon-link"></span></a>nodegame-window: GameWindow</h1>
+<a id="nodegame-window" class="anchor" href="#nodegame-window" aria-hidden="true"><span class="octicon octicon-link"></span></a>nodegame-window</h1>
 
-<p>GameWindow provides a handy API to interface nodeGame with the browser window.</p>
+<p><a href="https://travis-ci.org/nodeGame/nodegame-window"><img src="https://travis-ci.org/nodeGame/nodegame-window.png?branch=master" alt="Build Status"></a></p>
 
-<p>Creates a custom root element inside the HTML page, and insert an iframe element inside it.</p>
-
-<p>Dynamic content can be loaded inside the iframe without losing the javascript state inside the page.</p>
-
-<p>Loads and unloads special javascript/HTML snippets, called widgets, in the page.</p>
-
-<p>Defines a number of predefined profiles associated with special configuration of widgets.</p>
-
-<p>Depends on nodeGame-client and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
-Widgets can have custom dependencies, which are checked internally by the GameWindow engine.</p>
-
-<h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
-
-<p>TODO</p>
-
-<h2>
-<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h2>
-
-<p>You can create a custom nodegame-window build using the make.js file in the bin directory.</p>
-
-<div class="highlight highlight-javascript"><pre>node make.js build <span class="pl-k">-</span>a <span class="pl-c">// Full build, about 20Kb minified</span>
-node make.js build <span class="pl-k">-</span>B <span class="pl-c">// Bare (minimal) build, about 8Kb minified</span></pre></div>
-
-<h2>
-<a id="make-help" class="anchor" href="#make-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make help</h2>
-
-<p>Usage: make.js [options] [command]</p>
-
-<pre><code>Commands:
-
-  clean
-  Removes all files from build folder
-
-  build [options] [options]
-  Creates a nodegame-window custom build
-
-Options:
-
-  -h, --help     output usage information
-  -V, --version  output the version number
-
-
-Usage: build [options] [options]
-
-Options:
-
-  -h, --help           output usage information
-  -B, --bare           bare naked nodegame-window (only core)
-  -a, --all            full build of nodegame-window (default)
-  -C, --clean          clean build directory
-  -A, --analyse        analyse build
-  -o, --output &lt;file&gt;  output file (without .js)
-</code></pre>
+<ul>
+<li>See <a href="https://github.com/nodeGame/nodegame/wiki">documentation</a>.</li>
+<li>Browse <a href="http://nodegame.github.io/nodegame-window/docs/index.js.html">source code</a>.</li>
+</ul>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
