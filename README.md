@@ -1,61 +1,12 @@
-# nodegame-window: GameWindow
-
-GameWindow provides a handy API to interface nodeGame with the browser window.
-
-Creates a custom root element inside the HTML page, and insert an iframe element inside it.
-
-Dynamic content can be loaded inside the iframe without losing the javascript state inside the page.
-
-Loads and unloads special javascript/HTML snippets, called widgets, in the page.
-
-Defines a number of predefined profiles associated with special configuration of widgets.
-
-Depends on nodeGame-client and JSUS. GameWindow.Table and GameWindow.List depend also on NDDB.
-Widgets can have custom dependencies, which are checked internally by the GameWindow engine.
-
-## Usage
-
-TODO
-
-##
-
-## Build
-
-You can create a custom nodegame-window build using the make.js file in the bin directory.
-
-```javascript
-node make.js build -a // Full build, about 20Kb minified
-node make.js build -B // Bare (minimal) build, about 8Kb minified
-```
-
-## Make help
-
-  Usage: make.js [options] [command]
-
-    Commands:
-
-      clean
-      Removes all files from build folder
-
-      build [options] [options]
-      Creates a nodegame-window custom build
-
-    Options:
-
-      -h, --help     output usage information
-      -V, --version  output the version number
+# nodegame-window
 
 
-    Usage: build [options] [options]
+[![Build Status](https://travis-ci.org/nodeGame/nodegame-window.png?branch=master)](https://travis-ci.org/nodeGame/nodegame-window)
 
-    Options:
+- See [documentation](https://github.com/nodeGame/nodegame/wiki).
+- Browse [source code](http://nodegame.github.io/nodegame-window/docs/index.js.html).
 
-      -h, --help           output usage information
-      -B, --bare           bare naked nodegame-window (only core)
-      -a, --all            full build of nodegame-window (default)
-      -C, --clean          clean build directory
-      -A, --analyse        analyse build
-      -o, --output <file>  output file (without .js)
+
 
 
 ## License
