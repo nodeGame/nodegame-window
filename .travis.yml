@@ -1,2 +1,9 @@
 language: node_js
 node_js: 0.10
+install:
+  - npm install
+  - bin/install-nodegame-for-window.sh
+before_script:
+  - cd nodegame
+  - node launcher.js
+  - cd ..

@@ -1,3 +1,4 @@
+/*
 var util = require('util'),
     should = require('should');
 
@@ -170,3 +171,4 @@ describe('Table and Hash:', function() {
     //    table.length.should.be.eql(0);
     //});
 });
+*/

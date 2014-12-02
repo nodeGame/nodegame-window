@@ -4,6 +4,9 @@
 # MIT Licensed
 #
 # To be used in nodegame-window testing
+#
+# Run this from inside the nodegame-window directory:
+#  $ bin/install-nodegame-for-window.sh
 
 # Clone the main repo.
 git clone https://github.com/nodeGame/nodegame.git
