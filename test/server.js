@@ -2,7 +2,6 @@
  * Launcher file for nodeGame server with conf.
  */
 
-/*
 var ServerNode = require('nodegame-server').ServerNode;
 
 var options = {
@@ -27,4 +26,3 @@ var options = {
 var sn = new ServerNode(options);
 
 module.exports = sn;
-*/

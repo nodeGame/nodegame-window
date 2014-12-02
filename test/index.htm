@@ -1,0 +1,73 @@
+<!doctype html>
+<title>Ultimatum</title>
+
+<!-- Loading nodeGame libraries and CSS -->
+<script src='http://localhost:8080/socket.io/socket.io.js'></script>
+<script src='http://localhost:8080/javascripts/nodegame-full.js' charset='utf-8'></script>
+<link rel='stylesheet' href='../node_modules/mocha/mocha.css' />
+
+<!--
+<link rel='stylesheet' href='http://localhost:8080/css/bootstrap.min.css' />
+<link rel='stylesheet' href='http://localhost:8080/stylesheets/nodegame.css'></link>
+<link rel='stylesheet' href='http://localhost:8080/stylesheets/fullheight.css'></link>
+<link rel='stylesheet' href='http://localhost:8080/stylesheets/noscript.css'></link>
+<link rel='stylesheet' href='http://localhost:8080/css/index.css'></link>
+-->
+
+<body>
+
+<!-- Initializing mocha-phantomjs -->
+<div id='mocha'></div>
+<script src='../node_modules/mocha/mocha.js'></script>
+<script src='../node_modules/should/should.js'></script>
+<script>
+  mocha.ui('bdd');
+  mocha.reporter('html');
+</script>
+
+<!-- Load tests -->
+<script src='./test.connection.js'></script>
+
+<script>
+  window.onload = function () {
+    // Configure nodegame.
+
+    node.setup('nodegame', {
+      verbosity: 5,
+      window: {
+        promptOnleave: false,
+        noEscape: true
+      },
+      env: {
+        auto: false,
+        debug: false
+      },
+      events: {
+        dumpEvents: false,
+        history: false
+      },
+      socket: {
+        type: 'SocketIo',
+        reconnect: false
+      }
+    });
+
+    // Connect to the game.
+
+    //if (location.search) {
+    //  // Pass query arguments on.
+    //  node.connect('/ultimatum', { query: location.search.substr(1) });
+    //}
+    //else {
+    //  node.connect('/ultimatum');
+    //}
+
+    node.connect('/ultimatum');
+
+    // Run the test.
+
+    if (window.mochaPhantomJS) mochaPhantomJS.run();
+    else mocha.run();
+  }
+</script>
+</body>

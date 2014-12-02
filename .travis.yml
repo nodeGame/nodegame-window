@@ -5,5 +5,8 @@ install:
   - bin/install-nodegame-for-window.sh
 before_script:
   - cd nodegame
-  - node launcher.js
+  - node launcher.js &
+  - sleep 5
   - cd ..
+script:
+  - node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.html
