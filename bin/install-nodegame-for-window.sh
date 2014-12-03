@@ -25,9 +25,9 @@ git clone https://github.com/nodeGame/shelf.js.git
 git clone https://github.com/nodeGame/descil-mturk.git
 git clone https://github.com/nodeGame/nodegame-db.git
 git clone https://github.com/nodeGame/nodegame-mongodb.git
-npm install smoosh
+#npm install smoosh
 npm install ya-csv
-npm install commander
+#npm install commander
 #npm install docker
 
 # Add symbolic links to given dependencies that are in nodegame/node_modules
