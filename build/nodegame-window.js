@@ -785,10 +785,15 @@
         if (!iframe) {
             throw new Error('GameWindow.clearFrame: cannot detect frame.');
         }
+
         frameName = iframe.name || iframe.id;
         iframe.onload = null;
+
         // Method .replace does not add the uri to the history.
-        iframe.contentWindow.location.replace('about:blank');
+        //iframe.contentWindow.location.replace('about:blank');
+
+        this.getFrameDocument().documentElement.innerHTML = '';
+
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);

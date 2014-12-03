@@ -8,5 +8,6 @@ before_script:
   - node launcher.js &
   - sleep 5
   - cd ..
-script:
-  - node_modules/mocha-phantomjs/bin/mocha-phantomjs test/index.htm
+#script:
+#  - phantomjs autoplay
+#  - npm test
