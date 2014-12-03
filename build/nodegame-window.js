@@ -785,10 +785,15 @@
         if (!iframe) {
             throw new Error('GameWindow.clearFrame: cannot detect frame.');
         }
+
         frameName = iframe.name || iframe.id;
         iframe.onload = null;
+
         // Method .replace does not add the uri to the history.
-        iframe.contentWindow.location.replace('about:blank');
+        //iframe.contentWindow.location.replace('about:blank');
+
+        this.getFrameDocument().documentElement.innerHTML = '';
+
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
         this.frameDocument = W.getIFrameDocument(iframe);
@@ -1351,7 +1356,7 @@
      * Warning: Security policies may block this method if the content is
      * coming from another domain.
      * Notice: If called multiple times within the same stage/step, it will
-     * the `VisualTimer` widget to reload the timer.
+     * cause the `VisualTimer` widget to reload the timer.
      *
      * @param {string} uri The uri to load
      * @param {function} func Optional. The function to call once the DOM is
@@ -1503,7 +1508,7 @@
             // would be cleared once the iframe becomes ready.  In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
-                // Handles chaching.
+                // Handles caching.
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow);
 
@@ -1695,8 +1700,7 @@
      *
      * Injects scripts into the iframe
      *
-     * First removes all old injected script tags.
-     * Then injects `<script class="injectedlib" src="...">` lines into given
+     * Inserts `<script class="injectedlib" src="...">` lines into given
      * iframe object, one for every given library.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
@@ -1756,7 +1760,8 @@
      * The frame element must exists or an error will be thrown.
      *
      * @param {GameWindow} W The current GameWindow object
-     * @param {string} W Optional. The previous position of the header
+     * @param {string} oldHeaderPos Optional. The previous position of the
+     *   header
      *
      * @api private
      */

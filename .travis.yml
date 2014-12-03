@@ -1,4 +1,13 @@
 language: node_js
-node_js:
-  - 0.8
-  - 0.6
+node_js: 0.10
+install:
+  - npm install
+  - bin/install-nodegame-for-window.sh
+before_script:
+  - cd nodegame
+  - node launcher.js &
+  - sleep 5
+  - cd ..
+#script:
+#  - phantomjs autoplay
+#  - npm test
