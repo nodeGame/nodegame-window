@@ -31,7 +31,7 @@ describe('Caching:', function() {
 
         for (i = 0; i < cachedURIs.length; ++i) {
             W.cache.should.have.property(cachedURIs[i])
-                .with.property('contents');
+                .with.property('contents').String;
         }
     });
 
