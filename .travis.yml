@@ -4,7 +4,13 @@ install:
   - npm install
   - bin/install-nodegame-for-window.sh
 before_script:
-  - cd nodegame
+# Link testing directory into game.
+  - cd nodegame/games/ultimatum/public/
+  - ln -s ../../../../test test
+  - ln -s ../../../../node_modules node_modules
+# Go to nodegame.
+  - cd ../../..
+# Start the server.
   - node launcher.js &
   - sleep 5
   - cd ..

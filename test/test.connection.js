@@ -10,38 +10,34 @@ describe('Basic connection:', function() {
 
 
 describe('Caching:', function() {
-    var cachedURIs = ['ultimatum/languageSelection.html',
-                      'ultimatum/instructions.html',
-                      'ultimatum/quiz.html',
-                      'ultimatum/bidder.html',
-                      'ultimatum/resp.html',
-                      'ultimatum/postgame.html',
-                      'ultimatum/ended.html'];
+    var langPath = 'en_/';
+    var cachedURIs = [
+        '/ultimatum/languageSelection.html',
+        '/ultimatum/' + langPath + 'quiz.html',
+        '/ultimatum/' + langPath + 'bidder.html',
+        '/ultimatum/' + langPath + 'resp.html',
+        '/ultimatum/' + langPath + 'postgame.html',
+        '/ultimatum/' + langPath + 'ended.html'
+    ];
 
     before(function(done) {
-        W.preCache(['ultimatum/languageSelection.html',
-                    'ultimatum/instructions.html',
-                    'ultimatum/quiz.html',
-                    'ultimatum/bidder.html',
-                    'ultimatum/resp.html',
-                    'ultimatum/postgame.html',
-                    'ultimatum/ended.html'], function () { done(); });
+        W.preCache(cachedURIs, function() { done(); });
     });
 
-    it('should have preloaded given pages', function () {
+    it('should have preloaded given pages', function() {
         var i;
 
         W.cache.should.exist;
 
         for (i = 0; i < cachedURIs.length; ++i) {
             W.cache.should.have.property(cachedURIs[i])
-                .with.property('contents').that.exists;
+                .with.property('contents');
         }
     });
 
     /*
-    it('should display a cached page correctly', function (done) {
-        W.loadFrame('html/instructions.html', function () {
+    it('should display a cached page correctly', function(done) {
+        W.loadFrame('html/instructions.html', function() {
             var documentElement = (iframe.contentDocument ? iframe.contentDocument
                 : iframe.contentWindow.document).documentElement;
             var body = documentElement.getElementsByTagName('body')[0];
@@ -60,13 +56,13 @@ describe('Caching:', function() {
         }, { cache: { loadMode: 'cache' } });
     });
 
-    it('should cache/load scripted pages correctly', function (done) {
-        W.loadFrame('html/scripttest.html', function () {
+    it('should cache/load scripted pages correctly', function(done) {
+        W.loadFrame('html/scripttest.html', function() {
             (iframe.contentDocument ? iframe.contentDocument
                 : iframe.contentWindow.document).
                 getElementById('scripttest_field').innerHTML.should.equal('1');
 
-            W.loadFrame('html/scripttest.html', function () {
+            W.loadFrame('html/scripttest.html', function() {
                 var contentDocument = iframe.contentDocument ? iframe.contentDocument
                     : iframe.contentWindow.document;
                 var testfield = contentDocument.getElementById('scripttest_field');
@@ -74,7 +70,7 @@ describe('Caching:', function() {
                 testfield.innerHTML.should.equal('2');
                 testfield.innerHTML = '0';
 
-                W.loadFrame('html/scripttest.html', function () {
+                W.loadFrame('html/scripttest.html', function() {
                     var contentDocument = iframe.contentDocument ? iframe.contentDocument
                         : iframe.contentWindow.document;
                     var testfield = contentDocument.getElementById('scripttest_field');
@@ -82,7 +78,7 @@ describe('Caching:', function() {
                     testfield.innerHTML.should.equal('3');
                     testfield.innerHTML = '0';
 
-                    W.loadFrame('html/scripttest.html', function () {
+                    W.loadFrame('html/scripttest.html', function() {
                         (iframe.contentDocument ? iframe.contentDocument
                             : iframe.contentWindow.document).
                             getElementById('scripttest_field').innerHTML

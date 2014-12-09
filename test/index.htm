@@ -32,9 +32,11 @@
 
 <!-- Load tests -->
 <script src='./test.connection.js'></script>
+<!--base href='http://localhost:8080/'-->
+<!--base href='/home/benedek/nodegame/master/nodegame/node_modules/nodegame-window/public/'-->
 
 <script>
-  window.onload = function () {
+  window.onload = function() {
     // Configure nodegame.
 
     node.setup('nodegame', {
@@ -75,4 +77,13 @@
     else mocha.run();
   }
 </script>
+
+<!-- Needed for game: -->
+<p id="waitingForPlayers">
+  Welcome to the game! Please be patient while waiting for enough players to connect
+  <span id="span_dots_container"></span><br/>
+  Currently connected: <span id="span_connected"></span><br/>
+  <span id="span_msg"></span>
+</p>
+
 </body>
