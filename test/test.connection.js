@@ -39,8 +39,9 @@ describe('Caching:', function() {
 
     it('should display a cached page correctly', function(done) {
         W.loadFrame('/ultimatum/en_/instructions.html', function() {
-            var iframe = document.getElementById('ng_mainframe');// W.getFrame();
-            var documentElement = (iframe.contentDocument ? iframe.contentDocument
+            var iframe = W.getFrame();
+            var documentElement = (iframe.contentDocument
+                ? iframe.contentDocument
                 : iframe.contentWindow.document).documentElement;
             var body = documentElement.getElementsByTagName('body')[0];
             var container;
@@ -71,17 +72,21 @@ describe('Caching:', function() {
                 getElementById('scripttest_field').innerHTML.should.equal('1');
 
             W.loadFrame('html/scripttest.html', function() {
-                var contentDocument = iframe.contentDocument ? iframe.contentDocument
+                var contentDocument = iframe.contentDocument
+                    ? iframe.contentDocument
                     : iframe.contentWindow.document;
-                var testfield = contentDocument.getElementById('scripttest_field');
+                var testfield =
+                    contentDocument.getElementById('scripttest_field');
 
                 testfield.innerHTML.should.equal('2');
                 testfield.innerHTML = '0';
 
                 W.loadFrame('html/scripttest.html', function() {
-                    var contentDocument = iframe.contentDocument ? iframe.contentDocument
+                    var contentDocument = iframe.contentDocument
+                        ? iframe.contentDocument
                         : iframe.contentWindow.document;
-                    var testfield = contentDocument.getElementById('scripttest_field');
+                    var testfield =
+                        contentDocument.getElementById('scripttest_field');
 
                     testfield.innerHTML.should.equal('3');
                     testfield.innerHTML = '0';
