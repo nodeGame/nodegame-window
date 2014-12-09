@@ -10,17 +10,19 @@ describe('Basic connection:', function() {
 
 
 describe('Caching:', function() {
-    var langPath = 'en_/';
     var cachedURIs = [
         '/ultimatum/languageSelection.html',
-        '/ultimatum/' + langPath + 'quiz.html',
-        '/ultimatum/' + langPath + 'bidder.html',
-        '/ultimatum/' + langPath + 'resp.html',
-        '/ultimatum/' + langPath + 'postgame.html',
-        '/ultimatum/' + langPath + 'ended.html'
+        '/ultimatum/en_/instructions.html',
+        '/ultimatum/en_/quiz.html',
+        '/ultimatum/en_/bidder.html',
+        '/ultimatum/en_/resp.html',
+        '/ultimatum/en_/postgame.html',
+        '/ultimatum/en_/ended.html'
     ];
 
     before(function(done) {
+        if (!W.getFrame()) W.generateFrame();
+
         W.preCache(cachedURIs, function() { done(); });
     });
 
@@ -35,20 +37,25 @@ describe('Caching:', function() {
         }
     });
 
-    /*
     it('should display a cached page correctly', function(done) {
-        W.loadFrame('html/instructions.html', function() {
+        W.loadFrame('/ultimatum/en_/instructions.html', function() {
+            var iframe = document.getElementById('ng_mainframe');// W.getFrame();
             var documentElement = (iframe.contentDocument ? iframe.contentDocument
                 : iframe.contentWindow.document).documentElement;
             var body = documentElement.getElementsByTagName('body')[0];
+            var container;
 
             iframe.should.exist;
-            documentElement.should.exist;
-            body.should.exist;
-            body.should.have.property('children').that.is.not.empty;
+            ('undefined' !== typeof documentElement).should.be.true;
+            ('undefined' !== typeof body).should.be.true;
+            (body.hasOwnProperty('children') && body.children.length > 0)
+                .should.be.true;
+            container = body.children[0];
+            (container.hasOwnProperty('children') &&
+                 container.children.length > 0).should.be.true;
 
-            body.children[0].tagName.should.equal('H1');
-            body.children[0].innerHTML.trim().should.equal(
+            container.children[0].tagName.should.equal('H1');
+            container.children[0].innerHTML.should.equal(
                 'Instructions of the Ultimatum Game. ' +
                 'Please read them carefully');
 
@@ -56,6 +63,7 @@ describe('Caching:', function() {
         }, { cache: { loadMode: 'cache' } });
     });
 
+    /*
     it('should cache/load scripted pages correctly', function(done) {
         W.loadFrame('html/scripttest.html', function() {
             (iframe.contentDocument ? iframe.contentDocument
