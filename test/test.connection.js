@@ -57,38 +57,30 @@ describe('Caching:', function() {
         }, { cache: { loadMode: 'cache' } });
     });
 
-    /*
     it('should cache/load scripted pages correctly', function(done) {
-        W.loadFrame('html/scripttest.html', function() {
-            (iframe.contentDocument ? iframe.contentDocument
-                : iframe.contentWindow.document).
-                getElementById('scripttest_field').innerHTML.should.equal('1');
+        W.loadFrame('/ultimatum/test/scripttest.html', function() {
+            expect(W.getFrameDocument().
+                getElementById('scripttest_field').innerHTML).to.equal('1');
 
-            W.loadFrame('html/scripttest.html', function() {
-                var contentDocument = iframe.contentDocument
-                    ? iframe.contentDocument
-                    : iframe.contentWindow.document;
+            W.loadFrame('/ultimatum/test/scripttest.html', function() {
                 var testfield =
-                    contentDocument.getElementById('scripttest_field');
+                    W.getFrameDocument().getElementById('scripttest_field');
 
-                testfield.innerHTML.should.equal('2');
+                expect(testfield).to.exist;
+                expect(testfield.innerHTML).to.equal('2');
                 testfield.innerHTML = '0';
 
-                W.loadFrame('html/scripttest.html', function() {
-                    var contentDocument = iframe.contentDocument
-                        ? iframe.contentDocument
-                        : iframe.contentWindow.document;
+                W.loadFrame('/ultimatum/test/scripttest.html', function() {
                     var testfield =
-                        contentDocument.getElementById('scripttest_field');
+                        W.getFrameDocument().getElementById('scripttest_field');
 
-                    testfield.innerHTML.should.equal('3');
+                    expect(testfield).to.exist;
+                    expect(testfield.innerHTML).to.equal('3');
                     testfield.innerHTML = '0';
 
-                    W.loadFrame('html/scripttest.html', function() {
-                        (iframe.contentDocument ? iframe.contentDocument
-                            : iframe.contentWindow.document).
-                            getElementById('scripttest_field').innerHTML
-                            .should.equal('1');
+                    W.loadFrame('/ultimatum/test/scripttest.html', function() {
+                        expect(W.getFrameDocument().getElementById(
+                            'scripttest_field').innerHTML).to.equal('1');
 
                         done();
                     }, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
@@ -96,5 +88,4 @@ describe('Caching:', function() {
             }, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
         }, { cache: { loadMode: 'reload', storeMode: 'onLoad' } });
     });
-    */
 });
