@@ -39,15 +39,11 @@ describe('Caching:', function() {
 
     it('should display a cached page correctly', function(done) {
         W.loadFrame('/ultimatum/en_/instructions.html', function() {
-            var iframe = W.getFrame();
-            // TODO: Get documentElement differently
-            var documentElement = (iframe.contentDocument
-                ? iframe.contentDocument
-                : iframe.contentWindow.document).documentElement;
+            var documentElement;
             var body;
             var container;
 
-            expect(iframe).to.exist;
+            documentElement = W.getFrameDocument().documentElement;
             expect(documentElement).to.exist;
 
             body = documentElement.getElementsByTagName('body')[0];
