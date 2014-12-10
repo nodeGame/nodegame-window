@@ -1,0 +1,37 @@
+__        ___           _                 _____         _   _             
+\ \      / (_)_ __   __| | _____      __ |_   _|__  ___| |_(_)_ __   __ _ 
+ \ \ /\ / /| | '_ \ / _` |/ _ \ \ /\ / /   | |/ _ \/ __| __| | '_ \ / _` |
+  \ V  V / | | | | | (_| | (_) \ V  V /    | |  __/\__ \ |_| | | | | (_| |
+   \_/\_/  |_|_| |_|\__,_|\___/ \_/\_/     |_|\___||___/\__|_|_| |_|\__, |
+                                                                    |___/ 
+
+To test the features of the nodegame-window module, inspection of DOM elements
+is necessary to assert correctness.
+To this end, the mocha-phantomjs package is used to combine the mocha testing
+framework with the PhantomJS engine for headless browser-testing.
+
+The mocha-phantomjs executable takes a test description in HTML-format
+(test/index.htm) which itself launches javascript code to run the concrete tests
+(test/test.connection.js).
+
+For some functionality, including caching, access to files hosted on a running
+nodegame-server is necessary.
+While mocha-phantomjs could be run on a local HTML file, any access that is made
+to http://-URLs (instead of file:// ones) would cause errors.
+For this reason, mocha-phantomjs is executed on an http://-URL directly
+(http://localhost:8080/testergame/test/index.htm) and all file accesses go over
+the server.
+
+To be able to run a server and get access to the necessary testing files of
+nodegame-window, these steps are done:
+ 1. Install a full nodegame-instance with dependencies under nodegame/
+ 2. Place testergame under nodegame/games/
+ 3. Create symbolic links to test/ and node_modules/ under
+    nodegame/games/testergame/public/
+ 4. Launch the server in nodegame/
+
+This sequence is programmed in bin/install-nodegame-for-window.sh and
+'.travis.yml'.
+These codes allow a test to be run on Travis CI
+(https://travis-ci.org/nodeGame/nodegame-window) automatically after each git
+push.
