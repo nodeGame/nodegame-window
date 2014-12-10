@@ -67,9 +67,9 @@ patch node_modules/express/node_modules/connect/lib/middleware/static.js < bin/n
 # Rebuild js files.
 node bin/make.js build-client -a -o nodegame-full
 
-# Install ultimatum game.
+# Install tester game.
 cd ../../
-git clone https://github.com/nodeGame/ultimatum games/ultimatum
+git clone https://github.com/nodeGame/testergame games/testergame
 
 
 # Execute the following commands to try out the ultimatum game.

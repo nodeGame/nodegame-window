@@ -11,8 +11,8 @@ describe('Basic connection:', function() {
 
 describe('Caching:', function() {
     var cachedURIs = [
-        '/ultimatum/test/instructions.html',
-        '/ultimatum/test/quiz.html'
+        '/testergame/test/instructions.html',
+        '/testergame/test/quiz.html'
     ];
 
     before(function(done) {
@@ -33,7 +33,7 @@ describe('Caching:', function() {
     });
 
     it('should display a cached page correctly', function(done) {
-        W.loadFrame('/ultimatum/test/instructions.html', function() {
+        W.loadFrame('/testergame/test/instructions.html', function() {
             var documentElement;
             var body;
             var container;
@@ -50,7 +50,7 @@ describe('Caching:', function() {
 
             expect(container.children[0].tagName).to.equal('H1');
             expect(container.children[0].innerHTML).to.equal(
-                'Instructions of the Ultimatum Game. ' +
+                'Instructions of the Tester Game. ' +
                 'Please read them carefully');
 
             done();
@@ -58,7 +58,7 @@ describe('Caching:', function() {
     });
 
     it('should cache/load scripted pages correctly', function(done) {
-        var scriptPath = '/ultimatum/test/scripttest.html';
+        var scriptPath = '/testergame/test/scripttest.html';
         var fieldId = 'scripttest_field';
 
         var stage1 = function() {

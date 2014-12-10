@@ -4,19 +4,19 @@
      Requires the nodeGame server to be running.
   --> 
 
-<title>Ultimatum</title>
+<title>Window Test</title>
 
 <!-- Loading nodeGame libraries and CSS -->
 <script src='/socket.io/socket.io.js'></script>
 <script src='/javascripts/nodegame-full.js'></script>
-<link rel='stylesheet' href='/ultimatum/node_modules/mocha/mocha.css' />
+<link rel='stylesheet' href='/testergame/node_modules/mocha/mocha.css' />
 
 <body>
 
 <!-- Initializing mocha-phantomjs -->
 <div id='mocha'></div>
-<script src='/ultimatum/node_modules/mocha/mocha.js'></script>
-<script src='/ultimatum/node_modules/chai/chai.js'></script>
+<script src='/testergame/node_modules/mocha/mocha.js'></script>
+<script src='/testergame/node_modules/chai/chai.js'></script>
 <script>
   mocha.ui('bdd');
   mocha.reporter('html');
@@ -51,7 +51,7 @@
     });
 
     // Connect to the game.
-    node.connect('/ultimatum');
+    node.connect('/testergame');
 
     // Run the test.
 

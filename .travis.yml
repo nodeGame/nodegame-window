@@ -7,7 +7,7 @@ install:
   - bin/install-nodegame-for-window.sh
 before_script:
 # Link testing directory into game.
-  - cd nodegame/games/ultimatum/public/
+  - cd nodegame/games/testergame/public/
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
 # Go to nodegame.
