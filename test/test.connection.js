@@ -11,13 +11,8 @@ describe('Basic connection:', function() {
 
 describe('Caching:', function() {
     var cachedURIs = [
-        '/ultimatum/languageSelection.html',
-        '/ultimatum/en_/instructions.html',
-        '/ultimatum/en_/quiz.html',
-        '/ultimatum/en_/bidder.html',
-        '/ultimatum/en_/resp.html',
-        '/ultimatum/en_/postgame.html',
-        '/ultimatum/en_/ended.html'
+        '/ultimatum/test/instructions.html',
+        '/ultimatum/test/quiz.html'
     ];
 
     before(function(done) {
@@ -38,7 +33,7 @@ describe('Caching:', function() {
     });
 
     it('should display a cached page correctly', function(done) {
-        W.loadFrame('/ultimatum/en_/instructions.html', function() {
+        W.loadFrame('/ultimatum/test/instructions.html', function() {
             var documentElement;
             var body;
             var container;
