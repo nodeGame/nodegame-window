@@ -1,10 +1,10 @@
 describe('Basic connection:', function() {
     it('global node should exist', function() {
-        window.should.have.property('node');
+        expect(window).to.have.property('node');
     });
 
     it('global W should exist', function() {
-        window.should.have.property('W');
+        expect(window).to.have.property('W');
     });
 });
 
@@ -29,10 +29,10 @@ describe('Caching:', function() {
     it('should have preloaded given pages', function() {
         var i;
 
-        W.cache.should.exist;
+        expect(W.cache).to.exist;
 
         for (i = 0; i < cachedURIs.length; ++i) {
-            W.cache.should.have.property(cachedURIs[i])
+            expect(W.cache).to.have.property(cachedURIs[i])
                 .with.property('contents').String;
         }
     });
@@ -40,23 +40,25 @@ describe('Caching:', function() {
     it('should display a cached page correctly', function(done) {
         W.loadFrame('/ultimatum/en_/instructions.html', function() {
             var iframe = W.getFrame();
+            // TODO: Get documentElement differently
             var documentElement = (iframe.contentDocument
                 ? iframe.contentDocument
                 : iframe.contentWindow.document).documentElement;
-            var body = documentElement.getElementsByTagName('body')[0];
+            var body;
             var container;
 
-            iframe.should.exist;
-            ('undefined' !== typeof documentElement).should.be.true;
-            ('undefined' !== typeof body).should.be.true;
-            (body.hasOwnProperty('children') && body.children.length > 0)
-                .should.be.true;
-            container = body.children[0];
-            (container.hasOwnProperty('children') &&
-                 container.children.length > 0).should.be.true;
+            expect(iframe).to.exist;
+            expect(documentElement).to.exist;
 
-            container.children[0].tagName.should.equal('H1');
-            container.children[0].innerHTML.should.equal(
+            body = documentElement.getElementsByTagName('body')[0];
+            expect(body).to.exist;
+            expect(body).to.have.property('children').that.is.not.empty;
+
+            container = body.children[0];
+            expect(container).to.have.property('children').that.is.not.empty;
+
+            expect(container.children[0].tagName).to.equal('H1');
+            expect(container.children[0].innerHTML).to.equal(
                 'Instructions of the Ultimatum Game. ' +
                 'Please read them carefully');
 

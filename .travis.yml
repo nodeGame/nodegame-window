@@ -1,7 +1,7 @@
 language: node_js
 node_js: 0.10
 install:
-# Old phantomjs lacks "unsafe access" warning bug.
+# Old phantomjs has no "unsafe access" warning bug.
   - npm install 'phantomjs@<1.9.8'
   - npm install
   - bin/install-nodegame-for-window.sh
@@ -17,5 +17,4 @@ before_script:
   - sleep 5
   - cd ..
 #script:
-#  - phantomjs autoplay
 #  - npm test

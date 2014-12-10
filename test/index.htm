@@ -16,10 +16,11 @@
 <!-- Initializing mocha-phantomjs -->
 <div id='mocha'></div>
 <script src='/ultimatum/node_modules/mocha/mocha.js'></script>
-<script src='/ultimatum/node_modules/should/should.js'></script>
+<script src='/ultimatum/node_modules/chai/chai.js'></script>
 <script>
   mocha.ui('bdd');
   mocha.reporter('html');
+  var expect = chai.expect;
 </script>
 
 <!-- Load tests -->
