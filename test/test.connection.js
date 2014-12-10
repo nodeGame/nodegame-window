@@ -58,34 +58,51 @@ describe('Caching:', function() {
     });
 
     it('should cache/load scripted pages correctly', function(done) {
-        W.loadFrame('/ultimatum/test/scripttest.html', function() {
-            expect(W.getFrameDocument().
-                getElementById('scripttest_field').innerHTML).to.equal('1');
+        var scriptPath = '/ultimatum/test/scripttest.html';
+        var fieldId = 'scripttest_field';
 
-            W.loadFrame('/ultimatum/test/scripttest.html', function() {
-                var testfield =
-                    W.getFrameDocument().getElementById('scripttest_field');
+        var stage1 = function() {
+            var testfield = W.getFrameDocument().getElementById(fieldId);
 
-                expect(testfield).to.exist;
-                expect(testfield.innerHTML).to.equal('2');
-                testfield.innerHTML = '0';
+            expect(testfield).to.exist;
+            expect(testfield.innerHTML).to.equal('1');
 
-                W.loadFrame('/ultimatum/test/scripttest.html', function() {
-                    var testfield =
-                        W.getFrameDocument().getElementById('scripttest_field');
+            W.loadFrame(scriptPath, stage2,
+                { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
+        };
 
-                    expect(testfield).to.exist;
-                    expect(testfield.innerHTML).to.equal('3');
-                    testfield.innerHTML = '0';
+        var stage2 = function() {
+            var testfield = W.getFrameDocument().getElementById(fieldId);
 
-                    W.loadFrame('/ultimatum/test/scripttest.html', function() {
-                        expect(W.getFrameDocument().getElementById(
-                            'scripttest_field').innerHTML).to.equal('1');
+            expect(testfield).to.exist;
+            expect(testfield.innerHTML).to.equal('2');
+            testfield.innerHTML = '0';
 
-                        done();
-                    }, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
-                }, { cache: { loadMode: 'cache', storeMode: 'onClose' } });
-            }, { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
-        }, { cache: { loadMode: 'reload', storeMode: 'onLoad' } });
+            W.loadFrame(scriptPath, stage3,
+                { cache: { loadMode: 'cache', storeMode: 'onClose' } });
+        };
+
+        var stage3 = function() {
+            var testfield = W.getFrameDocument().getElementById(fieldId);
+
+            expect(testfield).to.exist;
+            expect(testfield.innerHTML).to.equal('3');
+            testfield.innerHTML = '0';
+
+            W.loadFrame(scriptPath, stage4,
+                    { cache: { loadMode: 'cache', storeMode: 'onLoad' } });
+        };
+
+        var stage4 = function() {
+            var testfield = W.getFrameDocument().getElementById(fieldId);
+
+            expect(testfield).to.exist;
+            expect(testfield.innerHTML).to.equal('1');
+
+            done();
+        };
+
+        W.loadFrame(scriptPath, stage1,
+                { cache: { loadMode: 'reload', storeMode: 'onLoad' } });
     });
 });
