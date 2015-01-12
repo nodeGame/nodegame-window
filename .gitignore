@@ -4,5 +4,6 @@ _*
 .project
 *~
 node_modules/
+nodegame/
 \#*
 .\#*
