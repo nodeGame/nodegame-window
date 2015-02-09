@@ -12,8 +12,9 @@ before_script:
   - cd nodegame/games/testergame/public/
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
+  - cd ../../../..
 # Go to nodegame.
-#  - cd ../../..
+#  - cd nodegame
 # Start the server.
 #  - node launcher.js &
 #  - sleep 5
