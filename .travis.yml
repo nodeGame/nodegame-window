@@ -2,8 +2,6 @@ language: node_js
 node_js: 0.10
 install:
 # Install expect.
-  - echo "Checking for expect..."
-  - which expect && echo "Expect already installed."
   - sudo apt-get install expect
 # Old phantomjs has no "unsafe access" warning bug.
   - npm install 'phantomjs@<1.9.8'
