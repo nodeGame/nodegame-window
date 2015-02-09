@@ -1,6 +1,10 @@
 language: node_js
 node_js: 0.10
 install:
+# Install expect.
+  - echo "Checking for expect..."
+  - which expect && echo "Expect already installed."
+  - sudo apt-get install expect
 # Old phantomjs has no "unsafe access" warning bug.
   - npm install 'phantomjs@<1.9.8'
   - npm install
@@ -11,10 +15,10 @@ before_script:
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
 # Go to nodegame.
-  - cd ../../..
+#  - cd ../../..
 # Start the server.
-  - node launcher.js &
-  - sleep 5
-  - cd ..
-#script:
-#  - npm test
+#  - node launcher.js &
+#  - sleep 5
+#  - cd ..
+script:
+  - expect test/runtest.exp

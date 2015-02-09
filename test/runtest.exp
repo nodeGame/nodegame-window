@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+#
+# Expect script for starting the server and then running the npm tests.
+
+# Start server, wait until it's ready.
+cd nodegame
+set server_pid [spawn node launcher.js]
+expect "ng> socket connected.\r"
+
+# Start tests.
+cd ..
+spawn npm test
+expect eof
+catch wait result
+
+# Stop server.
+exec kill $server_pid
+
+# Return result of test.
+exit [lindex $result 3]
