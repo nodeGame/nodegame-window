@@ -13,11 +13,5 @@ before_script:
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
   - cd ../../../..
-# Go to nodegame.
-#  - cd nodegame
-# Start the server.
-#  - node launcher.js &
-#  - sleep 5
-#  - cd ..
 script:
   - expect test/runtest.exp
