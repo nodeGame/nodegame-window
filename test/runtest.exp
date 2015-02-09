@@ -5,16 +5,24 @@
 # Start server, wait until it's ready.
 cd nodegame
 set server_pid [spawn node launcher.js]
-expect "ng> socket connected.\r"
+set server_id $spawn_id
+set timeout 30
+expect {
+    timeout { puts "\nERROR: Server is not starting!"; exit 1 }
 
-# Start tests.
+    "ng> socket connected.\r"
+}
+
+# Run tests.
 cd ..
 spawn npm test
+set timeout -1
 expect eof
-catch wait result
+set result [wait]
 
 # Stop server.
 exec kill $server_pid
+wait -i $server_id
 
 # Return result of test.
 exit [lindex $result 3]
