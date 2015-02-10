@@ -24,6 +24,7 @@ set result [wait]
 
 # Stop server.
 exec kill $server_pid
+close -i $server_id
 wait -i $server_id
 
 # Return result of test.
