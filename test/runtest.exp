@@ -1,0 +1,31 @@
+#!/usr/bin/expect -f
+#
+# Expect script for starting the server and then running the npm tests.
+
+# Start server, wait until it's ready.
+cd nodegame
+set server_pid [spawn node launcher.js]
+set server_id $spawn_id
+set timeout 30
+expect {
+    timeout { puts "\nERROR: Server is not starting!"; exit 1 }
+
+    "ng> socket connected.\r"
+}
+
+# Run tests.
+cd ..
+puts "Running tests."
+puts "PhantomJS may show security warnings at the end."
+spawn npm test
+set timeout -1
+expect eof
+set result [wait]
+
+# Stop server.
+exec kill $server_pid
+close -i $server_id
+wait -i $server_id
+
+# Return result of test.
+exit [lindex $result 3]
