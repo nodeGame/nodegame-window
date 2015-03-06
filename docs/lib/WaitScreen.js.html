@@ -166,6 +166,12 @@ be re-activated later.</p>
       <span class="dox_type">Element</span>
       <span>The target to scan for input tags</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">disable</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Lock inputs if TRUE, unlock if FALSE.
+  Default: TRUE</span>
+    </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
       <span class="dox_type">private
@@ -174,18 +180,30 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">inputs</span><span class="p">,</span> <span class="nx">nInputs</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">disable</span><span class="p">)</span> <span class="nx">disable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">inputs</span> <span class="o">=</span> <span class="nx">container</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">inputTags</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
             <span class="nx">nInputs</span> <span class="o">=</span> <span class="nx">inputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nInputs</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">disable</span><span class="p">)</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span> 
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">event_REALLY_DONE</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
@@ -546,8 +564,19 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
 </div>
 <p>Disables all input forms in the page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
-        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>frameDoc = W.getFrameDocument();
+Using this for IE8 compatibility.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">());</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
@@ -586,7 +615,8 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">inputs</span><span class="p">,</span> <span class="nx">nInputs</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
@@ -597,15 +627,29 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Re-enables all previously locked input forms in the page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>For IE8.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">()),</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -688,7 +732,7 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Removes previously registered listeners.</p>
         </td>
