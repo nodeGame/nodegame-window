@@ -3055,7 +3055,7 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
   <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>...reduce it to a boolean:
-frameReady = frameReady === 'interactive' || frameReady === 'complete';</p>
+frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">frameReady</span> <span class="o">=</span> <span class="nx">frameReady</span> <span class="o">===</span> <span class="s1">&#39;complete&#39;</span><span class="p">;</span></pre></div>
         </td>
@@ -3528,7 +3528,7 @@ if this was the frame of the game.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">removeLibraries</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
         <span class="nx">afterScripts</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">injectLibraries</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">globalLibs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span>
-                    <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">uri</span><span class="p">)</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">uri</span><span class="p">)</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">frameLibs</span><span class="p">[</span><span class="nx">uri</span><span class="p">]</span> <span class="o">:</span> <span class="p">[]));</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">storeCache</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>

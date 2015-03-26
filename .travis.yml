@@ -2,14 +2,25 @@ language: node_js
 node_js:
   - "0.10"
   - "0.12"
+before_install:
+# Get installer script.
+  - cd bin
+  - wget https://github.com/nodeGame/nodegame/raw/master/bin/install-nodegame-for-module.sh
+  - chmod a+x install-nodegame-for-module.sh
+  - cd ..
 install:
 # Install expect.
   - sudo apt-get install expect
+# Make this nodegame-window available to nodeGame.
+  - mkdir -p nodegame/node_modules
+  - ln -s ../.. nodegame/node_modules/nodegame-window
 # Old phantomjs has no "unsafe access" warning bug.
 # Disregard that; only newer phantomjs works with node v0.12.
   #- npm install 'phantomjs@<1.9.8'
   - npm install
-  - bin/install-nodegame-for-window.sh
+  - bin/install-nodegame-for-module.sh -g "nodegame-client nodegame-server nodegame-widgets JSUS NDDB shelf.js descil-mturk nodegame-db nodegame-mongodb" -n "ya-csv"
+# Install tester game.
+  - git clone https://github.com/nodeGame/testergame nodegame/games/testergame
 before_script:
 # Link testing directory into game.
   - cd nodegame/games/testergame/public
