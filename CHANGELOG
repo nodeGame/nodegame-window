@@ -1,5 +1,16 @@
 # nodegame-window change log
 
+## 0.9.8
+ - Added listener on onload to disconnect the client. This way also non-websockets disconnections are detected immediately.
+ - `textOnleave` -> `promptOnleaveText` for consistency with option promptOnleave.
+ - Listeners are added with a dedicated method now.
+ - IE8 Compatibility: noscript tags are hidden.
+
+## 0.9.7
+ - `#clearFrame()` is synchronous now.
+ - New testing framework.
+ - Documentation updates.
+
 ## 0.9.1
  - Wait Screen is not displayed if the are no more steps in the sequence
 

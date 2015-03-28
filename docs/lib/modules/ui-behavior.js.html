@@ -171,8 +171,9 @@ MIT Licensed</p>
 </div>
 
   </div>
-  <div class="body"><p>Captures the onbeforeunload event and warns the user that leaving the
-page may halt the game</p>
+  <div class="body"><p>Displays a confirmation box upon closing the window or tab</p>
+
+<p>Listens on the onbeforeunload event.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -199,7 +200,7 @@ page may halt the game</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
-        <span class="nx">text</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">textOnleave</span><span class="p">;</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleaveText</span><span class="p">;</span>
 
         <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
