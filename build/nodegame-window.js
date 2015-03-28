@@ -62,11 +62,14 @@
         iframeWin = iframe.contentWindow;
 
         function completed(event) {
+            var iframeDoc;
+            iframeDoc = JSUS.getIFrameDocument(iframe);
+
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
             iframeWin.removeEventListener('load', completed, false);
             if (cb) {
-                // Some browsers fires onLoad too early.
+                // Some browsers fire onLoad too early.
                 // A small timeout is enough.
                 setTimeout(function() { cb(); }, 120);
             }
@@ -101,7 +104,7 @@
                 iframeWin.detachEvent('onload', completed );
 
                 if (cb) {
-                    // Some browsers fires onLoad too early.
+                    // Some browsers fire onLoad too early.
                     // A small timeout is enough.
                     setTimeout(function() { cb(); }, 120);
                 }
@@ -117,7 +120,7 @@
 
     function onLoad(iframe, cb) {
         // IE
-        if (iframe.attachEvent) {
+        if (W.isIE) {
             onLoadIE(iframe, cb);
         }
         // Standards-based browsers support DOMContentLoaded.
@@ -355,6 +358,13 @@
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
+         * ### GameWindow.isIE
+         *
+         * Boolean flag saying whether we are in IE or not
+         */
+        this.isIE = !!document.createElement('span').attachEvent;
+
+        /**
          * ### node.setup.window
          *
          * Setup handler for the node.window object
@@ -371,6 +381,13 @@
 
         // Adding listeners.
         this.addDefaultListeners();
+
+        // Hide <noscript> tag (necessary for IE8).
+        setTimeout(function(){
+            (function (scriptTag) {
+                if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
+            })(document.getElementsByTagName('noscript'));
+        }, 1000);
 
         // Init.
         this.init(GameWindow.defaults);
@@ -453,7 +470,7 @@
         }
 
         this.setStateLevel('INITIALIZED');
-        
+
         node.silly('node-window: inited.');
     };
 
@@ -734,6 +751,9 @@
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
+        // For IE8.
+        iframe.frameBorder = 0;
+
         this.setFrame(iframe, frameName, root);
 
         if (this.frameElement) {
@@ -810,7 +830,18 @@
         // Method .replace does not add the uri to the history.
         //iframe.contentWindow.location.replace('about:blank');
 
-        this.getFrameDocument().documentElement.innerHTML = '';
+        try {
+            this.getFrameDocument().documentElement.innerHTML = '';
+        }
+        catch(e) {
+            // IE < 10 gives 'Permission Denied' if trying to access
+            // the iframeDoc from the context of the function above.
+            // We need to re-get it from the DOM.
+            if (J.getIFrameDocument(iframe).documentElement) {
+                J.removeChildrenFromNode(
+                        J.getIFrameDocument(iframe).documentElement);
+            }
+        }
 
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
@@ -1157,7 +1188,7 @@
     /**
      * ### GameWindow.preCacheTest
      *
-     * Tests wether preChace is supported by the browser
+     * Tests whether preChace is supported by the browser
      *
      * Results are stored in _GameWindow.cacheSupported_.
      *
@@ -1183,8 +1214,14 @@
         document.body.appendChild(iframe);
         iframe.contentWindow.location.replace(uri);
         onLoad(iframe, function() {
+            //var iframe, docElem;
             try {
                 W.getIFrameDocument(iframe).documentElement.innerHTML = 'a';
+                // This passes in IE8, but the rest of the caching doesn't.
+                // We want this test to fail in IE8.
+                //iframe = document.getElementById(iframeName);
+                //docElem = W.getIFrameDocument(iframe);
+                //docElem.innerHTML = 'a';
                 W.cacheSupported = true;
             }
             catch(e) {
@@ -1422,7 +1459,8 @@
         iframeDocument = W.getIFrameDocument(iframe);
         frameReady = iframeDocument.readyState;
         // ...reduce it to a boolean:
-        frameReady = frameReady === 'interactive' || frameReady === 'complete';
+        //frameReady = frameReady === 'interactive'||frameReady === 'complete';
+        frameReady = frameReady === 'complete';
 
         // Begin loadFrame caching section.
 
@@ -1434,7 +1472,6 @@
         // Caching options.
         if (opts.cache) {
             if (opts.cache.loadMode) {
-
                 if (opts.cache.loadMode === 'reload') {
                     loadCache = false;
                 }
@@ -1513,9 +1550,11 @@
             onLoad(iframe, function() {
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
-                // Executes callback and updates GameWindow state.
-                that.updateLoadFrameState(func);
+                                storeCacheNow, function() {
+
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             });
         }
 
@@ -1528,10 +1567,11 @@
             if (frameReady) {
                 // Handles caching.
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
-                                storeCacheNow);
+                                storeCacheNow, function() {
 
-                // Executes callback and updates GameWindow state.
-                this.updateLoadFrameState(func);
+                    // Executes callback and updates GameWindow state.
+                    that.updateLoadFrameState(func);
+                });
             }
         }
         else {
@@ -1593,20 +1633,24 @@
      *
      * @param {GameWindow} that The GameWindow instance
      * @param {uri} uri URI to load
+     * @param {iframe} iframe The target iframe
      * @param {string} frameName ID of the iframe
      * @param {bool} loadCache Whether to load from cache
      * @param {bool} storeCache Whether to store to cache
+     * @param {function} func Callback
      *
      * @see GameWindow.loadFrame
      *
      * @api private
      */
     function handleFrameLoad(that, uri, iframe, frameName, loadCache,
-                             storeCache) {
+                             storeCache, func) {
 
         var iframeDocumentElement;
+        var afterScripts;
 
-        // iframe = W.getElementById(frameName);
+        // Needed for IE8.
+        iframe = W.getElementById(frameName);
         iframeDocumentElement = W.getIFrameDocument(iframe).documentElement;
 
         if (loadCache) {
@@ -1627,15 +1671,22 @@
 
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
-        if (loadCache) {
-            reloadScripts(iframe);
-        }
-        injectLibraries(iframe, that.globalLibs.concat(
+        afterScripts = function() {
+            injectLibraries(iframe, that.globalLibs.concat(
                 that.frameLibs.hasOwnProperty(uri) ? that.frameLibs[uri] : []));
 
-        if (storeCache) {
-            // Store frame in cache:
-            that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            if (storeCache) {
+                // Store frame in cache:
+                that.cache[uri].contents = iframeDocumentElement.innerHTML;
+            }
+
+            func();
+        };
+        if (loadCache) {
+            reloadScripts(iframe, afterScripts);
+        }
+        else {
+            afterScripts();
         }
     }
 
@@ -1681,18 +1732,25 @@
      * scripts. The placement of the tags can change, but the order is kept.
      *
      * @param {HTMLIFrameElement} iframe The target iframe
+     * @param {function} func Callback
      *
      * @api private
      */
-    function reloadScripts(iframe) {
+    function reloadScripts(iframe, func) {
         var contentDocument;
         var headNode;
         var tag, scriptNodes, scriptNodeIdx, scriptNode;
         var attrIdx, attr;
+        var numLoading;
+        var needsLoad;
 
         contentDocument = W.getIFrameDocument(iframe);
-
         headNode = W.getIFrameAnyChild(iframe);
+
+        // Start counting loading tags at 1 instead of 0 and decrement the
+        // count after the loop.
+        // This way the callback cannot be called before the loop finishes.
+        numLoading = 1;
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
@@ -1705,12 +1763,27 @@
             // Reinsert tag for reloading:
             scriptNode = document.createElement('script');
             if (tag.innerHTML) scriptNode.innerHTML = tag.innerHTML;
+            needsLoad = false;
             for (attrIdx = 0; attrIdx < tag.attributes.length; attrIdx++) {
                 attr = tag.attributes[attrIdx];
                 scriptNode.setAttribute(attr.name, attr.value);
+                if (attr.name === 'src') needsLoad = true;
+            }
+            if (needsLoad) {
+                //scriptNode.async = true;
+                ++numLoading;
+                scriptNode.onload = function(sn) {
+                    return function() {
+                        sn.onload = null;
+                        --numLoading;
+                        if (numLoading <= 0) func();
+                    };
+                }(scriptNode);
             }
             headNode.appendChild(scriptNode);
         }
+        --numLoading;
+        if (numLoading <= 0) func();
     }
 
     /**
@@ -2164,19 +2237,19 @@
 
         /**
          * Force disconnection upon page unload
-         * 
+         *
          * This makes browsers using AJAX to signal disconnection immediately.
          *
-         * Kudos: 
+         * Kudos:
          * http://stackoverflow.com/questions/1704533/intercept-page-exit-event
-         */       
+         */
         window.onunload = function() {
             var i;
             node.socket.disconnect();
             // Do nothing, but gain time.
             for (i = -1 ; ++i < 100000 ; ) { }
         };
-    
+
         // Mark listeners as added.
         this.listenersAdded = true;
 
@@ -2224,21 +2297,35 @@
      * be re-activated later.
      *
      * @param {Document|Element} container The target to scan for input tags
+     * @param {boolean} disable Optional. Lock inputs if TRUE, unlock if FALSE.
+     *   Default: TRUE
      *
      * @api private
      */
-    function lockUnlockedInputs(container) {
+    function lockUnlockedInputs(container, disable) {
         var j, i, inputs, nInputs;
+
+        if ('undefined' === typeof disable) disable = true;
+
         for (j = -1; ++j < len; ) {
             inputs = container.getElementsByTagName(inputTags[j]);
             nInputs = inputs.length;
             for (i = -1 ; ++i < nInputs ; ) {
-                if (!inputs[i].disabled) {
-                    inputs[i].disabled = true;
-                    W.waitScreen.lockedInputs.push(inputs[i]);
+                if (disable) {
+                    if (!inputs[i].disabled) {
+                        inputs[i].disabled = true;
+                        W.waitScreen.lockedInputs.push(inputs[i]);
+                    }
+                }
+                else {
+                    if (inputs[i].disabled) {
+                        inputs[i].disabled = false;
+                    }
                 }
             }
         }
+
+        if (!disable) W.waitScreen.lockedInputs = [];
     }
 
     function event_REALLY_DONE(text) {
@@ -2426,7 +2513,11 @@
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-        frameDoc = W.getFrameDocument();
+
+        //frameDoc = W.getFrameDocument();
+        // Using this for IE8 compatibility.
+        frameDoc = W.getIFrameDocument(W.getFrame());
+
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -2449,18 +2540,25 @@
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var i, len;
+        var j, i, len, inputs, nInputs;
+
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
                 this.waitingDiv.style.display = 'none';
             }
         }
         // Re-enables all previously locked input forms in the page.
-        i = -1, len = this.lockedInputs.length;
-        for ( ; ++i < len ; ) {
-            this.lockedInputs[i].removeAttribute('disabled');
+        try {
+            len = this.lockedInputs.length;
+            for (i = -1 ; ++i < len ; ) {
+                this.lockedInputs[i].removeAttribute('disabled');
+            }
+            this.lockedInputs = [];
         }
-        this.lockedInputs = [];
+        catch(e) {
+            // For IE8.
+            lockUnlockedInputs(W.getIFrameDocument(W.getFrame()), false);
+        }
     };
 
     /**

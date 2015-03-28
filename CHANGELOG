@@ -4,6 +4,7 @@
  - Added listener on onload to disconnect the client. This way also non-websockets disconnections are detected immediately.
  - `textOnleave` -> `promptOnleaveText` for consistency with option promptOnleave.
  - Listeners are added with a dedicated method now.
+ - IE8 Compatibility: noscript tags are hidden.
 
 ## 0.9.7
  - `#clearFrame()` is synchronous now.

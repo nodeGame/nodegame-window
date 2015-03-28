@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/List.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "lib/List.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -32,7 +32,7 @@
   <div class="summary">
 <div class="pilwrap" id="list">
   <h1>
-    <a href="#list" class="pilcrow">&#182;</a>
+    <a href="#list" name="list" class="pilcrow">&#182;</a>
     List
   </h1>
 </div>
@@ -76,7 +76,10 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">lifo</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -86,7 +89,8 @@ MIT Licensed</p>
 </div>
 <p>TODO: improve init</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">List</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">List</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">FIRST_LEVEL</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">first_level</span> <span class="o">||</span> <span class="s1">&#39;dl&#39;</span><span class="p">;</span>
@@ -104,7 +108,10 @@ MIT Licensed</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">globalCompare</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o1</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o2</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span></pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -114,7 +121,8 @@ MIT Licensed</p>
 </div>
 <p>FIFO</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lifo</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lifo</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">dt</span> <span class="o">&lt;</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">dt</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">dt</span> <span class="o">&gt;</span> <span class="nx">o2</span><span class="p">.</span><span class="nx">dt</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span>
@@ -141,7 +149,10 @@ MIT Licensed</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">title</span><span class="p">));</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -152,11 +163,14 @@ MIT Licensed</p>
 <p>was
 this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">htmlRenderer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HTMLRenderer</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">htmlRenderer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HTMLRenderer</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span>
     <span class="p">};</span>
 
     <span class="nx">List</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -165,13 +179,14 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
   <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>         <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">about</span> <span class="n">to</span> <span class="n">add</span> <span class="n">node</span><span class="err">&#39;</span><span class="p">);</span>
-         <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<div class="highlight"><pre><code>         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;about to add node&#39;</span><span class="p">);</span>
+         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
 </code></pre></div>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">auto_update</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
         <span class="p">}</span>
@@ -208,7 +223,9 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
         <span class="p">};</span>
 
         <span class="kd">var</span> <span class="nx">appendDD</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">THIRD_LEVEL</span><span class="p">);</span></pre></div>
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">THIRD_LEVEL</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -217,18 +234,21 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
   <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>             <span class="k">if</span> <span class="p">(</span><span class="n">old_dd</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="n">old_dd</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<div class="highlight"><pre><code>             <span class="k">if</span> <span class="p">(</span><span class="nx">old_dd</span><span class="p">)</span> <span class="p">{</span>
+                     <span class="nx">old_dd</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
              <span class="p">}</span>
-             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">old_dt</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="n">old_dt</span> <span class="o">=</span> <span class="n">appendDT</span><span class="p">.</span><span class="n">call</span><span class="p">(</span><span class="n">this</span><span class="p">);</span>
+             <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">old_dt</span><span class="p">)</span> <span class="p">{</span>
+                     <span class="nx">old_dt</span> <span class="o">=</span> <span class="nx">appendDT</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
              <span class="p">}</span>
-             <span class="n">old_dt</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+             <span class="nx">old_dt</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
 </code></pre></div>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -237,14 +257,18 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
   <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>             <span class="n">old_dd</span> <span class="o">=</span> <span class="n">null</span><span class="p">;</span>
-             <span class="n">old_dt</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+<div class="highlight"><pre><code>             <span class="nx">old_dd</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+             <span class="nx">old_dt</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
 </code></pre></div>
 
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
-        <span class="p">};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -255,7 +279,8 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
 <p>Reparse all every time
 TODO: improve this</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">hasChildNodes</span><span class="p">())</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
             <span class="p">}</span>
@@ -269,7 +294,9 @@ TODO: improve this</p>
             <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
             <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">dd</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="nx">appendDT</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span></pre></div>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">appendDT</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -279,7 +306,8 @@ TODO: improve this</p>
 </div>
 <p>console.log('just created dt');</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">node</span> <span class="o">=</span> <span class="nx">appendDD</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
@@ -291,7 +319,10 @@ TODO: improve this</p>
 
     <span class="nx">List</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRoot</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">DL</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -301,7 +332,8 @@ TODO: improve this</p>
 </div>
 <p>Cell Class</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Entity</span><span class="p">();</span>
     <span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">;</span>
 
     <span class="kd">function</span> <span class="nx">Node</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>

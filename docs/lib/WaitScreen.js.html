@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../', thisFile = 'lib/WaitScreen.js', defaultSidebar = true;
+    var relativeDir = "../", thisFile = "lib/WaitScreen.js", defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -25,13 +25,13 @@
         <a href="#meta-data">Meta-data</a>
       </div>
       <div class="heading h2">
-        <a href="#helper-functions">Helper functions</a>
+        <a href="#helper%20functions">Helper functions</a>
       </div>
       <div class="heading h3">
         <a href="#lockunlockedinputs">lockUnlockedInputs</a>
       </div>
       <div class="heading h2">
-        <a href="#waitscreen-constructor">WaitScreen constructor</a>
+        <a href="#waitscreen%20constructor">WaitScreen constructor</a>
       </div>
       <div class="heading h3">
         <a href="#waitscreen.id">WaitScreen.id</a>
@@ -83,7 +83,7 @@
   <div class="summary">
 <div class="pilwrap" id="waitscreen">
   <h1>
-    <a href="#waitscreen" class="pilcrow">&#182;</a>
+    <a href="#waitscreen" name="waitscreen" class="pilcrow">&#182;</a>
     WaitScreen
   </h1>
 </div>
@@ -100,7 +100,10 @@ MIT Licensed</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -110,36 +113,50 @@ MIT Licensed</p>
 </div>
 <p>Append under window.node.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">exports</span><span class="p">.</span><span class="nx">WaitScreen</span> <span class="o">=</span> <span class="nx">WaitScreen</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">WaitScreen</span> <span class="o">=</span> <span class="nx">WaitScreen</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="meta-data">
   <h2>
-    <a href="#meta-data" class="pilcrow">&#182;</a>
+    <a href="#meta-data" name="meta-data" class="pilcrow">&#182;</a>
     Meta-data
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.7.0&#39;</span><span class="p">;</span>
-    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;Show a standard waiting screen&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.7.0&#39;</span><span class="p">;</span>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;Show a standard waiting screen&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="helper-functions">
+<div class="pilwrap" id="helper%20functions">
   <h2>
-    <a href="#helper-functions" class="pilcrow">&#182;</a>
+    <a href="#helper%20functions" name="helper%20functions" class="pilcrow">&#182;</a>
     Helper functions
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">inputTags</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kd">var</span> <span class="nx">inputTags</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
     <span class="nx">inputTags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">];</span>
-    <span class="nx">len</span> <span class="o">=</span> <span class="nx">inputTags</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
+    <span class="nx">len</span> <span class="o">=</span> <span class="nx">inputTags</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -147,7 +164,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="lockunlockedinputs">
   <h3>
-    <a href="#lockunlockedinputs" class="pilcrow">&#182;</a>
+    <a href="#lockunlockedinputs" name="lockunlockedinputs" class="pilcrow">&#182;</a>
     lockUnlockedInputs
   </h3>
 </div>
@@ -166,26 +183,45 @@ be re-activated later.</p>
       <span class="dox_type">Element</span>
       <span>The target to scan for input tags</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">disable</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Lock inputs if TRUE, unlock if FALSE.
+  Default: TRUE</span>
+    </div>
     <div class="dox_tag_title">API</div>
     <div class="dox_tag_detail">
       <span class="dox_type">private
 </span>
-    </span>
+    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">container</span><span class="p">,</span> <span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">inputs</span><span class="p">,</span> <span class="nx">nInputs</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">disable</span><span class="p">)</span> <span class="nx">disable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">inputs</span> <span class="o">=</span> <span class="nx">container</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">inputTags</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
             <span class="nx">nInputs</span> <span class="o">=</span> <span class="nx">inputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nInputs</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">disable</span><span class="p">)</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">event_REALLY_DONE</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
@@ -238,15 +274,18 @@ be re-activated later.</p>
                 <span class="nx">W</span><span class="p">.</span><span class="nx">unlockScreen</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
-    <span class="p">}</span></pre></div>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="waitscreen-constructor">
+<div class="pilwrap" id="waitscreen%20constructor">
   <h2>
-    <a href="#waitscreen-constructor" class="pilcrow">&#182;</a>
+    <a href="#waitscreen%20constructor" name="waitscreen%20constructor" class="pilcrow">&#182;</a>
     WaitScreen constructor
   </h2>
 </div>
@@ -264,8 +303,12 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">WaitScreen</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">function</span> <span class="nx">WaitScreen</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -273,7 +316,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.id">
   <h3>
-    <a href="#waitscreen.id" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.id" name="waitscreen.id" class="pilcrow">&#182;</a>
     WaitScreen.id
   </h3>
 </div>
@@ -285,12 +328,16 @@ be re-activated later.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.waitingDiv
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="s1">&#39;ng_waitScreen&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="s1">&#39;ng_waitScreen&#39;</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -298,7 +345,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.root">
   <h3>
-    <a href="#waitscreen.root" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.root" name="waitscreen.root" class="pilcrow">&#182;</a>
     WaitScreen.root
   </h3>
 </div>
@@ -310,12 +357,16 @@ be re-activated later.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.waitingDiv
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">root</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">root</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -323,7 +374,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.waitingdiv">
   <h3>
-    <a href="#waitscreen.waitingdiv" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.waitingdiv" name="waitscreen.waitingdiv" class="pilcrow">&#182;</a>
     WaitScreen.waitingDiv
   </h3>
 </div>
@@ -333,7 +384,11 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -341,7 +396,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.beforepausetext">
   <h3>
-    <a href="#waitscreen.beforepausetext" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.beforepausetext" name="waitscreen.beforepausetext" class="pilcrow">&#182;</a>
     WaitScreen.beforePauseText
   </h3>
 </div>
@@ -353,7 +408,11 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">beforePauseInnerHTML</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">beforePauseInnerHTML</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -361,7 +420,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.enabled">
   <h3>
-    <a href="#waitscreen.enabled" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.enabled" name="waitscreen.enabled" class="pilcrow">&#182;</a>
     WaitScreen.enabled
   </h3>
 </div>
@@ -373,12 +432,16 @@ be re-activated later.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.enable
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -386,7 +449,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.text">
   <h3>
-    <a href="#waitscreen.text" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.text" name="waitscreen.text" class="pilcrow">&#182;</a>
     WaitScreen.text
   </h3>
 </div>
@@ -396,14 +459,18 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">defaultTexts</span> <span class="o">=</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">defaultTexts</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">waiting</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">waitingText</span> <span class="o">||</span>
                 <span class="s1">&#39;Waiting for other players to be done...&#39;</span><span class="p">,</span>
             <span class="nx">stepping</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">steppingText</span> <span class="o">||</span>
                 <span class="s1">&#39;Initializing game step, will be ready soon...&#39;</span><span class="p">,</span>
             <span class="nx">paused</span><span class="o">:</span> <span class="nx">options</span><span class="p">.</span><span class="nx">pausedText</span> <span class="o">||</span>
                 <span class="s1">&#39;Game is paused. Please wait.&#39;</span>
-        <span class="p">};</span></pre></div>
+        <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -411,7 +478,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.lockedinputs">
   <h2>
-    <a href="#waitscreen.lockedinputs" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.lockedinputs" name="waitscreen.lockedinputs" class="pilcrow">&#182;</a>
     WaitScreen.lockedInputs
   </h2>
 </div>
@@ -423,12 +490,16 @@ be re-activated later.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.lock
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -438,8 +509,12 @@ be re-activated later.</p>
 </div>
 <p>Registers the event listeners.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">enable</span><span class="p">();</span>
-    <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">enable</span><span class="p">();</span>
+    <span class="p">}</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -447,7 +522,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.enable">
   <h3>
-    <a href="#waitscreen.enable" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.enable" name="waitscreen.enable" class="pilcrow">&#182;</a>
     WaitScreen.enable
   </h3>
 </div>
@@ -457,7 +532,8 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">enabled</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;REALLY_DONE&#39;</span><span class="p">,</span> <span class="nx">event_REALLY_DONE</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">,</span> <span class="nx">event_STEPPING</span><span class="p">);</span>
@@ -465,7 +541,10 @@ be re-activated later.</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">,</span> <span class="nx">event_PAUSED</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;RESUMED&#39;</span><span class="p">,</span> <span class="nx">event_RESUMED</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -473,7 +552,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.disable">
   <h3>
-    <a href="#waitscreen.disable" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.disable" name="waitscreen.disable" class="pilcrow">&#182;</a>
     WaitScreen.disable
   </h3>
 </div>
@@ -483,7 +562,8 @@ be re-activated later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">enabled</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;REALLY_DONE&#39;</span><span class="p">,</span> <span class="nx">event_REALLY_DONE</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;STEPPING&#39;</span><span class="p">,</span> <span class="nx">event_STEPPING</span><span class="p">);</span>
@@ -491,7 +571,10 @@ be re-activated later.</p>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;PAUSED&#39;</span><span class="p">,</span> <span class="nx">event_PAUSED</span><span class="p">);</span>
         <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;RESUMED&#39;</span><span class="p">,</span> <span class="nx">event_RESUMED</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -499,7 +582,7 @@ be re-activated later.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.lock">
   <h3>
-    <a href="#waitscreen.lock" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.lock" name="waitscreen.lock" class="pilcrow">&#182;</a>
     WaitScreen.lock
   </h3>
 </div>
@@ -527,16 +610,19 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScren.updateText
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">lock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">lock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">frameDoc</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;WaitScreen.lock: cannot lock inputs.&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -546,8 +632,24 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
 </div>
 <p>Disables all input forms in the page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
-        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>frameDoc = W.getFrameDocument();
+Using this for IE8 compatibility.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">());</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
@@ -560,7 +662,10 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -568,7 +673,7 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.unlock">
   <h3>
-    <a href="#waitscreen.unlock" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.unlock" name="waitscreen.unlock" class="pilcrow">&#182;</a>
     WaitScreen.unlock
   </h3>
 </div>
@@ -580,33 +685,58 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.lock
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unlock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">inputs</span><span class="p">,</span> <span class="nx">nInputs</span><span class="p">;</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
 </div>
 <p>Re-enables all previously locked input forms in the page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">lockedInputs</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="p">};</span></pre></div>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>For IE8.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">()),</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -614,7 +744,7 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.updatetext">
   <h3>
-    <a href="#waitscreen.updatetext" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.updatetext" name="waitscreen.updatetext" class="pilcrow">&#182;</a>
     WaitScreen.updateText
   </h3>
 </div>
@@ -638,7 +768,8 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateText</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">append</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateText</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">append</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">append</span> <span class="o">=</span> <span class="nx">append</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;WaitScreen.updateText: text must be string.&#39;</span><span class="p">);</span>
@@ -649,7 +780,10 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -657,7 +791,7 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
   <div class="summary">
 <div class="pilwrap" id="waitscreen.destroy">
   <h3>
-    <a href="#waitscreen.destroy" class="pilcrow">&#182;</a>
+    <a href="#waitscreen.destroy" name="waitscreen.destroy" class="pilcrow">&#182;</a>
     WaitScreen.destroy
   </h3>
 </div>
@@ -669,12 +803,13 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">WaitScreen.unlock
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">destroy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">setScreenLevel</span><span class="p">(</span><span class="s1">&#39;UNLOCKING&#39;</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">unlock</span><span class="p">();</span>
@@ -682,17 +817,20 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Removes previously registered listeners.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>
+        <span class="k">this</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
     <span class="p">};</span>
 
 <span class="p">})(</span>

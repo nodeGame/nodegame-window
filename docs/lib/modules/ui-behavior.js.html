@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = '../../', thisFile = 'lib/modules/ui-behavior.js', defaultSidebar = true;
+    var relativeDir = "../../", thisFile = "lib/modules/ui-behavior.js", defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -50,7 +50,7 @@
   <div class="summary">
 <div class="pilwrap" id="ui-behavior">
   <h1>
-    <a href="#ui-behavior" class="pilcrow">&#182;</a>
+    <a href="#ui-behavior" name="ui-behavior" class="pilcrow">&#182;</a>
     ui-behavior
   </h1>
 </div>
@@ -72,7 +72,10 @@ MIT Licensed</p>
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -80,7 +83,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.noescape">
   <h3>
-    <a href="#gamewindow.noescape" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.noescape" name="gamewindow.noescape" class="pilcrow">&#182;</a>
     GameWindow.noEscape
   </h3>
 </div>
@@ -101,7 +104,8 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
         <span class="nx">windowObj</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">keyCode</span> <span class="o">=</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">)</span> <span class="o">?</span> <span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">;</span>
@@ -110,7 +114,10 @@ MIT Licensed</p>
             <span class="p">}</span>
         <span class="p">};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -118,7 +125,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.restoreescape">
   <h3>
-    <a href="#gamewindow.restoreescape" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.restoreescape" name="gamewindow.restoreescape" class="pilcrow">&#182;</a>
     GameWindow.restoreEscape
   </h3>
 </div>
@@ -137,16 +144,20 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.noEscape()
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreEscape</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
         <span class="nx">windowObj</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -154,14 +165,15 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.promptonleave">
   <h3>
-    <a href="#gamewindow.promptonleave" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.promptonleave" name="gamewindow.promptonleave" class="pilcrow">&#182;</a>
     GameWindow.promptOnleave
   </h3>
 </div>
 
   </div>
-  <div class="body"><p>Captures the onbeforeunload event and warns the user that leaving the
-page may halt the game</p>
+  <div class="body"><p>Displays a confirmation box upon closing the window or tab</p>
+
+<p>Listens on the onbeforeunload event.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -178,18 +190,22 @@ page may halt the game</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <a href=" ">https://developer.mozilla.org/en/DOM/window.onbeforeunload
+      <a href="https://developer.mozilla.org/en/DOM/window.onbeforeunload
+">https://developer.mozilla.org/en/DOM/window.onbeforeunload
 </a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">,</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
-        <span class="nx">text</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">textOnleave</span><span class="p">;</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span> <span class="o">?</span> <span class="nx">text</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleaveText</span><span class="p">;</span>
 
         <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span></pre></div>
+            <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -199,9 +215,12 @@ page may halt the game</p>
 </div>
 <p>For IE&lt;8 and Firefox prior to version 4</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">e</span><span class="p">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
-            <span class="p">}</span></pre></div>
+            <span class="p">}</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -211,11 +230,15 @@ page may halt the game</p>
 </div>
 <p>For Chrome, Safari, IE8+ and Opera 12+</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">return</span> <span class="nx">text</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>
+            <span class="k">return</span> <span class="nx">text</span><span class="p">;</span>
         <span class="p">};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -223,7 +246,7 @@ page may halt the game</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.restoreonleave">
   <h3>
-    <a href="#gamewindow.restoreonleave" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.restoreonleave" name="gamewindow.restoreonleave" class="pilcrow">&#182;</a>
     GameWindow.restoreOnleave
   </h3>
 </div>
@@ -245,17 +268,22 @@ page may halt the game</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <a href=" ">https://developer.mozilla.org/en/DOM/window.onbeforeunload
+      <a href="https://developer.mozilla.org/en/DOM/window.onbeforeunload
+">https://developer.mozilla.org/en/DOM/window.onbeforeunload
 </a>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">restoreOnleave</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">windowObj</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">windowObj</span> <span class="o">=</span> <span class="nx">windowObj</span> <span class="o">||</span> <span class="nb">window</span><span class="p">;</span>
         <span class="nx">windowObj</span><span class="p">.</span><span class="nx">onbeforeunload</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">promptOnleave</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -263,7 +291,7 @@ page may halt the game</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.disablerightclick">
   <h3>
-    <a href="#gamewindow.disablerightclick" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.disablerightclick" name="gamewindow.disablerightclick" class="pilcrow">&#182;</a>
     GameWindow.disableRightClick
   </h3>
 </div>
@@ -279,18 +307,22 @@ page may halt the game</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">JSUS.disableRightClick
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">J</span><span class="p">.</span><span class="nx">disableRightClick</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">());</span>
         <span class="p">}</span>
         <span class="nx">J</span><span class="p">.</span><span class="nx">disableRightClick</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">rightClickDisabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>
+    <span class="p">};</span>
+
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -298,7 +330,7 @@ page may halt the game</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.enablerightclick">
   <h3>
-    <a href="#gamewindow.enablerightclick" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.enablerightclick" name="gamewindow.enablerightclick" class="pilcrow">&#182;</a>
     GameWindow.enableRightClick
   </h3>
 </div>
@@ -314,12 +346,13 @@ page may halt the game</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">JSUS.enableRightClick
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enableRightClick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
              <span class="nx">J</span><span class="p">.</span><span class="nx">enableRightClick</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">());</span>
         <span class="p">}</span>
@@ -327,7 +360,9 @@ page may halt the game</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">rightClickDisabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span>
 
-<span class="p">})(</span></pre></div>
+<span class="p">})(</span>
+
+</pre></div>
         </td>
       </tr>
       <tr>
@@ -338,7 +373,8 @@ page may halt the game</p>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
 <span class="p">);</span>
 </pre></div>
