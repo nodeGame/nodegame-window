@@ -5,6 +5,7 @@
  - `textOnleave` -> `promptOnleaveText` for consistency with option promptOnleave.
  - Listeners are added with a dedicated method now.
  - IE8 Compatibility: noscript tags are hidden.
+ - `#GameWindow.destroyFrame()` checks for existence of frameRoot.
  - Travis Integration Testing.
 
 ## 0.9.7
