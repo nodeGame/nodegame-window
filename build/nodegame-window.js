@@ -1612,9 +1612,9 @@
         if (func) func.call(node.game);
 
         // ng event emitter is not used.
-        node.events.game.emit('FRAME_LOADED');
-        node.events.stage.emit('FRAME_LOADED');
-        node.events.step.emit('FRAME_LOADED');
+        node.events.ee.game.emit('FRAME_LOADED');
+        node.events.ee.stage.emit('FRAME_LOADED');
+        node.events.ee.step.emit('FRAME_LOADED');
 
         if (loaded) {
             stageLevel = node.game.getStageLevel();
