@@ -76,7 +76,7 @@
         <a href="#gamewindow.framelibs">GameWindow.frameLibs</a>
       </div>
       <div class="heading h3">
-        <a href="#gamewindow.state">GameWindow.state</a>
+        <a href="#gamewindow.statelevel">GameWindow.stateLevel</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.waitscreen">GameWindow.waitScreen</a>
@@ -270,6 +270,10 @@ javascript state inside the page.</p>
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">windowLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">windowLevels</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">screenLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">screenLevels</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">CB_EXECUTED</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">CALLBACK_EXECUTED</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">WIN_LOADING</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1052,10 +1056,10 @@ libraries that should be loaded for a frame.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamewindow.state">
+<div class="pilwrap" id="gamewindow.statelevel">
   <h3>
-    <a href="#gamewindow.state" name="gamewindow.state" class="pilcrow">&#182;</a>
-    GameWindow.state
+    <a href="#gamewindow.statelevel" name="gamewindow.statelevel" class="pilcrow">&#182;</a>
+    GameWindow.stateLevel
   </h3>
 </div>
 
@@ -1072,7 +1076,7 @@ libraries that should be loaded for a frame.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
 
 </pre></div>
@@ -1373,7 +1377,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">waitScreen</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">WaitScreen</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">);</span>
 
-            <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
+            <span class="nx">stageLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">;</span>
             <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">!==</span> <span class="nx">stageLevels</span><span class="p">.</span><span class="nx">UNINITIALIZED</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
@@ -1566,7 +1570,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
                             <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
     <span class="p">};</span>
 
 
@@ -1603,7 +1607,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1621,24 +1625,24 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
 </div>
 
   </div>
-  <div class="body"><p>Returns whether the GameWindow is ready</p>
+  <div class="body"><p>Returns TRUE if the GameWindow is ready</p>
 
-<p>Returns TRUE if the state is either INITIALIZED or LOADED or LOCKED.</p>
+<p>The window is ready if its state is either INITIALIZED or LOADED.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">boolean</span>
-      <span>Whether the window is ready</span>
+      <span>TRUE if the window is ready</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">isReady</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span> <span class="o">||</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">LOADED</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">LOADED</span> <span class="o">||</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">INITIALIZED</span><span class="p">;</span>
     <span class="p">};</span>
 
 
@@ -1807,9 +1811,9 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFrameName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameName</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">WIN_LOADING</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">frameName</span> <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frameName</span> <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameName</span><span class="p">;</span>
     <span class="p">};</span>
@@ -1852,7 +1856,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFrameWindow</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameWindow</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameWindow</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">WIN_LOADING</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">frameWindow</span> <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
@@ -1897,7 +1901,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getFrameDocument</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">WIN_LOADING</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">)</span> <span class="o">:</span>
                 <span class="kc">null</span><span class="p">;</span>
@@ -3883,20 +3887,24 @@ iframe.onload handles the filling of the contents.</p>
       <span class="dox_type">updateAreLoading
 </span>
     </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>FRAME_LOADED</span>
+    </div>
+    <div class="dox_tag_title">emit</div>
+    <div class="dox_tag_detail">
+      <span>LOADED</span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateLoadFrameState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">loaded</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">;</span>
+        <span class="nx">loaded</span> <span class="o">=</span> <span class="nx">updateAreLoading</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
 
-        <span class="nx">updateAreLoading</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;WINDOW_LOADED&#39;</span><span class="p">);</span>
 
 </pre></div>
         </td>
@@ -3906,14 +3914,20 @@ iframe.onload handles the filling of the contents.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
-<p>The listener will take care of emitting PLAYING,
-if all conditions are met.</p>
+<p>ng event emitter is not used.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;FRAME_LOADED&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">stage</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;FRAME_LOADED&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ee</span><span class="p">.</span><span class="nx">step</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;FRAME_LOADED&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">CB_EXECUTED</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;GameWindow.updateLoadFrameState: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span>
-                       <span class="s1">&#39; loadFrame processes open.&#39;</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;game-window: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span> <span class="s1">&#39; frames &#39;</span> <span class="o">+</span>
+                       <span class="s1">&#39;still loading.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
@@ -4411,9 +4425,7 @@ iframe object, one for every given library.</p>
 </div>
 
   </div>
-  <div class="body"><p>Updates the counter of loading frames in a secure way</p>
-
-<p>Ensure atomicity of the operation by using the <em>lockedUpdate</em> semaphore.</p>
+  <div class="body"><p>Updates the counter of loading frames</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -4442,16 +4454,8 @@ iframe object, one for every given library.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>
     <span class="kd">function</span> <span class="nx">updateAreLoading</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lockedUpdate</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">lockedUpdate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span> <span class="nx">update</span><span class="p">;</span>
-            <span class="nx">lockedUpdate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">updateAreLoading</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
-            <span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span> <span class="nx">update</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
 
 

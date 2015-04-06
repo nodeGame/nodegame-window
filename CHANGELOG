@@ -1,6 +1,10 @@
 # nodegame-window change log
 
 ## 0.9.8
+ - GameWindow.state -> GameWindow.stateLevel.
+ - loadFrame emits 'LOADED' directly if that is the case.
+ - Event 'WINDOW_LOADED' removed.
+ - Added event: 'FRAME_LOADED'.
  - Added listener on onload to disconnect the client. This way also non-websockets disconnections are detected immediately.
  - `textOnleave` -> `promptOnleaveText` for consistency with option promptOnleave.
  - Listeners are added with a dedicated method now.
