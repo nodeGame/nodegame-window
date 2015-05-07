@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../", thisFile = "listeners/listeners.js", defaultSidebar = true;
+    var relativeDir = '../', thisFile = 'listeners/listeners.js', defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -35,7 +35,7 @@
   <div class="summary">
 <div class="pilwrap" id="listeners">
   <h1>
-    <a href="#listeners" name="listeners" class="pilcrow">&#182;</a>
+    <a href="#listeners" class="pilcrow">&#182;</a>
     listeners
   </h1>
 </div>
@@ -73,10 +73,7 @@ MIT Licensed</p>
         <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
-
-
-</pre></div>
+    <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -84,7 +81,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.adddefaultlisteners">
   <h2>
-    <a href="#gamewindow.adddefaultlisteners" name="gamewindow.adddefaultlisteners" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.adddefaultlisteners" class="pilcrow">&#182;</a>
     GameWindow.addDefaultListeners
   </h2>
 </div>
@@ -110,8 +107,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultListeners</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">listenersAdded</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;node.window.addDefaultListeners: listeners already &#39;</span> <span class="o">+</span>
@@ -142,10 +138,7 @@ MIT Licensed</p>
             <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
             <span class="p">}</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -155,13 +148,9 @@ MIT Licensed</p>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_DISABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_DISABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -171,13 +160,9 @@ MIT Licensed</p>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_ENABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_ENABLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -187,13 +172,9 @@ MIT Licensed</p>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;INPUT_TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -211,12 +192,9 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nb">window</span><span class="p">.</span><span class="nx">onunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nb">window</span><span class="p">.</span><span class="nx">onunload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
-
-</pre></div>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">socket</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -226,12 +204,9 @@ MIT Licensed</p>
 </div>
 <p>Do nothing, but gain time.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">100000</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">100000</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
         <span class="p">};</span>
-    
-
-</pre></div>
+    </pre></div>
         </td>
       </tr>
       <tr>
@@ -241,8 +216,7 @@ MIT Licensed</p>
 </div>
 <p>Mark listeners as added.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">listenersAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">listenersAdded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;node-window: listeners added.&#39;</span><span class="p">);</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
