@@ -11,14 +11,10 @@
 
     "use strict";
 
-    function getElement(idOrObj, prefix) {
+    function getElement(idOrObj) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
-            if (!el) {
-                throw new Error(prefix + ': could not find element ' +
-                                'with id ' + idOrObj);
-            }
         }
         else if (JSUS.isElement(idOrObj)) {
             el = idOrObj;
@@ -55,23 +51,27 @@
         });
 
         node.on('HIDE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.HIDE');
+            if (el) el.style.display = 'none';
         });
 
         node.on('SHOW', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            el.style.display = '';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.SHOW');
+            if (el) el.style.display = '';
         });
 
         node.on('TOGGLE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-
-            if (el.style.display === 'none') {
-                el.style.display = '';
-            }
-            else {
-                el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+            if (el) {
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                }
+                else {
+                    el.style.display = 'none';
+                }
             }
         });
 
@@ -92,19 +92,19 @@
 
         /**
          * Force disconnection upon page unload
-         * 
+         *
          * This makes browsers using AJAX to signal disconnection immediately.
          *
-         * Kudos: 
+         * Kudos:
          * http://stackoverflow.com/questions/1704533/intercept-page-exit-event
-         */       
+         */
         window.onunload = function() {
             var i;
             node.socket.disconnect();
             // Do nothing, but gain time.
             for (i = -1 ; ++i < 100000 ; ) { }
         };
-    
+
         // Mark listeners as added.
         this.listenersAdded = true;
 
