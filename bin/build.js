@@ -35,6 +35,7 @@ function build(options) {
     // CREATING build array
     var files = [
         libDir + 'GameWindow.js',
+        modulesDir + 'setup.js',
         modulesDir + 'ui-behavior.js',
         modulesDir + 'lockScreen.js',
         listDir + 'listeners.js',

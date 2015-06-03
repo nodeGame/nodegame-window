@@ -11,6 +11,9 @@
  - IE8 Compatibility: noscript tags are hidden.
  - `#GameWindow.destroyFrame()` checks for existence of frameRoot.
  - Travis Integration Testing.
+ - No error thrown on HIDE/SHOW/TOGGLE listeners.
+ - New setup functions: frame, header, and page.
+ - New methods: `#GameWindow.clearPage()` and `#GameWindow.clearPageBody()`.
 
 ## 0.9.7
  - `#clearFrame()` is synchronous now.
