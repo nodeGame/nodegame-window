@@ -1490,7 +1490,8 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode + '.');
+                                    'store mode: ' + opts.cache.storeMode +
+                                    '.');
                 }
             }
         }
@@ -1544,7 +1545,8 @@
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback and updates GameWindow state.
+                                    // Executes callback
+                                    // and updates GameWindow state.
                                     that.updateLoadFrameState(func);
                                 });
             });
@@ -1561,7 +1563,8 @@
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback and updates GameWindow state.
+                                    // Executes callback
+                                    // and updates GameWindow state.
                                     that.updateLoadFrameState(func);
                                 });
             }
@@ -2359,14 +2362,10 @@
 
     "use strict";
 
-    function getElement(idOrObj, prefix) {
+    function getElement(idOrObj) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
-            if (!el) {
-                throw new Error(prefix + ': could not find element ' +
-                                'with id ' + idOrObj);
-            }
         }
         else if (JSUS.isElement(idOrObj)) {
             el = idOrObj;
@@ -2403,23 +2402,27 @@
         });
 
         node.on('HIDE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.HIDE');
+            if (el) el.style.display = 'none';
         });
 
         node.on('SHOW', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            el.style.display = '';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.SHOW');
+            if (el) el.style.display = '';
         });
 
         node.on('TOGGLE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-
-            if (el.style.display === 'none') {
-                el.style.display = '';
-            }
-            else {
-                el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+            if (el) {
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                }
+                else {
+                    el.style.display = 'none';
+                }
             }
         });
 
