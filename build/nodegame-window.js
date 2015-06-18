@@ -1969,12 +1969,26 @@
          * @see node.setup
          */
         node.registerSetup('page', function(conf) {
+            var tmp, body;
             if (!conf) return;
 
             // Clear.
             if (conf.clearBody) this.window.clearPageBody();
             if (conf.clear) this.window.clearPage();
-
+            if ('string' === typeof conf.title) {
+                conf.title = { title: conf.title };
+            }
+            if ('object' === typeof conf.title) {
+                // TODO: add option to animate it.
+                document.title = conf.title.title;
+                if (conf.title.addToBody) {
+                    tmp = document.createElement('h1');
+                    tmp.innerHTML = conf.title.title;
+                    body = document.body;
+                    if (body.innerHTML === '') body.appendChild(tmp);
+                    else body.insertBefore(tmp, body.firstChild);
+                }
+            }
             return conf;
         });
 
