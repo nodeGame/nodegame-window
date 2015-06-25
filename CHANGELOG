@@ -14,6 +14,7 @@
  - No error thrown on HIDE/SHOW/TOGGLE listeners.
  - New setup functions: frame, header, and page.
  - New methods: `#GameWindow.clearPage()` and `#GameWindow.clearPageBody()`.
+ - `#GameWindow.loadFrame()` adds the name of the HTTP channel by default, if the uri load does not start with '/' or 'http://'.
 
 ## 0.9.7
  - `#clearFrame()` is synchronous now.
