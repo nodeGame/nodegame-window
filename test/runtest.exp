@@ -10,7 +10,7 @@ set timeout 30
 expect {
     timeout { puts "\nERROR: Server is not starting!"; exit 1 }
 
-    "ng> socket connected.\r"
+    "info  - socket.io started\r"
 }
 
 # Run tests.
