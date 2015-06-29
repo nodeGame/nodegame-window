@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../", thisFile = "lib/modules/extra.js", defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/modules/extra.js', defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -52,7 +52,7 @@
         <a href="#gamewindow.addeventbutton">GameWindow.addEventButton</a>
       </div>
       <div class="heading h2">
-        <a href="#helper%20functions">Helper Functions</a>
+        <a href="#helper-functions">Helper Functions</a>
       </div>
       <div class="heading h3">
         <a href="#toggleinputs">toggleInputs</a>
@@ -68,7 +68,7 @@
   <div class="summary">
 <div class="pilwrap" id="extra">
   <h1>
-    <a href="#extra" name="extra" class="pilcrow">&#182;</a>
+    <a href="#extra" class="pilcrow">&#182;</a>
     extra
   </h1>
 </div>
@@ -89,10 +89,7 @@ MIT Licensed</p>
 
     <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">DOM</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
-
-
-</pre></div>
+    <span class="kd">var</span> <span class="nx">DOM</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;DOM&#39;</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -100,7 +97,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.getscreen">
   <h3>
-    <a href="#gamewindow.getscreen" name="gamewindow.getscreen" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.getscreen" class="pilcrow">&#182;</a>
     GameWindow.getScreen
   </h3>
 </div>
@@ -128,8 +125,7 @@ inside which to display content</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getScreen</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getScreen</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nx">el</span><span class="p">;</span>
@@ -138,10 +134,7 @@ inside which to display content</p>
             <span class="nx">el</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -149,7 +142,7 @@ inside which to display content</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.write">
   <h3>
-    <a href="#gamewindow.write" name="gamewindow.write" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.write" class="pilcrow">&#182;</a>
     GameWindow.write
   </h3>
 </div>
@@ -184,13 +177,12 @@ If no root element is specified, the default screen is used.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.writeln
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">write</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
@@ -202,10 +194,7 @@ If no root element is specified, the default screen is used.</p>
                 <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.write: could not determine where to write.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">DOM</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">text</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -213,7 +202,7 @@ If no root element is specified, the default screen is used.</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.writeln">
   <h3>
-    <a href="#gamewindow.writeln" name="gamewindow.writeln" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.writeln" class="pilcrow">&#182;</a>
     GameWindow.writeln
   </h3>
 </div>
@@ -248,13 +237,12 @@ If no root element is specified, the default screen is used.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.write
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">writeln</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">br</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">writeln</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">br</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
@@ -266,10 +254,7 @@ If no root element is specified, the default screen is used.</p>
                             <span class="s1">&#39;could not determine where to write.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">DOM</span><span class="p">.</span><span class="nx">writeln</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">br</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -277,7 +262,7 @@ If no root element is specified, the default screen is used.</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.generateuniqueid">
   <h3>
-    <a href="#gamewindow.generateuniqueid" name="gamewindow.generateuniqueid" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.generateuniqueid" class="pilcrow">&#182;</a>
     GameWindow.generateUniqueId
   </h3>
 </div>
@@ -300,16 +285,10 @@ If no root element is specified, the default screen is used.</p>
       <span class="dox_type">string</span>
       <span>The generated id</span>
     </div>
-    <div class="dox_tag_title">experimental
-TODO:</div>
-    <div class="dox_tag_detail">
-      <span>it is not always working fine.</span>
-    </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateUniqueId</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateUniqueId</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">found</span><span class="p">;</span>
 
         <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">prefix</span> <span class="o">||</span> <span class="nx">J</span><span class="p">.</span><span class="nx">randomInt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">));</span>
@@ -320,10 +299,7 @@ TODO:</div>
             <span class="nx">found</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -331,7 +307,7 @@ TODO:</div>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.toggleinputs">
   <h3>
-    <a href="#gamewindow.toggleinputs" name="gamewindow.toggleinputs" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.toggleinputs" class="pilcrow">&#182;</a>
     GameWindow.toggleInputs
   </h3>
 </div>
@@ -375,13 +351,12 @@ disabled or enabled (and not toggled).</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">toggleInputs
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toggleInputs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toggleInputs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">disabled</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">container</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span>
@@ -400,9 +375,7 @@ disabled or enabled (and not toggled).</p>
             <span class="p">}</span>
             <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-
-</pre></div>
+        <span class="k">else</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -412,10 +385,7 @@ disabled or enabled (and not toggled).</p>
 </div>
 <p>The whole page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">);</span>
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -425,17 +395,13 @@ disabled or enabled (and not toggled).</p>
 </div>
 <p>If there is Frame apply it there too.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -443,7 +409,7 @@ disabled or enabled (and not toggled).</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.getscreeninfo">
   <h3>
-    <a href="#gamewindow.getscreeninfo" name="gamewindow.getscreeninfo" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.getscreeninfo" class="pilcrow">&#182;</a>
     GameWindow.getScreenInfo
   </h3>
 </div>
@@ -461,8 +427,7 @@ disabled or enabled (and not toggled).</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getScreenInfo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getScreenInfo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">screen</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">screen</span><span class="p">;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="nx">height</span><span class="o">:</span> <span class="nx">screen</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
@@ -472,10 +437,7 @@ disabled or enabled (and not toggled).</p>
             <span class="nx">colorDepth</span><span class="o">:</span> <span class="nx">screen</span><span class="p">.</span><span class="nx">colorDepth</span><span class="p">,</span>
             <span class="nx">pixelDepth</span><span class="o">:</span> <span class="nx">screen</span><span class="p">.</span><span class="nx">pixedDepth</span>
         <span class="p">};</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -483,7 +445,7 @@ disabled or enabled (and not toggled).</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.getloadingdots">
   <h3>
-    <a href="#gamewindow.getloadingdots" name="gamewindow.getloadingdots" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.getloadingdots" class="pilcrow">&#182;</a>
     GameWindow.getLoadingDots
   </h3>
 </div>
@@ -519,8 +481,7 @@ starts from the beginning.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getLoadingDots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getLoadingDots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">span_dots</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">limit</span><span class="p">,</span> <span class="nx">intervalId</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&amp;</span> <span class="nx">len</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.getLoadingDots: len &lt; 0.&#39;</span><span class="p">);</span>
@@ -531,9 +492,7 @@ starts from the beginning.</p>
         <span class="nx">limit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">limit</span> <span class="o">=</span> <span class="nx">limit</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span>
-        <span class="p">}</span>
-
-</pre></div>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -543,8 +502,7 @@ starts from the beginning.</p>
 </div>
 <p>Refreshing the dots...</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">intervalId</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">intervalId</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">span_dots</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">!==</span> <span class="nx">limit</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">span_dots</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">span_dots</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span>
             <span class="p">}</span>
@@ -562,10 +520,7 @@ starts from the beginning.</p>
             <span class="nx">span</span><span class="o">:</span> <span class="nx">span_dots</span><span class="p">,</span>
             <span class="nx">stop</span><span class="o">:</span> <span class="nx">stop</span>
         <span class="p">};</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -573,7 +528,7 @@ starts from the beginning.</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addloadingdots">
   <h3>
-    <a href="#gamewindow.addloadingdots" name="gamewindow.addloadingdots" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addloadingdots" class="pilcrow">&#182;</a>
     GameWindow.addLoadingDots
   </h3>
 </div>
@@ -612,18 +567,14 @@ starts from the beginning.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.getLoadingDots
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addLoadingDots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addLoadingDots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getLoadingDots</span><span class="p">(</span><span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">).</span><span class="nx">span</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -631,7 +582,7 @@ starts from the beginning.</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.geteventbutton">
   <h3>
-    <a href="#gamewindow.geteventbutton" name="gamewindow.geteventbutton" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.geteventbutton" class="pilcrow">&#182;</a>
     GameWindow.getEventButton
   </h3>
 </div>
@@ -670,8 +621,7 @@ starts from the beginning.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getEventButton</span> <span class="o">=</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getEventButton</span> <span class="o">=</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">b</span><span class="p">;</span>
@@ -684,10 +634,7 @@ starts from the beginning.</p>
             <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
         <span class="p">};</span>
         <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -695,7 +642,7 @@ starts from the beginning.</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addeventbutton">
   <h3>
-    <a href="#gamewindow.addeventbutton" name="gamewindow.addeventbutton" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addeventbutton" class="pilcrow">&#182;</a>
     GameWindow.addEventButton
   </h3>
 </div>
@@ -742,13 +689,12 @@ in the current screen.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.getEventButton
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addEventButton</span> <span class="o">=</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addEventButton</span> <span class="o">=</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">eb</span><span class="p">;</span>
 
@@ -760,26 +706,20 @@ in the current screen.</p>
         <span class="nx">eb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEventButton</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">attributes</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">eb</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="helper%20functions">
+<div class="pilwrap" id="helper-functions">
   <h2>
-    <a href="#helper%20functions" name="helper%20functions" class="pilcrow">&#182;</a>
+    <a href="#helper-functions" class="pilcrow">&#182;</a>
     Helper Functions
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -787,7 +727,7 @@ in the current screen.</p>
   <div class="summary">
 <div class="pilwrap" id="toggleinputs">
   <h3>
-    <a href="#toggleinputs" name="toggleinputs" class="pilcrow">&#182;</a>
+    <a href="#toggleinputs" class="pilcrow">&#182;</a>
     toggleInputs
   </h3>
 </div>
@@ -800,12 +740,11 @@ in the current screen.</p>
     <div class="dox_tag_detail">
       <span class="dox_type">private
 </span>
-    </div>
+    </span>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">inputTags</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">inputs</span><span class="p">,</span> <span class="nx">nInputs</span><span class="p">;</span>
         <span class="nx">container</span> <span class="o">=</span> <span class="nx">container</span> <span class="o">||</span> <span class="nb">document</span><span class="p">;</span>
         <span class="nx">inputTags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">];</span>
@@ -813,9 +752,7 @@ in the current screen.</p>
         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">inputs</span> <span class="o">=</span> <span class="nx">container</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">inputTags</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
             <span class="nx">nInputs</span> <span class="o">=</span> <span class="nx">inputs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nInputs</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-
-</pre></div>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nInputs</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -825,8 +762,7 @@ in the current screen.</p>
 </div>
 <p>Set to state, or toggle.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">state</span> <span class="o">=</span> <span class="nx">inputs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">disabled</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
@@ -839,9 +775,7 @@ in the current screen.</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-<span class="p">})(</span>
-
-</pre></div>
+<span class="p">})(</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -852,8 +786,7 @@ in the current screen.</p>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
 <span class="p">);</span>
 </pre></div>

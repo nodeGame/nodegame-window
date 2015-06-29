@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../", thisFile = "lib/Canvas.js", defaultSidebar = true;
+    var relativeDir = '../', thisFile = 'lib/Canvas.js', defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -32,7 +32,7 @@
   <div class="summary">
 <div class="pilwrap" id="canvas">
   <h1>
-    <a href="#canvas" name="canvas" class="pilcrow">&#182;</a>
+    <a href="#canvas" class="pilcrow">&#182;</a>
     Canvas
   </h1>
 </div>
@@ -55,9 +55,7 @@ MIT Licensed</p>
 
     <span class="kd">function</span> <span class="nx">Canvas</span><span class="p">(</span><span class="nx">canvas</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">;</span>
-
-</pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -67,8 +65,7 @@ MIT Licensed</p>
 </div>
 <p>2D Canvas Context</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">centerX</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">centerY</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
@@ -81,10 +78,7 @@ MIT Licensed</p>
 
         <span class="nx">constructor</span><span class="o">:</span> <span class="nx">Canvas</span><span class="p">,</span>
 
-        <span class="nx">drawOval</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
-
-
-</pre></div>
+        <span class="nx">drawOval</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">settings</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -94,13 +88,10 @@ MIT Licensed</p>
 </div>
 <p>We keep the center fixed</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">x</span> <span class="o">/</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">scale_x</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">x</span> <span class="o">/</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">scale_x</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">y</span> <span class="o">/</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">scale_y</span><span class="p">;</span>
 
-            <span class="kd">var</span> <span class="nx">radius</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">radius</span> <span class="o">||</span> <span class="mi">100</span><span class="p">;</span>
-
-</pre></div>
+            <span class="kd">var</span> <span class="nx">radius</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">radius</span> <span class="o">||</span> <span class="mi">100</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -112,9 +103,7 @@ MIT Licensed</p>
 console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
    ', Scale: ' + settings.scale_x + ',' + settings.scale_y);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">strokeStyle</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">color</span> <span class="o">||</span> <span class="s1">&#39;#000000&#39;</span><span class="p">;</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
@@ -132,10 +121,7 @@ console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
             <span class="kd">var</span> <span class="nx">from_y</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
 
             <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">angle</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">angle</span><span class="p">;</span>
-
-
-</pre></div>
+            <span class="kd">var</span> <span class="nx">angle</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">angle</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -145,11 +131,8 @@ console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
 </div>
 <p>Rotation</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="kd">var</span> <span class="nx">to_x</span> <span class="o">=</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">cos</span><span class="p">(</span><span class="nx">angle</span><span class="p">)</span> <span class="o">*</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">to_y</span> <span class="o">=</span>  <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span><span class="nx">angle</span><span class="p">)</span> <span class="o">*</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">to_x</span> <span class="o">=</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">cos</span><span class="p">(</span><span class="nx">angle</span><span class="p">)</span> <span class="o">*</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">to_y</span> <span class="o">=</span>  <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span><span class="nx">angle</span><span class="p">)</span> <span class="o">*</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -159,10 +142,7 @@ console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
 </div>
 <p>console.log('aa ' + to_x + ' ' + to_y);</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -174,9 +154,7 @@ console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
            ', ' + to_y + ')');
 console.log('Length: ' + length + ', Angle: ' + angle );</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">lineWidth</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">strokeStyle</span> <span class="o">=</span> <span class="nx">settings</span><span class="p">.</span><span class="nx">color</span> <span class="o">||</span> <span class="s1">&#39;#000000&#39;</span><span class="p">;</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
@@ -195,9 +173,7 @@ console.log('Length: ' + length + ', Angle: ' + angle );</p>
         <span class="p">},</span>
 
         <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-
-</pre></div>
+            <span class="k">this</span><span class="p">.</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -207,8 +183,7 @@ console.log('Length: ' + length + ', Angle: ' + angle );</p>
 </div>
 <p>For IE</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">w</span><span class="p">;</span>
         <span class="p">}</span>

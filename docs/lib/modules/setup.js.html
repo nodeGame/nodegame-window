@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../", thisFile = "lib/modules/setup.js", defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/modules/setup.js', defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -47,7 +47,7 @@
   <div class="summary">
 <div class="pilwrap" id="setup.window">
   <h1>
-    <a href="#setup.window" name="setup.window" class="pilcrow">&#182;</a>
+    <a href="#setup.window" class="pilcrow">&#182;</a>
     setup.window
   </h1>
 </div>
@@ -65,10 +65,7 @@ MIT Licensed</p>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
-
-
-</pre></div>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -76,7 +73,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.adddefaultsetups">
   <h3>
-    <a href="#gamewindow.adddefaultsetups" name="gamewindow.adddefaultsetups" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.adddefaultsetups" class="pilcrow">&#182;</a>
     GameWindow.addDefaultSetups
   </h3>
 </div>
@@ -86,11 +83,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultSetups</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultSetups</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -98,7 +91,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.window">
   <h3>
-    <a href="#node.setup.window" name="node.setup.window" class="pilcrow">&#182;</a>
+    <a href="#node.setup.window" class="pilcrow">&#182;</a>
     node.setup.window
   </h3>
 </div>
@@ -110,20 +103,16 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">conf</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">conf</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">conf</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -131,7 +120,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.page">
   <h3>
-    <a href="#node.setup.page" name="node.setup.page" class="pilcrow">&#182;</a>
+    <a href="#node.setup.page" class="pilcrow">&#182;</a>
     node.setup.page
   </h3>
 </div>
@@ -143,18 +132,14 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">tmp</span><span class="p">,</span> <span class="nx">body</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
-
-</pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -164,15 +149,12 @@ MIT Licensed</p>
 </div>
 <p>Clear.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clearBody</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearPageBody</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clearBody</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearPageBody</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearPage</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span> <span class="p">};</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
-
-</pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -182,8 +164,7 @@ MIT Licensed</p>
 </div>
 <p>TODO: add option to animate it.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-                <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">addToBody</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">tmp</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">);</span>
                     <span class="nx">tmp</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;ng-page-title&#39;</span><span class="p">;</span>
@@ -194,10 +175,7 @@ MIT Licensed</p>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -205,7 +183,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.frame">
   <h3>
-    <a href="#node.setup.frame" name="node.setup.frame" class="pilcrow">&#182;</a>
+    <a href="#node.setup.frame" class="pilcrow">&#182;</a>
     node.setup.frame
   </h3>
 </div>
@@ -217,19 +195,15 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">rootName</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
-
-</pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -239,8 +213,7 @@ MIT Licensed</p>
 </div>
 <p>Generate.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
@@ -268,10 +241,7 @@ MIT Licensed</p>
                 <span class="p">}</span>
 
                 <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">generateFrame</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">);</span>
-            <span class="p">}</span>
-
-
-</pre></div>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -281,8 +251,7 @@ MIT Licensed</p>
 </div>
 <p>Load.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">url</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
                     <span class="nx">cb</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">.</span><span class="nx">cb</span><span class="p">;</span>
@@ -297,10 +266,7 @@ MIT Licensed</p>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-            <span class="p">}</span>
-
-
-</pre></div>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -310,15 +276,11 @@ MIT Licensed</p>
 </div>
 <p>Clear and destroy.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearFrame</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearFrame</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">destroy</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">destroyFrame</span><span class="p">();</span>
 
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
-        <span class="p">});</span>
-
-
-</pre></div>
+        <span class="p">});</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -326,7 +288,7 @@ MIT Licensed</p>
   <div class="summary">
 <div class="pilwrap" id="node.setup.header">
   <h3>
-    <a href="#node.setup.header" name="node.setup.header" class="pilcrow">&#182;</a>
+    <a href="#node.setup.header" class="pilcrow">&#182;</a>
     node.setup.header
   </h3>
 </div>
@@ -338,19 +300,15 @@ MIT Licensed</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">node.setup
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">rootName</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-
-
-</pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -360,8 +318,7 @@ MIT Licensed</p>
 </div>
 <p>Generate.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
@@ -389,10 +346,7 @@ MIT Licensed</p>
                 <span class="p">}</span>
 
                 <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">generateFrame</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">);</span>
-            <span class="p">}</span>
-
-
-</pre></div>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -402,18 +356,14 @@ MIT Licensed</p>
 </div>
 <p>Position.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.header: conf.position &#39;</span> <span class="o">+</span>
                               <span class="s1">&#39;must be string or undefined.&#39;</span><span class="p">);</span>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setHeaderPosition</span><span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">position</span><span class="p">);</span>
-            <span class="p">}</span>
-
-
-</pre></div>
+            <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -423,17 +373,14 @@ MIT Licensed</p>
 </div>
 <p>Clear and destroy.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearHeader</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">clearHeader</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">destroy</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">destroyHeader</span><span class="p">();</span>
 
             <span class="k">return</span> <span class="nx">conf</span><span class="p">;</span>
         <span class="p">});</span>
 
     <span class="p">};</span>
-<span class="p">})(</span>
-
-</pre></div>
+<span class="p">})(</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -444,8 +391,7 @@ MIT Licensed</p>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
 <span class="p">);</span>
 </pre></div>
