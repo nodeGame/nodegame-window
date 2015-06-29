@@ -6,18 +6,16 @@
 cd nodegame
 set server_pid [spawn node launcher.js]
 set server_id $spawn_id
-set timeout 30
+#set timeout 30
 #timeout { puts "\nERROR: Server is not starting!"; exit 1 }
-expect {
-    "info  - socket.io started" { puts "\nSERVER STARTED.\n"; exp_continue }
-}
+expect "info  - socket.io started" { puts "\nSERVER STARTED.\n"; exp_continue }
 
 # Run tests.
 cd ..
 puts "Running tests."
 puts "PhantomJS may show security warnings at the end."
 spawn npm test
-set timeout -1
+#set timeout -1
 expect eof
 set result [wait]
 
