@@ -28,7 +28,7 @@ before_script:
   - ln -s ../../../../node_modules node_modules
   - cd ../../../..
 # Add servernode conf file (to increase verbosity)
-  - ln -s test/servernode.conf.js nodegame/conf/servernode.js
+  - ln -sf test/servernode.conf.js nodegame/conf/servernode.js
 script:
   - expect test/runtest.exp
 # Test Ultimatum game.
