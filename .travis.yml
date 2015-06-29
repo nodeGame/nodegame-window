@@ -30,7 +30,7 @@ before_script:
   - ln -s ../../../../node_modules node_modules
   - cd ../../../..
 script:
-#  - expect test/runtest.exp
+  - expect test/runtest.exp
 # Test Ultimatum game.
   - cd nodegame/games
   - git clone https://github.com/nodeGame/ultimatum.git
