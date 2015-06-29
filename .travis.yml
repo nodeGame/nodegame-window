@@ -19,8 +19,6 @@ install:
   #- npm install 'phantomjs@<1.9.8'
   - npm install
   - ./bin/install-nodegame-for-module.sh -g "nodegame-widgets JSUS NDDB shelf.js nodegame-client nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb" -n "smoosh ya-csv"
-# Add servernode conf file (to increase verbosity)
-  - ln -s test/servernode.conf.js nodegame/conf/servernode.js
 # Install tester game.
   - git clone https://github.com/nodeGame/testergame nodegame/games/testergame
 before_script:
@@ -29,6 +27,8 @@ before_script:
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
   - cd ../../../..
+# Add servernode conf file (to increase verbosity)
+  - ln -s test/servernode.conf.js nodegame/conf/servernode.js
 script:
   - expect test/runtest.exp
 # Test Ultimatum game.
