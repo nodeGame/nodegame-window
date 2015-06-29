@@ -2,7 +2,7 @@
   "name": "nodegame-window",
   "description": "Provides a handy API to interface nodeGame with the browser window.",
   "version": "0.9.7",
-  "keywords": [ "nodegame", "window", "browser", "widgets" ],
+  "keywords": [ "nodegame", "window", "browser" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "licenses": [
     { "type": "MIT" }
