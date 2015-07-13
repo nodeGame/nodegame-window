@@ -116,10 +116,10 @@
         }
 
         // Ensure firing before onload, maybe late but safe also for iframes.
-        iframe.attachEvent('onreadystatechange', completed );
+        iframe.attachEvent('onreadystatechange', completed);
 
         // A fallback to window.onload, that will always work.
-        iframeWin.attachEvent('onload', completed );
+        iframeWin.attachEvent('onload', completed);
     }
 
     function onLoad(iframe, cb) {
@@ -260,7 +260,7 @@
         this.conf = {};
 
         /**
-         * ### GameWindow.channelURI
+         * ### GameWindow.uriChannel
          *
          * The uri of the channel on the server
          *
@@ -268,7 +268,7 @@
          *
          * @see GameWindow.loadFrame
          */
-        this.channelURI = null;
+        this.uriChannel = null;
 
         /**
          * ### GameWindow.areLoading
@@ -330,6 +330,19 @@
          * @see GameWindow.globalLibs
          */
         this.frameLibs = {};
+
+        /**
+         * ### GameWindow.uriPrefix
+         *
+         * A prefix added to every loaded uri that does not begin with `/`
+         *
+         * Useful for example to add a language path (e.g. a language
+         * directory) that matches a specific context of a view.
+         *
+         * @see GameWindow.loadFrame
+         * @see LanguageSelector (widget)
+         */
+        this.uriPrefix = null;
 
         /**
          * ### GameWindow.stateLevel
@@ -1075,85 +1088,6 @@
     };
 
     /**
-     * ### GameWindow.setupFrame
-     *
-     * Sets up the page with a predefined configuration of widgets
-     *
-     * Available setup profiles are:
-     *
-     * - MONITOR: frame
-     * - PLAYER: header + frame
-     * - SOLO_PLAYER: (like player without header)
-     *
-     * @param {string} profile The setup profile
-     */
-    GameWindow.prototype.setupFrame = function(profile) {
-
-        if ('string' !== typeof profile) {
-            throw new TypeError('GameWindow.setup: profile must be string.');
-        }
-
-        switch (profile) {
-
-        case 'MONITOR':
-
-            if (!this.getFrame()) {
-                this.generateFrame();
-            }
-
-            node.widgets.append('NextPreviousState');
-            node.widgets.append('GameSummary');
-            node.widgets.append('StateDisplay');
-            node.widgets.append('StateBar');
-            node.widgets.append('DataBar');
-            node.widgets.append('MsgBar');
-            node.widgets.append('GameBoard');
-            node.widgets.append('ServerInfoDisplay');
-            node.widgets.append('Wall');
-
-            // Add default CSS.
-            if (node.conf.host) {
-                this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/monitor.css');
-            }
-
-            break;
-
-        case 'PLAYER':
-
-            this.generateHeader();
-
-            node.game.visualState = node.widgets.append('VisualState',
-                                                        this.headerElement);
-            node.game.timer = node.widgets.append('VisualTimer',
-                                                  this.headerElement);
-            node.game.stateDisplay = node.widgets.append('StateDisplay',
-                                                         this.headerElement);
-
-            // Will continue in SOLO_PLAYER.
-
-            /* falls through */
-        case 'SOLO_PLAYER':
-
-            if (!this.getFrame()) {
-                this.generateFrame();
-            }
-
-            // Add default CSS.
-            if (node.conf.host) {
-                this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/nodegame.css');
-            }
-
-            break;
-
-        default:
-            throw new Error('GameWindow.setupFrame: unknown profile type: ' +
-                            profile + '.');
-        }
-    };
-
-    /**
      * ### GameWindow.initLibs
      *
      * Specifies the libraries to be loaded automatically in the iframe
@@ -1419,6 +1353,9 @@
      * @param {function} func Optional. The function to call once the DOM is
      *   ready
      * @param {object} opts Optional. The options object
+     *
+     * @see GameWindow.uriPrefix
+     * @see GameWindow.uriChannel
      */
     GameWindow.prototype.loadFrame = function(uri, func, opts) {
         var that;
@@ -1507,10 +1444,11 @@
         }
 
         // Adapt the uri if necessary.
-        if (this.channelURI &&
-            (uri.charAt(0) !== '/' && uri.substr(0,7) !== 'http://')) {
-
-            uri = this.channelURI + uri;
+        if (uri.charAt(0) !== '/' && uri.substr(0,7) !== 'http://') {
+            if (this.uriChannel) uri = this.uriChannel + uri;
+        }
+        else {
+            if (this.uriPrefix) uri = this.uriPrefix + uri;
         }
 
         if (this.cacheSupported === null) {
@@ -1661,6 +1599,36 @@
         catch(e) {
             this.removeChildrenFromNode(document.documentElement);
         }
+    };
+
+    /**
+     * ### GameWindow.setUriPrefix
+     *
+     * Sets the variable uriPrefix
+     *
+     * @see GameWindow.uriPrefix
+     */
+    GameWindow.prototype.setUriPrefix = function(uriPrefix) {
+        if (uriPrefix !== null && 'string' !== typeof uriPrefix) {
+            throw new TypeError('GameWindow.setUriPrefix: uriPrefix must be ' +
+                                'string or null.');
+        }
+        this.uriPrefix = uriPrefix;
+    };
+
+    /**
+     * ### GameWindow.setUriChannel
+     *
+     * Sets the variable uriChannel
+     *
+     * @see GameWindow.uriChannel
+     */
+    GameWindow.prototype.setUriChannel = function(uriChannel) {
+        if (uriChannel !== null && 'string' !== typeof uriChannel) {
+            throw new TypeError('GameWindow.uriChannel: uriChannel must be ' +
+                                'string or null.');
+        }
+        this.uriChannel = uriChannel;
     };
 
     // ## Helper functions

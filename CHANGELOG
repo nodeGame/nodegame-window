@@ -17,6 +17,7 @@
  - `#GameWindow.loadFrame()` adds the name of the HTTP channel by default, if the uri load does not start with '/' or 'http://'.
  - `#GameWindow.loadFrame()` can add a prefix to all loaded uri, if the uri load does not start with '/' or 'http://'.
  - `#GameWindow.setUriChannel()`, `#GameWindow.setUriPrefix()`.
+ - Removed `#GameWindow.setupFrame()`.
 
 ## 0.9.7
  - `#clearFrame()` is synchronous now.
