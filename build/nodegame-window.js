@@ -1445,10 +1445,8 @@
 
         // Adapt the uri if necessary.
         if (uri.charAt(0) !== '/' && uri.substr(0,7) !== 'http://') {
-            if (this.uriChannel) uri = this.uriChannel + uri;
-        }
-        else {
             if (this.uriPrefix) uri = this.uriPrefix + uri;
+            if (this.uriChannel) uri = this.uriChannel + uri;
         }
 
         if (this.cacheSupported === null) {
@@ -2351,7 +2349,7 @@
 
 /**
  * # listeners
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow listeners
