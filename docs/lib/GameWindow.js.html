@@ -193,6 +193,9 @@
         <a href="#gamewindow.loadframe">GameWindow.loadFrame</a>
       </div>
       <div class="heading h3">
+        <a href="#gamewindow.processuri">GameWindow.processUri</a>
+      </div>
+      <div class="heading h3">
         <a href="#gamewindow.updateloadframestate">GameWindow.updateLoadFrameState</a>
       </div>
       <div class="heading h3">
@@ -2598,6 +2601,9 @@ docElem.innerHTML = 'a';</p>
 
 <p>If caching is not supported by the browser, the callback will be
 executed anyway.</p>
+
+<p>All uri to precache are parsed with <code>GameWindow.processUri</code> before
+being loaded.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -2619,7 +2625,11 @@ executed anyway.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameWindow.preCacheTest
+      <span class="dox_type">GameWindow.preCacheTest</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.processUri
   </span>
     </div>
   </div>
@@ -2691,7 +2701,7 @@ executed anyway.</p>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">loadedCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">uriIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">uriIdx</span> <span class="o">&lt;</span> <span class="nx">uris</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">uriIdx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">currentUri</span> <span class="o">=</span> <span class="nx">uris</span><span class="p">[</span><span class="nx">uriIdx</span><span class="p">];</span></pre></div>
+            <span class="nx">currentUri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processUri</span><span class="p">(</span><span class="nx">uris</span><span class="p">[</span><span class="nx">uriIdx</span><span class="p">]);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3104,10 +3114,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
 </div>
 <p>Adapt the uri if necessary.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">uri</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span><span class="p">)</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">;</span>
-        <span class="p">}</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processUri</span><span class="p">(</span><span class="nx">uri</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">preCacheTest</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -3306,6 +3313,47 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="gamewindow.processuri">
+  <h3>
+    <a href="#gamewindow.processuri" class="pilcrow">&#182;</a>
+    GameWindow.processUri
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Parses a uri string and adds channel uri and prefix, if defined</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">uri</span>
+      <span class="dox_type">string</span>
+      <span>The uri to process</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.uriPrefix</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.uriChannel
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">processUri</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">uri</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">uri</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;http://&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span><span class="p">)</span> <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">uri</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="gamewindow.updateloadframestate">
   <h3>
     <a href="#gamewindow.updateloadframestate" class="pilcrow">&#182;</a>
@@ -3349,7 +3397,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>ng event emitter is not used.</p>
         </td>
@@ -3584,7 +3632,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
 </div>
 <p>Needed for IE8.</p>
         </td>
@@ -3597,7 +3645,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Load frame from cache:</p>
         </td>
@@ -3608,7 +3656,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>Update references to frameWindow and frameDocument
 if this was the frame of the game.</p>
@@ -3621,7 +3669,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
 </div>
 <p>Disable right click in loaded iframe document, if necessary.</p>
         </td>
@@ -3634,7 +3682,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>(Re-)Inject libraries and reload scripts:</p>
         </td>
@@ -3649,7 +3697,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>Store frame in cache:</p>
         </td>
@@ -3714,7 +3762,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
 </div>
 <p>Old IEs do not have getElementsByClassName.</p>
         </td>
@@ -3725,7 +3773,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
+  <a class="pilcrow" href="#section-143" id="section-143">&#182;</a>
 </div>
 <p>It was. To check.
 scriptNodes = contentDocument.getElementsByClassName('injectedlib');</p>
@@ -3788,7 +3836,7 @@ scripts. The placement of the tags can change, but the order is kept.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
+  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
 </div>
 <p>Start counting loading tags at 1 instead of 0 and decrement the
 count after the loop.
@@ -3804,7 +3852,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
+  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
 </div>
 <p>Remove tag:</p>
         </td>
@@ -3815,7 +3863,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>Reinsert tag for reloading:</p>
         </td>
@@ -3833,7 +3881,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
 </div>
 <p>scriptNode.async = true;</p>
         </td>
@@ -3997,7 +4045,7 @@ iframe object, one for every given library.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>If no header is found, simulate the 'top' position to better
 fit the whole screen.</p>
@@ -4008,7 +4056,7 @@ fit the whole screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
 </div>
 <p>When we move from bottom to any other configuration, we need
 to move the header before the frame.</p>
@@ -4032,7 +4080,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
 </div>
 <p>There might be no header yet.</p>
         </td>
@@ -4047,7 +4095,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
 </div>
 <p>There might be no header yet.</p>
         </td>
@@ -4063,7 +4111,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>Expose GameWindow prototype to the global object.</p>
         </td>
@@ -4075,7 +4123,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
