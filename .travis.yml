@@ -1,4 +1,11 @@
 sudo: false
+addons:
+  apt:
+    sources:
+    - deadsnakes
+    - ubuntu-toolchain-r-test
+    packages:
+    - expect
 language: node_js
 node_js:
   - "0.12"
@@ -9,8 +16,6 @@ before_install:
   - chmod a+x install-nodegame-for-module.sh
   - cd ..
 install:
-# Install expect.
-  - sudo apt-get install expect
 # Make this nodegame-window available to nodeGame.
   - mkdir -p nodegame/node_modules
   - ln -s ../.. nodegame/node_modules/nodegame-window
