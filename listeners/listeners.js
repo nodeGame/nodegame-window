@@ -11,12 +11,14 @@
 
     "use strict";
 
-    function getElement(idOrObj) {
+    var J = node.JSUS;
+
+    function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
         }
-        else if (JSUS.isElement(idOrObj)) {
+        else if (J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {

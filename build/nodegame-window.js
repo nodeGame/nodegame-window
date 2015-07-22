@@ -67,7 +67,7 @@
 
         function completed(event) {
             var iframeDoc;
-            iframeDoc = JSUS.getIFrameDocument(iframe);
+            iframeDoc = J.getIFrameDocument(iframe);
 
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
@@ -1109,7 +1109,7 @@
             throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
                                 'array or undefined.');
         }
-        if (frameLibs && 'object' !== typeof framLibs) {
+        if (frameLibs && 'object' !== typeof frameLibs) {
             throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
                                 'object or undefined.');
         }
@@ -2071,7 +2071,6 @@
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var url, cb, options;
             var frameName, force, root, rootName;
             if (!conf) return;
 
@@ -2274,7 +2273,7 @@
 
 /**
  * # lockScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Locks / Unlocks the screen
@@ -2287,8 +2286,6 @@
 (function(window, node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     var GameWindow = node.GameWindow;
     var screenLevels = node.constants.screenLevels;
@@ -2379,12 +2376,14 @@
 
     "use strict";
 
-    function getElement(idOrObj) {
+    var J = node.JSUS;
+
+    function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
         }
-        else if (JSUS.isElement(idOrObj)) {
+        else if (J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
@@ -2486,7 +2485,7 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -2763,7 +2762,7 @@
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var j, i, len, inputs, nInputs;
+        var i, len;
 
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
@@ -3535,7 +3534,7 @@
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -3664,10 +3663,12 @@
         });
 
         this.tm.addTrigger(function(el) {
+            var html;
             if (!el) return;
-            if (el.content && el.content.parse
-                && 'function' === typeof el.content.parse) {
-                var html = el.content.parse();
+            if (el.content && el.content.parse &&
+                'function' === typeof el.content.parse) {
+
+                html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
                     return html;
                 }
@@ -3777,7 +3778,7 @@
 
 /**
  * # List
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML list that can be manipulated by an api
@@ -3788,7 +3789,6 @@
 
     "use strict";
 
-    var JSUS = node.JSUS;
     var NDDB = node.NDDB;
 
     var HTMLRenderer = node.window.HTMLRenderer;

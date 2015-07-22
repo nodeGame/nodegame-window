@@ -54,12 +54,14 @@ MIT Licensed</p>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="kd">function</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">idOrObj</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>

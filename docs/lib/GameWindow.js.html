@@ -338,7 +338,7 @@ javascript state inside the page.</p>
 
         <span class="kd">function</span> <span class="nx">completed</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">iframeDoc</span><span class="p">;</span>
-            <span class="nx">iframeDoc</span> <span class="o">=</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span></pre></div>
+            <span class="nx">iframeDoc</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2486,7 +2486,7 @@ Deletion must be done manually.</p>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: globalLibs must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">frameLibs</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">framLibs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">frameLibs</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: frameLibs must be &#39;</span> <span class="o">+</span>
                                 <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
         <span class="p">}</span>
