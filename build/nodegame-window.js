@@ -2132,7 +2132,7 @@
 
 /**
  * # ui-behavior
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow UI Behavior module
@@ -2832,7 +2832,7 @@
 
 /**
  * # selector
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
@@ -3056,7 +3056,7 @@
 
 /**
  * # extra
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -3433,7 +3433,7 @@
 
 /**
  * # Canvas
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api
@@ -3978,7 +3978,7 @@
 
 /**
  * # Table
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
