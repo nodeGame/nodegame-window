@@ -9,6 +9,7 @@ addons:
 language: node_js
 node_js:
   - "0.12"
+  - "4.0"
 before_install:
 # Get installer script.
   - cd bin

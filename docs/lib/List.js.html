@@ -164,8 +164,8 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
   <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>         <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;about to add node&#39;</span><span class="p">);</span>
-         <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<div class="highlight"><pre><code>         <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="err">&#39;</span><span class="n">about</span> <span class="n">to</span> <span class="n">add</span> <span class="n">node</span><span class="err">&#39;</span><span class="p">);</span>
+         <span class="n">console</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 </code></pre></div>
 
 
@@ -217,12 +217,12 @@ this.htmlRenderer = new HTMLRenderer({renderers: options.renderer});</p>
 </div>
 
 <div class="highlight"><pre><code>             <span class="k">if</span> <span class="p">(</span><span class="n">old_dd</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="n">old_dd</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                     <span class="n">old_dd</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
              <span class="p">}</span>
              <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">old_dt</span><span class="p">)</span> <span class="p">{</span>
-                     <span class="n">old_dt</span> <span class="o">=</span> <span class="n">appendDT</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">this</span><span class="p">);</span>
+                     <span class="n">old_dt</span> <span class="o">=</span> <span class="n">appendDT</span><span class="p">.</span><span class="n">call</span><span class="p">(</span><span class="n">this</span><span class="p">);</span>
              <span class="p">}</span>
-             <span class="n">old_dt</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+             <span class="n">old_dt</span><span class="p">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 </code></pre></div>
 
 
