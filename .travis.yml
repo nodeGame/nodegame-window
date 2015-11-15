@@ -1,7 +1,15 @@
+sudo: false
+addons:
+  apt:
+    sources:
+    - deadsnakes
+    - ubuntu-toolchain-r-test
+    packages:
+    - expect
 language: node_js
 node_js:
-  - "0.10"
   - "0.12"
+  - "4.0"
 before_install:
 # Get installer script.
   - cd bin
@@ -9,8 +17,6 @@ before_install:
   - chmod a+x install-nodegame-for-module.sh
   - cd ..
 install:
-# Install expect.
-  - sudo apt-get install expect
 # Make this nodegame-window available to nodeGame.
   - mkdir -p nodegame/node_modules
   - ln -s ../.. nodegame/node_modules/nodegame-window
@@ -18,7 +24,7 @@ install:
 # Disregard that; only newer phantomjs works with node v0.12.
   #- npm install 'phantomjs@<1.9.8'
   - npm install
-  - ./bin/install-nodegame-for-module.sh -g "nodegame-widgets JSUS NDDB shelf.js nodegame-client nodegame-server descil-mturk nodegame-db nodegame-mongodb" -n "smoosh ya-csv"
+  - ./bin/install-nodegame-for-module.sh -g "nodegame-widgets JSUS NDDB shelf.js nodegame-client nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb" -n "smoosh ya-csv"
 # Install tester game.
   - git clone https://github.com/nodeGame/testergame nodegame/games/testergame
 before_script:
@@ -27,6 +33,8 @@ before_script:
   - ln -s ../../../../test test
   - ln -s ../../../../node_modules node_modules
   - cd ../../../..
+# Add servernode conf file (to increase verbosity)
+  - ln -sf test/servernode.conf.js nodegame/conf/servernode.js
 script:
   - expect test/runtest.exp
 # Test Ultimatum game.

@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../../doc-style.css" />
   <script src="../../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../../", thisFile = "lib/modules/selector.js", defaultSidebar = true;
+    var relativeDir = '../../', thisFile = 'lib/modules/selector.js', defaultSidebar = true;
   </script>
   <script src="../../doc-script.js"></script>
 </head>
@@ -56,13 +56,13 @@
   <div class="summary">
 <div class="pilwrap" id="selector">
   <h1>
-    <a href="#selector" name="selector" class="pilcrow">&#182;</a>
+    <a href="#selector" class="pilcrow">&#182;</a>
     selector
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Utility functions to create and manipulate meaninful HTML select lists for
@@ -78,10 +78,7 @@ nodeGame</p>
 
     <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
     <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span>
-
-
-</pre></div>
+    <span class="kd">var</span> <span class="nx">GameWindow</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">GameWindow</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -89,7 +86,7 @@ nodeGame</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.getrecipientselector">
   <h3>
-    <a href="#gamewindow.getrecipientselector" name="gamewindow.getrecipientselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.getrecipientselector" class="pilcrow">&#182;</a>
     GameWindow.getRecipientSelector
   </h3>
 </div>
@@ -122,13 +119,12 @@ nodeGame</p>
       <span class="dox_type">GameWindow.populateRecipientSelector
 
 TODO: add options to control which players/servers to add.
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRecipientSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getRecipientSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">toSelector</span><span class="p">;</span>
 
         <span class="nx">toSelector</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">);</span>
@@ -137,10 +133,7 @@ TODO: add options to control which players/servers to add.
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addStandardRecipients</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">toSelector</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -148,7 +141,7 @@ TODO: add options to control which players/servers to add.
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addrecipientselector">
   <h3>
-    <a href="#gamewindow.addrecipientselector" name="gamewindow.addrecipientselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addrecipientselector" class="pilcrow">&#182;</a>
     GameWindow.addRecipientSelector
   </h3>
 </div>
@@ -187,22 +180,18 @@ TODO: add options to control which players/servers to add.
       <span class="dox_type">GameWindow.populateRecipientSelector
 
 TODO: adds options to control which players/servers to add.
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRecipientSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRecipientSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">toSelector</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">toSelector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRecipientSelector</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -210,7 +199,7 @@ TODO: adds options to control which players/servers to add.
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addstandardrecipients">
   <h3>
-    <a href="#gamewindow.addstandardrecipients" name="gamewindow.addstandardrecipients" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addstandardrecipients" class="pilcrow">&#182;</a>
     GameWindow.addStandardRecipients
   </h3>
 </div>
@@ -230,13 +219,12 @@ TODO: adds options to control which players/servers to add.
       <span class="dox_type">GameWindow.populateRecipientSelector
 
 TODO: adds options to control which players/servers to add.
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStandardRecipients</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addStandardRecipients</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">opt</span><span class="p">;</span>
 
         <span class="nx">opt</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">);</span>
@@ -258,10 +246,7 @@ TODO: adds options to control which players/servers to add.
         <span class="nx">opt</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="s1">&#39;SERVER&#39;</span><span class="p">;</span>
         <span class="nx">opt</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="s1">&#39;SERVER&#39;</span><span class="p">));</span>
         <span class="nx">toSelector</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -269,7 +254,7 @@ TODO: adds options to control which players/servers to add.
   <div class="summary">
 <div class="pilwrap" id="gamewindow.populaterecipientselector">
   <h3>
-    <a href="#gamewindow.populaterecipientselector" name="gamewindow.populaterecipientselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.populaterecipientselector" class="pilcrow">&#182;</a>
     GameWindow.populateRecipientSelector
   </h3>
 </div>
@@ -293,13 +278,12 @@ select element</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.addStandardRecipients
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">populateRecipientSelector</span> <span class="o">=</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">populateRecipientSelector</span> <span class="o">=</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">,</span> <span class="nx">playerList</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">players</span><span class="p">,</span> <span class="nx">opt</span><span class="p">;</span>
 
@@ -308,10 +292,7 @@ select element</p>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">removeChildrenFromNode</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">addStandardRecipients</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">);</span>
-
-
-</pre></div>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addStandardRecipients</span><span class="p">(</span><span class="nx">toSelector</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -321,8 +302,7 @@ select element</p>
 </div>
 <p>check if it is a DB or a PlayerList object</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="nx">players</span> <span class="o">=</span> <span class="nx">playerList</span><span class="p">.</span><span class="nx">db</span> <span class="o">||</span> <span class="nx">playerList</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">players</span> <span class="o">=</span> <span class="nx">playerList</span><span class="p">.</span><span class="nx">db</span> <span class="o">||</span> <span class="nx">playerList</span><span class="p">;</span>
 
         <span class="nx">J</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">players</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">opt</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">);</span>
@@ -330,10 +310,7 @@ select element</p>
             <span class="nx">opt</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nx">id</span><span class="p">));</span>
             <span class="nx">toSelector</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
         <span class="p">});</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -341,7 +318,7 @@ select element</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.getactionselector">
   <h3>
-    <a href="#gamewindow.getactionselector" name="gamewindow.getactionselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.getactionselector" class="pilcrow">&#182;</a>
     GameWindow.getActionSelector
   </h3>
 </div>
@@ -366,23 +343,19 @@ select element</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.addActionSelector
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getActionSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getActionSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">actionSelector</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">actionSelector</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">populateSelect</span><span class="p">(</span><span class="nx">actionSelector</span><span class="p">,</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">action</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">actionSelector</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -390,7 +363,7 @@ select element</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addactionselector">
   <h3>
-    <a href="#gamewindow.addactionselector" name="gamewindow.addactionselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addactionselector" class="pilcrow">&#182;</a>
     GameWindow.addActionSelector
   </h3>
 </div>
@@ -419,22 +392,18 @@ select element</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.getActionSelector
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addActionSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addActionSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">actionSelector</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="nx">actionSelector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getActionSelector</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">actionSelector</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -442,7 +411,7 @@ select element</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.gettargetselector">
   <h3>
-    <a href="#gamewindow.gettargetselector" name="gamewindow.gettargetselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.gettargetselector" class="pilcrow">&#182;</a>
     GameWindow.getTargetSelector
   </h3>
 </div>
@@ -467,13 +436,12 @@ select element</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.addActionSelector
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTargetSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTargetSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">targetSelector</span><span class="p">;</span>
 
         <span class="nx">targetSelector</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;select&#39;</span><span class="p">);</span>
@@ -482,10 +450,7 @@ select element</p>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">populateSelect</span><span class="p">(</span><span class="nx">targetSelector</span><span class="p">,</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">targetSelector</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -493,7 +458,7 @@ select element</p>
   <div class="summary">
 <div class="pilwrap" id="gamewindow.addtargetselector">
   <h3>
-    <a href="#gamewindow.addtargetselector" name="gamewindow.addtargetselector" class="pilcrow">&#182;</a>
+    <a href="#gamewindow.addtargetselector" class="pilcrow">&#182;</a>
     GameWindow.addTargetSelector
   </h3>
 </div>
@@ -522,20 +487,17 @@ select element</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.getTargetSelector
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTargetSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addTargetSelector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">targetSelector</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getTargetSelector</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">targetSelector</span><span class="p">);</span>
     <span class="p">};</span>
-<span class="p">})(</span>
-
-</pre></div>
+<span class="p">})(</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -546,8 +508,7 @@ select element</p>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nb">window</span><span class="p">,</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nb">window</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span><span class="p">.</span><span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span>
 <span class="p">);</span>
 </pre></div>

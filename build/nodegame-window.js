@@ -36,6 +36,10 @@
     var windowLevels = constants.windowLevels;
     var screenLevels = constants.screenLevels;
 
+    var CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
+
+    var WIN_LOADING = windowLevels.LOADING;
+
     // Allows just one update at the time to the counter of loading frames.
     var lockedUpdate = false;
 
@@ -63,7 +67,7 @@
 
         function completed(event) {
             var iframeDoc;
-            iframeDoc = JSUS.getIFrameDocument(iframe);
+            iframeDoc = J.getIFrameDocument(iframe);
 
             // Detaching the function to avoid double execution.
             iframe.removeEventListener('load', completed, false);
@@ -93,7 +97,7 @@
             // IE < 10 gives 'Permission Denied' if trying to access
             // the iframeDoc from the context of the function above.
             // We need to re-get it from the DOM.
-            iframeDoc = JSUS.getIFrameDocument(iframe);
+            iframeDoc = J.getIFrameDocument(iframe);
 
             // readyState === "complete" works also in oldIE.
             if (event.type === 'load' ||
@@ -112,10 +116,10 @@
         }
 
         // Ensure firing before onload, maybe late but safe also for iframes.
-        iframe.attachEvent('onreadystatechange', completed );
+        iframe.attachEvent('onreadystatechange', completed);
 
         // A fallback to window.onload, that will always work.
-        iframeWin.attachEvent('onload', completed );
+        iframeWin.attachEvent('onload', completed);
     }
 
     function onLoad(iframe, cb) {
@@ -256,12 +260,22 @@
         this.conf = {};
 
         /**
+         * ### GameWindow.uriChannel
+         *
+         * The uri of the channel on the server
+         *
+         * It is not the socket.io channel, but the HTTP address.
+         *
+         * @see GameWindow.loadFrame
+         */
+        this.uriChannel = null;
+
+        /**
          * ### GameWindow.areLoading
          *
          * The number of frames currently being loaded
          */
         this.areLoading = 0;
-
 
         /**
          * ### GameWindow.cacheSupported
@@ -318,13 +332,26 @@
         this.frameLibs = {};
 
         /**
-         * ### GameWindow.state
+         * ### GameWindow.uriPrefix
+         *
+         * A prefix added to every loaded uri that does not begin with `/`
+         *
+         * Useful for example to add a language path (e.g. a language
+         * directory) that matches a specific context of a view.
+         *
+         * @see GameWindow.loadFrame
+         * @see LanguageSelector (widget)
+         */
+        this.uriPrefix = null;
+
+        /**
+         * ### GameWindow.stateLevel
          *
          * The window's state level
          *
          * @see constants.windowLevels
          */
-        this.state = null;
+        this.stateLevel = null;
 
         /**
          * ### GameWindow.waitScreen
@@ -364,20 +391,8 @@
          */
         this.isIE = !!document.createElement('span').attachEvent;
 
-        /**
-         * ### node.setup.window
-         *
-         * Setup handler for the node.window object
-         *
-         * @see node.setup
-         */
-        node.registerSetup('window', function(conf) {
-            conf = J.merge(W.conf, conf);
-            //if ('object' === typeof conf && !J.isEmpty(conf)) {
-                this.window.init(conf);
-                return conf;
-            //}
-        });
+        // Add setup functions.
+        this.addDefaultSetups();
 
         // Adding listeners.
         this.addDefaultListeners();
@@ -437,7 +452,7 @@
             }
             this.waitScreen = new node.WaitScreen(this.conf.waitScreen);
 
-            stageLevels = node.constants.stageLevels;
+            stageLevels = constants.stageLevels;
             stageLevel = node.game.getStageLevel();
             if (stageLevel !== stageLevels.UNINITIALIZED) {
                 if (node.game.paused) {
@@ -531,7 +546,7 @@
                             level + '.');
         }
 
-        this.state = windowLevels[level];
+        this.stateLevel = windowLevels[level];
     };
 
     /**
@@ -544,21 +559,21 @@
      * @see constants.windowLevels
      */
     GameWindow.prototype.getStateLevel = function() {
-        return this.state;
+        return this.stateLevel;
     };
 
     /**
      * ### GameWindow.isReady
      *
-     * Returns whether the GameWindow is ready
+     * Returns TRUE if the GameWindow is ready
      *
-     * Returns TRUE if the state is either INITIALIZED or LOADED or LOCKED.
+     * The window is ready if its state is either INITIALIZED or LOADED.
      *
-     * @return {boolean} Whether the window is ready
+     * @return {boolean} TRUE if the window is ready
      */
     GameWindow.prototype.isReady = function() {
-        return this.state === windowLevels.INITIALIZED ||
-            this.state === windowLevels.LOADED;
+        return this.stateLevel === windowLevels.LOADED ||
+            this.stateLevel === windowLevels.INITIALIZED;
     };
 
     /**
@@ -577,7 +592,7 @@
         }
         if ('undefined' === typeof screenLevels[level]) {
             throw new Error('GameWindow.setScreenLevel: unrecognized level: ' +
-                           level + '.');
+                            level + '.');
         }
 
         this.screenState = screenLevels[level];
@@ -631,9 +646,9 @@
      */
     GameWindow.prototype.getFrameName = function() {
         var iframe;
-        if (!this.frameName) {
+        if (!this.frameName || this.stateLevel === WIN_LOADING) {
             iframe = this.getFrame();
-            this.frameName = iframe ?iframe.name || iframe.id : null;
+            this.frameName = iframe ? iframe.name || iframe.id : null;
         }
         return this.frameName;
     };
@@ -652,7 +667,7 @@
      */
     GameWindow.prototype.getFrameWindow = function() {
         var iframe;
-        if (!this.frameWindow) {
+        if (!this.frameWindow || this.stateLevel === WIN_LOADING) {
             iframe = this.getFrame();
             this.frameWindow = iframe ? iframe.contentWindow : null;
         }
@@ -673,7 +688,7 @@
      */
     GameWindow.prototype.getFrameDocument = function() {
         var iframe;
-        if (!this.frameDocument) {
+        if (!this.frameDocument || this.stateLevel === WIN_LOADING) {
             iframe = this.getFrame();
             this.frameDocument = iframe ? this.getIFrameDocument(iframe) :
                 null;
@@ -805,7 +820,7 @@
      */
     GameWindow.prototype.destroyFrame = function() {
         this.clearFrame();
-        this.frameRoot.removeChild(this.frameElement);
+        if (this.frameRoot) this.frameRoot.removeChild(this.frameElement);
         this.frameElement = null;
         this.frameWindow = null;
         this.frameDocument = null;
@@ -839,7 +854,7 @@
             // We need to re-get it from the DOM.
             if (J.getIFrameDocument(iframe).documentElement) {
                 J.removeChildrenFromNode(
-                        J.getIFrameDocument(iframe).documentElement);
+                    J.getIFrameDocument(iframe).documentElement);
             }
         }
 
@@ -979,7 +994,7 @@
     GameWindow.prototype.setHeader = function(header, headerName, root) {
         if (!J.isElement(header)) {
             throw new Error(
-                    'GameWindow.setHeader: header must be HTMLElement.');
+                'GameWindow.setHeader: header must be HTMLElement.');
         }
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.setHeader: headerName must be string.');
@@ -1073,85 +1088,6 @@
     };
 
     /**
-     * ### GameWindow.setupFrame
-     *
-     * Sets up the page with a predefined configuration of widgets
-     *
-     * Available setup profiles are:
-     *
-     * - MONITOR: frame
-     * - PLAYER: header + frame
-     * - SOLO_PLAYER: (like player without header)
-     *
-     * @param {string} profile The setup profile
-     */
-    GameWindow.prototype.setupFrame = function(profile) {
-
-        if ('string' !== typeof profile) {
-            throw new TypeError('GameWindow.setup: profile must be string.');
-        }
-
-        switch (profile) {
-
-        case 'MONITOR':
-
-            if (!this.getFrame()) {
-                this.generateFrame();
-            }
-
-            node.widgets.append('NextPreviousState');
-            node.widgets.append('GameSummary');
-            node.widgets.append('StateDisplay');
-            node.widgets.append('StateBar');
-            node.widgets.append('DataBar');
-            node.widgets.append('MsgBar');
-            node.widgets.append('GameBoard');
-            node.widgets.append('ServerInfoDisplay');
-            node.widgets.append('Wall');
-
-            // Add default CSS.
-            if (node.conf.host) {
-                this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/monitor.css');
-            }
-
-            break;
-
-        case 'PLAYER':
-
-            this.generateHeader();
-
-            node.game.visualState = node.widgets.append('VisualState',
-                    this.headerElement);
-            node.game.timer = node.widgets.append('VisualTimer',
-                    this.headerElement);
-            node.game.stateDisplay = node.widgets.append('StateDisplay',
-                    this.headerElement);
-
-            // Will continue in SOLO_PLAYER.
-
-        /* falls through */
-        case 'SOLO_PLAYER':
-
-            if (!this.getFrame()) {
-                this.generateFrame();
-            }
-
-            // Add default CSS.
-            if (node.conf.host) {
-                this.addCSS(this.getFrameRoot(),
-                            node.conf.host + '/stylesheets/nodegame.css');
-            }
-
-            break;
-
-        default:
-            throw new Error('GameWindow.setupFrame: unknown profile type: ' +
-                            profile + '.');
-        }
-    };
-
-    /**
      * ### GameWindow.initLibs
      *
      * Specifies the libraries to be loaded automatically in the iframe
@@ -1173,7 +1109,7 @@
             throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
                                 'array or undefined.');
         }
-        if (frameLibs && 'object' !== typeof framLibs) {
+        if (frameLibs && 'object' !== typeof frameLibs) {
             throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
                                 'object or undefined.');
         }
@@ -1240,12 +1176,16 @@
      * If caching is not supported by the browser, the callback will be
      * executed anyway.
      *
+     * All uri to precache are parsed with `GameWindow.processUri` before
+     * being loaded.
+     *
      * @param {string|array} uris The URI(s) to cache
      * @param {function} callback Optional. The function to call once the
      *   caching is done
      *
      * @see GameWindow.cacheSupported
      * @see GameWindow.preCacheTest
+     * @see GameWindow.processUri
      */
     GameWindow.prototype.preCache = function(uris, callback) {
         var that;
@@ -1292,7 +1232,7 @@
         loadedCount = 0;
 
         for (uriIdx = 0; uriIdx < uris.length; uriIdx++) {
-            currentUri = uris[uriIdx];
+            currentUri = this.processUri(uris[uriIdx]);
 
             // Create an invisible internal frame for the current URI:
             iframe = document.createElement('iframe');
@@ -1417,6 +1357,9 @@
      * @param {function} func Optional. The function to call once the DOM is
      *   ready
      * @param {object} opts Optional. The options object
+     *
+     * @see GameWindow.uriPrefix
+     * @see GameWindow.uriChannel
      */
     GameWindow.prototype.loadFrame = function(uri, func, opts) {
         var that;
@@ -1498,10 +1441,14 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                            'store mode: ' + opts.cache.storeMode + '.');
+                                    'store mode: ' + opts.cache.storeMode +
+                                    '.');
                 }
             }
         }
+
+        // Adapt the uri if necessary.
+        uri = this.processUri(uri);
 
         if (this.cacheSupported === null) {
             this.preCacheTest(function() {
@@ -1552,9 +1499,10 @@
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                    // Executes callback and updates GameWindow state.
-                    that.updateLoadFrameState(func);
-                });
+                                    // Executes callback
+                                    // and updates GameWindow state.
+                                    that.updateLoadFrameState(func);
+                                });
             });
         }
 
@@ -1569,9 +1517,10 @@
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                    // Executes callback and updates GameWindow state.
-                    that.updateLoadFrameState(func);
-                });
+                                    // Executes callback
+                                    // and updates GameWindow state.
+                                    that.updateLoadFrameState(func);
+                                });
             }
         }
         else {
@@ -1581,6 +1530,24 @@
 
         // Adding a reference to nodeGame also in the iframe.
         iframeWindow.node = node;
+    };
+
+    /**
+     * ### GameWindow.processUri
+     *
+     * Parses a uri string and adds channel uri and prefix, if defined
+     *
+     * @param {string} uri The uri to process
+     *
+     * @see GameWindow.uriPrefix
+     * @see GameWindow.uriChannel
+     */
+    GameWindow.prototype.processUri = function(uri) {
+        if (uri.charAt(0) !== '/' && uri.substr(0,7) !== 'http://') {
+            if (this.uriPrefix) uri = this.uriPrefix + uri;
+            if (this.uriChannel) uri = this.uriChannel + uri;
+        }
+        return uri;
     };
 
     /**
@@ -1597,24 +1564,88 @@
      * @param {function} func Optional. A callback function
      *
      * @see updateAreLoading
+     *
+     * @emit FRAME_LOADED
+     * @emit LOADED
      */
     GameWindow.prototype.updateLoadFrameState = function(func) {
-        if (func) {
-            func.call(node.game);
-        }
+        var loaded, stageLevel;
+        loaded = updateAreLoading(this, -1);
+        if (loaded) this.setStateLevel('LOADED');
+        if (func) func.call(node.game);
 
-        updateAreLoading(this, -1);
+        // ng event emitter is not used.
+        node.events.ee.game.emit('FRAME_LOADED');
+        node.events.ee.stage.emit('FRAME_LOADED');
+        node.events.ee.step.emit('FRAME_LOADED');
 
-        if (this.areLoading === 0) {
-            this.setStateLevel('LOADED');
-            node.emit('WINDOW_LOADED');
-            // The listener will take care of emitting PLAYING,
-            // if all conditions are met.
+        if (loaded) {
+            stageLevel = node.game.getStageLevel();
+            if (stageLevel === CB_EXECUTED) node.emit('LOADED');
         }
         else {
-            node.silly('GameWindow.updateLoadFrameState: ' + this.areLoading +
-                       ' loadFrame processes open.');
+            node.silly('game-window: ' + this.areLoading + ' frames ' +
+                       'still loading.');
         }
+    };
+
+    /**
+     * ### GameWindow.clearPageBody
+     *
+     * Removes all HTML from body, and resets GameWindow
+     *
+     * @see GameWindow.reset
+     */
+    GameWindow.prototype.clearPageBody = function() {
+        this.reset();
+        document.body.innerHTML = '';
+    };
+
+    /**
+     * ### GameWindow.clearPage
+     *
+     * Removes all HTML from page and resets GameWindow
+     *
+     * @see GameWindow.reset
+     */
+    GameWindow.prototype.clearPage = function() {
+        this.reset();
+        try {
+            document.documentElement.innerHTML = '';
+        }
+        catch(e) {
+            this.removeChildrenFromNode(document.documentElement);
+        }
+    };
+
+    /**
+     * ### GameWindow.setUriPrefix
+     *
+     * Sets the variable uriPrefix
+     *
+     * @see GameWindow.uriPrefix
+     */
+    GameWindow.prototype.setUriPrefix = function(uriPrefix) {
+        if (uriPrefix !== null && 'string' !== typeof uriPrefix) {
+            throw new TypeError('GameWindow.setUriPrefix: uriPrefix must be ' +
+                                'string or null.');
+        }
+        this.uriPrefix = uriPrefix;
+    };
+
+    /**
+     * ### GameWindow.setUriChannel
+     *
+     * Sets the variable uriChannel
+     *
+     * @see GameWindow.uriChannel
+     */
+    GameWindow.prototype.setUriChannel = function(uriChannel) {
+        if (uriChannel !== null && 'string' !== typeof uriChannel) {
+            throw new TypeError('GameWindow.uriChannel: uriChannel must be ' +
+                                'string or null.');
+        }
+        this.uriChannel = uriChannel;
     };
 
     // ## Helper functions
@@ -1754,7 +1785,7 @@
 
         scriptNodes = contentDocument.getElementsByTagName('script');
         for (scriptNodeIdx = 0; scriptNodeIdx < scriptNodes.length;
-                scriptNodeIdx++) {
+             scriptNodeIdx++) {
 
             // Remove tag:
             tag = scriptNodes[scriptNodeIdx];
@@ -1819,9 +1850,7 @@
     /**
      * ### updateAreLoading
      *
-     * Updates the counter of loading frames in a secure way
-     *
-     * Ensure atomicity of the operation by using the _lockedUpdate_ semaphore.
+     * Updates the counter of loading frames
      *
      * @param {GameWindow} that A reference to the GameWindow instance
      * @param {number} update The number to add to the counter
@@ -1831,16 +1860,8 @@
      * @api private
      */
     function updateAreLoading(that, update) {
-        if (!lockedUpdate) {
-            lockedUpdate = true;
-            that.areLoading = that.areLoading + update;
-            lockedUpdate = false;
-        }
-        else {
-            setTimeout(function() {
-                updateAreLoading.call(that, update);
-            }, 300);
-        }
+        that.areLoading = that.areLoading + update;
+        return that.areLoading === 0;
     }
 
     /**
@@ -1869,7 +1890,7 @@
         // When we move from bottom to any other configuration, we need
         // to move the header before the frame.
         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
-             W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+            W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
         }
 
         W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
@@ -1909,8 +1930,209 @@
 );
 
 /**
+ * # setup.window
+ * Copyright(c) 2015 Stefano Balietti
+ * MIT Licensed
+ *
+ * GameWindow setup functions
+ *
+ * http://www.nodegame.org
+ */
+(function(window, node) {
+
+    var GameWindow = node.GameWindow;
+    var J = node.JSUS;
+
+    /**
+     * ### GameWindow.addDefaultSetups
+     *
+     * Registers setup functions for GameWindow, the frame and the header
+     */
+    GameWindow.prototype.addDefaultSetups = function() {
+
+        /**
+         * ### node.setup.window
+         *
+         * Setup handler for the node.window object
+         *
+         * @see node.setup
+         */
+        node.registerSetup('window', function(conf) {
+            conf = J.merge(W.conf, conf);
+            this.window.init(conf);
+            return conf;
+        });
+
+        /**
+         * ### node.setup.page
+         *
+         * Manipulates the HTML page
+         *
+         * @see node.setup
+         */
+        node.registerSetup('page', function(conf) {
+            var tmp, body;
+            if (!conf) return;
+
+            // Clear.
+            if (conf.clearBody) this.window.clearPageBody();
+            if (conf.clear) this.window.clearPage();
+            if ('string' === typeof conf.title) {
+                conf.title = { title: conf.title };
+            }
+            if ('object' === typeof conf.title) {
+                // TODO: add option to animate it.
+                document.title = conf.title.title;
+                if (conf.title.addToBody) {
+                    tmp = document.createElement('h1');
+                    tmp.className = 'ng-page-title';
+                    tmp.innerHTML = conf.title.title;
+                    body = document.body;
+                    if (body.innerHTML === '') body.appendChild(tmp);
+                    else body.insertBefore(tmp, body.firstChild);
+                }
+            }
+            return conf;
+        });
+
+        /**
+         * ### node.setup.frame
+         *
+         * Manipulates the frame object
+         *
+         * @see node.setup
+         */
+        node.registerSetup('frame', function(conf) {
+            var url, cb, options;
+            var frameName, force, root, rootName;
+            if (!conf) return;
+
+            // Generate.
+            if (conf.generate) {
+                if ('object' === typeof conf.generate) {
+                    if (conf.generate.root) {
+                        if ('string' !== typeof conf.generate.root) {
+                            node.warn('node.setup.frame: conf.generate.root ' +
+                                      'must be string or undefined.');
+                            return;
+                        }
+                        rootName = conf.generate.root;
+                        force = conf.generate.force;
+                        frameName = conf.generate.name;
+                    }
+                }
+                else {
+                    node.warn('node.setup.frame: conf.generate must be ' +
+                              'object or undefined.');
+                    return;
+                }
+
+                root = this.window.getElementById(rootName);
+                if (!root) root = this.window.getScreen();
+                if (!root) {
+                    node.warn('node.setup.frame: could not find valid ' +
+                              'root element to generate new frame.');
+                    return;
+                }
+
+                this.window.generateFrame(root, frameName, force);
+            }
+
+            // Load.
+            if (conf.load) {
+                if ('object' === typeof conf.load) {
+                    url = conf.load.url;
+                    cb = conf.load.cb;
+                    options = conf.load.options;
+                }
+                else if ('string' === typeof conf.load) {
+                    url = conf.load;
+                }
+                else {
+                    node.warn('node.setup.frame: conf.load must be string, ' +
+                              'object or undefined.');
+                    return;
+                }
+                this.window.loadFrame(url, cb, options);
+            }
+
+            // Clear and destroy.
+            if (conf.clear) this.window.clearFrame();
+            if (conf.destroy) this.window.destroyFrame();
+
+            return conf;
+        });
+
+        /**
+         * ### node.setup.header
+         *
+         * Manipulates the header object
+         *
+         * @see node.setup
+         */
+        node.registerSetup('header', function(conf) {
+            var frameName, force, root, rootName;
+            if (!conf) return;
+
+            // Generate.
+            if (conf.generate) {
+                if ('object' === typeof conf.generate) {
+                    if (conf.generate.root) {
+                        if ('string' !== typeof conf.generate.root) {
+                            node.warn('node.setup.header: conf.generate.root ' +
+                                      'must be string or undefined.');
+                            return;
+                        }
+                        rootName = conf.generate.root;
+                        force = conf.generate.force;
+                        frameName = conf.generate.name;
+                    }
+                }
+                else {
+                    node.warn('node.setup.header: conf.generate must be ' +
+                              'object or undefined.');
+                    return;
+                }
+
+                root = this.window.getElementById(rootName);
+                if (!root) root = this.window.getScreen();
+                if (!root) {
+                    node.warn('node.setup.frame: could not find valid ' +
+                              'root element to generate new frame.');
+                    return;
+                }
+
+                this.window.generateFrame(root, frameName, force);
+            }
+
+            // Position.
+            if (conf.position) {
+                if ('string' !== typeof conf.position) {
+                    node.warn('node.setup.header: conf.position ' +
+                              'must be string or undefined.');
+                    return;
+                }
+                this.window.setHeaderPosition(conf.position);
+            }
+
+            // Clear and destroy.
+            if (conf.clear) this.window.clearHeader();
+            if (conf.destroy) this.window.destroyHeader();
+
+            return conf;
+        });
+
+    };
+})(
+    // GameWindow works only in the browser environment. The reference
+    // to the node.js module object is for testing purpose only
+    ('undefined' !== typeof window) ? window : module.parent.exports.window,
+    ('undefined' !== typeof window) ? window.node : module.parent.exports.node
+);
+
+/**
  * # ui-behavior
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow UI Behavior module
@@ -2051,7 +2273,7 @@
 
 /**
  * # lockScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Locks / Unlocks the screen
@@ -2064,8 +2286,6 @@
 (function(window, node) {
 
     "use strict";
-
-    var J = node.JSUS;
 
     var GameWindow = node.GameWindow;
     var screenLevels = node.constants.screenLevels;
@@ -2145,7 +2365,7 @@
 
 /**
  * # listeners
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow listeners
@@ -2156,16 +2376,14 @@
 
     "use strict";
 
+    var J = node.JSUS;
+
     function getElement(idOrObj, prefix) {
         var el;
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
-            if (!el) {
-                throw new Error(prefix + ': could not find element ' +
-                                'with id ' + idOrObj);
-            }
         }
-        else if (JSUS.isElement(idOrObj)) {
+        else if (J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
@@ -2200,23 +2418,27 @@
         });
 
         node.on('HIDE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.HIDE');
+            if (el) el.style.display = 'none';
         });
 
         node.on('SHOW', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            el.style.display = '';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.SHOW');
+            if (el) el.style.display = '';
         });
 
         node.on('TOGGLE', function(idOrObj) {
-            var el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-
-            if (el.style.display === 'none') {
-                el.style.display = '';
-            }
-            else {
-                el.style.display = 'none';
+            var el;
+            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+            if (el) {
+                if (el.style.display === 'none') {
+                    el.style.display = '';
+                }
+                else {
+                    el.style.display = 'none';
+                }
             }
         });
 
@@ -2263,7 +2485,7 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -2540,7 +2762,7 @@
      * @see WaitScreen.lock
      */
     WaitScreen.prototype.unlock = function() {
-        var j, i, len, inputs, nInputs;
+        var i, len;
 
         if (this.waitingDiv) {
             if (this.waitingDiv.style.display === '') {
@@ -2610,7 +2832,7 @@
 
 /**
  * # selector
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Utility functions to create and manipulate meaninful HTML select lists for
@@ -2834,7 +3056,7 @@
 
 /**
  * # extra
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -2846,7 +3068,6 @@
     "use strict";
 
     var GameWindow = node.GameWindow;
-
     var J = node.JSUS;
     var DOM = J.get('DOM');
 
@@ -3212,7 +3433,7 @@
 
 /**
  * # Canvas
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api
@@ -3313,7 +3534,7 @@
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -3442,10 +3663,12 @@
         });
 
         this.tm.addTrigger(function(el) {
+            var html;
             if (!el) return;
-            if (el.content && el.content.parse
-                && 'function' === typeof el.content.parse) {
-                var html = el.content.parse();
+            if (el.content && el.content.parse &&
+                'function' === typeof el.content.parse) {
+
+                html = el.content.parse();
                 if (JSUS.isElement(html) || JSUS.isNode(html)) {
                     return html;
                 }
@@ -3555,7 +3778,7 @@
 
 /**
  * # List
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML list that can be manipulated by an api
@@ -3566,7 +3789,6 @@
 
     "use strict";
 
-    var JSUS = node.JSUS;
     var NDDB = node.NDDB;
 
     var HTMLRenderer = node.window.HTMLRenderer;
@@ -3756,7 +3978,7 @@
 
 /**
  * # Table
- * Copyright(c) 2014 Stefano Balietti
+ * Copyright(c) 2015 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.

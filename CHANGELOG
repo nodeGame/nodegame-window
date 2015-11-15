@@ -1,10 +1,23 @@
 # nodegame-window change log
 
 ## 0.9.8
+ - GameWindow.state -> GameWindow.stateLevel.
+ - loadFrame emits 'LOADED' directly if that is the case.
+ - Event 'WINDOW_LOADED' removed.
+ - Added event: 'FRAME_LOADED'.
  - Added listener on onload to disconnect the client. This way also non-websockets disconnections are detected immediately.
  - `textOnleave` -> `promptOnleaveText` for consistency with option promptOnleave.
  - Listeners are added with a dedicated method now.
  - IE8 Compatibility: noscript tags are hidden.
+ - `#GameWindow.destroyFrame()` checks for existence of frameRoot.
+ - Travis Integration Testing.
+ - No error thrown on HIDE/SHOW/TOGGLE listeners.
+ - New setup functions: frame, header, and page.
+ - New methods: `#GameWindow.clearPage()` and `#GameWindow.clearPageBody()`.
+ - `#GameWindow.loadFrame()` adds the name of the HTTP channel by default, if the uri load does not start with '/' or 'http://'.
+ - `#GameWindow.loadFrame()` can add a prefix to all loaded uri, if the uri load does not start with '/' or 'http://'.
+ - `#GameWindow.setUriChannel()`, `#GameWindow.setUriPrefix()`.
+ - Removed `#GameWindow.setupFrame()`.
 
 ## 0.9.7
  - `#clearFrame()` is synchronous now.

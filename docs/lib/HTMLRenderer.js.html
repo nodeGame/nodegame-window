@@ -6,7 +6,7 @@
   <link rel="stylesheet" media="all" href="../doc-style.css" />
   <script src="../doc-filelist.js"></script>
   <script>
-    var relativeDir = "../", thisFile = "lib/HTMLRenderer.js", defaultSidebar = true;
+    var relativeDir = '../', thisFile = 'lib/HTMLRenderer.js', defaultSidebar = true;
   </script>
   <script src="../doc-script.js"></script>
 </head>
@@ -22,10 +22,10 @@
         <a href="#htmlrenderer">HTMLRenderer</a>
       </div>
       <div class="heading h2">
-        <a href="#global%20scope">Global scope</a>
+        <a href="#global-scope">Global scope</a>
       </div>
       <div class="heading h2">
-        <a href="#htmlrenderer%20constructor">HTMLRenderer constructor</a>
+        <a href="#htmlrenderer-constructor">HTMLRenderer constructor</a>
       </div>
       <div class="heading h3">
         <a href="#htmlrenderer.options">HTMLRenderer.options</a>
@@ -34,7 +34,7 @@
         <a href="#htmlrenderer.tm">HTMLRenderer.tm</a>
       </div>
       <div class="heading h2">
-        <a href="#htmlrenderer%20methods">HTMLRenderer methods</a>
+        <a href="#htmlrenderer-methods">HTMLRenderer methods</a>
       </div>
       <div class="heading h3">
         <a href="#htmlrenderer.init">HTMLRenderer.init</a>
@@ -64,7 +64,7 @@
         <a href="#entity">Entity</a>
       </div>
       <div class="heading h2">
-        <a href="#entity%20constructor">Entity constructor</a>
+        <a href="#entity-constructor">Entity constructor</a>
       </div>
     </div>
   </div>
@@ -77,13 +77,13 @@
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer">
   <h1>
-    <a href="#htmlrenderer" name="htmlrenderer" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer" class="pilcrow">&#182;</a>
     HTMLRenderer
   </h1>
 </div>
 
 
-<p>Copyright(c) 2014 Stefano Balietti
+<p>Copyright(c) 2015 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Renders javascript objects into HTML following a pipeline
@@ -107,25 +107,20 @@ performs the following operations:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
-
-
-</pre></div>
+    <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="global%20scope">
+<div class="pilwrap" id="global-scope">
   <h2>
-    <a href="#global%20scope" name="global%20scope" class="pilcrow">&#182;</a>
+    <a href="#global-scope" class="pilcrow">&#182;</a>
     Global scope
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nb">document</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
     <span class="nx">JSUS</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">TriggerManager</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">TriggerManager</span><span class="p">;</span>
@@ -135,18 +130,15 @@ performs the following operations:</p>
     <span class="p">}</span>
 
     <span class="nx">exports</span><span class="p">.</span><span class="nx">HTMLRenderer</span> <span class="o">=</span> <span class="nx">HTMLRenderer</span><span class="p">;</span>
-    <span class="nx">exports</span><span class="p">.</span><span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">Entity</span> <span class="o">=</span> <span class="nx">Entity</span><span class="p">;</span>
-
-
-</pre></div>
+    <span class="nx">exports</span><span class="p">.</span><span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">Entity</span> <span class="o">=</span> <span class="nx">Entity</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="htmlrenderer%20constructor">
+<div class="pilwrap" id="htmlrenderer-constructor">
   <h2>
-    <a href="#htmlrenderer%20constructor" name="htmlrenderer%20constructor" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer-constructor" class="pilcrow">&#182;</a>
     HTMLRenderer constructor
   </h2>
 </div>
@@ -164,34 +156,27 @@ performs the following operations:</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">HTMLRenderer</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">HTMLRenderer</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="htmlrenderer.options">
   <h3>
-    <a href="#htmlrenderer.options" name="htmlrenderer.options" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.options" class="pilcrow">&#182;</a>
     HTMLRenderer.options
   </h3>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap" id="htmlrenderer.tm">
   <h3>
-    <a href="#htmlrenderer.tm" name="htmlrenderer.tm" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.tm" class="pilcrow">&#182;</a>
     HTMLRenderer.tm
   </h3>
 </div>
@@ -199,30 +184,23 @@ performs the following operations:</p>
 
 <p>TriggerManager instance</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TriggerManager</span><span class="p">();</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">tm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TriggerManager</span><span class="p">();</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span>
-    <span class="p">}</span>
-
-
-</pre></div>
+    <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="htmlrenderer%20methods">
+<div class="pilwrap" id="htmlrenderer-methods">
   <h2>
-    <a href="#htmlrenderer%20methods" name="htmlrenderer%20methods" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer-methods" class="pilcrow">&#182;</a>
     HTMLRenderer methods
   </h2>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -230,7 +208,7 @@ performs the following operations:</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.init">
   <h3>
-    <a href="#htmlrenderer.init" name="htmlrenderer.init" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.init" class="pilcrow">&#182;</a>
     HTMLRenderer.init
   </h3>
 </div>
@@ -259,8 +237,7 @@ recycles the settings in <code>this.options</code>.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">init</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
 
@@ -273,12 +250,7 @@ recycles the settings in <code>this.options</code>.</p>
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pipeline</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">initTriggers</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">pipeline</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span>
-
-
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -286,7 +258,7 @@ recycles the settings in <code>this.options</code>.</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.reset">
   <h3>
-    <a href="#htmlrenderer.reset" name="htmlrenderer.reset" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.reset" class="pilcrow">&#182;</a>
     HTMLRenderer.reset
   </h3>
 </div>
@@ -297,14 +269,10 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">addDefaultPipeline</span><span class="p">();</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -312,7 +280,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.adddefaultpipeline">
   <h3>
-    <a href="#htmlrenderer.adddefaultpipeline" name="htmlrenderer.adddefaultpipeline" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.adddefaultpipeline" class="pilcrow">&#182;</a>
     HTMLRenderer.addDefaultPipeline
   </h3>
 </div>
@@ -322,8 +290,7 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultPipeline</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addDefaultPipeline</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">){</span>
             <span class="k">return</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
         <span class="p">});</span>
@@ -344,10 +311,12 @@ pipeline</p>
         <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">html</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span>
-                <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">content</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span> <span class="o">&amp;&amp;</span>
+                <span class="s1">&#39;function&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">html</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">.</span><span class="nx">parse</span><span class="p">();</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">JSUS</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="o">||</span> <span class="nx">JSUS</span><span class="p">.</span><span class="nx">isNode</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -360,11 +329,7 @@ pipeline</p>
                 <span class="k">return</span> <span class="nx">el</span><span class="p">.</span><span class="nx">content</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">});</span>
-    <span class="p">};</span>
-
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -372,7 +337,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.clear">
   <h3>
-    <a href="#htmlrenderer.clear" name="htmlrenderer.clear" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.clear" class="pilcrow">&#182;</a>
     HTMLRenderer.clear
   </h3>
 </div>
@@ -396,13 +361,9 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">clear</span><span class="p">(</span><span class="nx">clear</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -410,7 +371,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.addrenderer">
   <h3>
-    <a href="#htmlrenderer.addrenderer" name="htmlrenderer.addrenderer" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.addrenderer" class="pilcrow">&#182;</a>
     HTMLRenderer.addRenderer
   </h3>
 </div>
@@ -440,13 +401,9 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">addTrigger</span><span class="p">(</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">pos</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -454,7 +411,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.removerenderer">
   <h3>
-    <a href="#htmlrenderer.removerenderer" name="htmlrenderer.removerenderer" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.removerenderer" class="pilcrow">&#182;</a>
     HTMLRenderer.removeRenderer
   </h3>
 </div>
@@ -478,13 +435,9 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeRenderer</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">renderer</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">removeTrigger</span><span class="p">(</span><span class="nx">renderer</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -492,7 +445,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.render">
   <h3>
-    <a href="#htmlrenderer.render" name="htmlrenderer.render" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.render" class="pilcrow">&#182;</a>
     HTMLRenderer.render
   </h3>
 </div>
@@ -516,18 +469,14 @@ pipeline</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">TriggerManager.pullTriggers
-</span>
+  </span>
     </div>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">pullTriggers</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -535,7 +484,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="htmlrenderer.size">
   <h3>
-    <a href="#htmlrenderer.size" name="htmlrenderer.size" class="pilcrow">&#182;</a>
+    <a href="#htmlrenderer.size" class="pilcrow">&#182;</a>
     HTMLRenderer.size
   </h3>
 </div>
@@ -553,13 +502,9 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">HTMLRenderer</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">tm</span><span class="p">.</span><span class="nx">triggers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="p">};</span>
-
-
-</pre></div>
+    <span class="p">};</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -567,7 +512,7 @@ pipeline</p>
   <div class="summary">
 <div class="pilwrap" id="entity">
   <h1>
-    <a href="#entity" name="entity" class="pilcrow">&#182;</a>
+    <a href="#entity" class="pilcrow">&#182;</a>
     Entity
   </h1>
 </div>
@@ -577,18 +522,15 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-
-
-</pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="entity%20constructor">
+<div class="pilwrap" id="entity-constructor">
   <h2>
-    <a href="#entity%20constructor" name="entity%20constructor" class="pilcrow">&#182;</a>
+    <a href="#entity-constructor" class="pilcrow">&#182;</a>
     Entity constructor
   </h2>
 </div>
@@ -606,8 +548,7 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>
-    <span class="kd">function</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>

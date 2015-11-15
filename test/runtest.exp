@@ -6,13 +6,10 @@
 cd nodegame
 set server_pid [spawn node launcher.js]
 set server_id $spawn_id
-set timeout 30
-expect {
-    timeout { puts "\nERROR: Server is not starting!"; exit 1 }
-
-    "ng> socket connected.\r"
-}
-
+# set timeout 30
+# timeout { puts "\nERROR: Server is not starting!"; exit 1 }
+expect "info  - socket.io started" { puts "\nSERVER STARTED.\n"; exp_continue }
+sleep 1
 # Run tests.
 cd ..
 puts "Running tests."
