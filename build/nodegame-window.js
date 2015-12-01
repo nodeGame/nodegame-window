@@ -484,6 +484,10 @@
             this.enableRightClick();
         }
 
+        if ('undefined' !== typeof this.conf.uriPrefix) {
+            this.setUriPrefix(this.conf.uriPrefix);
+        }
+
         this.setStateLevel('INITIALIZED');
 
         node.silly('node-window: inited.');
@@ -1630,7 +1634,7 @@
             throw new TypeError('GameWindow.setUriPrefix: uriPrefix must be ' +
                                 'string or null.');
         }
-        this.uriPrefix = uriPrefix;
+        this.conf.uriPrefix = this.uriPrefix = uriPrefix;
     };
 
     /**
@@ -1958,7 +1962,6 @@
          * @see node.setup
          */
         node.registerSetup('window', function(conf) {
-            conf = J.merge(W.conf, conf);
             this.window.init(conf);
             return conf;
         });
@@ -2054,6 +2057,11 @@
                     return;
                 }
                 this.window.loadFrame(url, cb, options);
+            }
+
+            // Uri prefix.
+            if ('undefined' !== typeof conf.uriPrefix) {
+                this.window.setUriPrefix(conf.uriPrefix);
             }
 
             // Clear and destroy.
