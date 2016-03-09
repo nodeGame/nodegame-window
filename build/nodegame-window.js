@@ -397,7 +397,7 @@
         // Adding listeners.
         this.addDefaultListeners();
 
-        // Hide <noscript> tag (necessary for IE8).
+        // Hide noscript tag (necessary for IE8).
         setTimeout(function(){
             (function (scriptTag) {
                 if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
