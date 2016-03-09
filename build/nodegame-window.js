@@ -1319,19 +1319,42 @@
      *
      * Returns a list of elements with the given tag name
      *
-     * Looks first into the iframe and then into the rest of the page.
+     * If set, it will look up in iframe, otherwsie into the rest of the page.
      *
      * @param {string} tag The tag of the elements
      *
      * @return {array|null} The elements in the page, or null if none is found
      *
      * @see GameWindow.getElementById
+     * @see GameWindow.frameDocument
      */
     GameWindow.prototype.getElementsByTagName = function(tag) {
         var frameDocument;
         frameDocument = this.getFrameDocument();
         return frameDocument ? frameDocument.getElementsByTagName(tag) :
             document.getElementsByTagName(tag);
+    };
+
+    /**
+     * ### GameWindow.getElementsByClassName
+     *
+     * Returns a list of elements with given class name
+     *
+     * If set, it will look up in iframe, otherwsie into the rest of the page.
+     *
+     * @param {string} className The requested className
+     * @param {string} tag Optional. If set only elements with
+     *   the specified tag name will be searched
+     *
+     * @return {array} Array of elements with the requested class name
+     *
+     * @see GameWindow.getElementByTagName
+     * @see GameWindow.frameDocument
+     */
+    GameWindow.prototype.getElementsByClassName = function(className, tag) {
+        var doc;
+        doc = this.getFrameDocument() || document;
+        return J.getElementsByClassName(doc, className, tag);
     };
 
     /**
