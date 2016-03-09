@@ -1,6 +1,9 @@
 # nodegame-window change log
 
-## 0.9.8
+## 1.0.1
+ - GameWindow.getElementsByClassName changed syntax. By default looks up in iframe now.
+
+## 1.0.0
  - GameWindow.state -> GameWindow.stateLevel.
  - loadFrame emits 'LOADED' directly if that is the case.
  - Event 'WINDOW_LOADED' removed.
