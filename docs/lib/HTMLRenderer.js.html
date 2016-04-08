@@ -83,7 +83,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Renders javascript objects into HTML following a pipeline
@@ -548,10 +548,19 @@ pipeline</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">content</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">style</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">Entity</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">content</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">content</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">content</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;Entity: className must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string, array, or undefined.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
 <span class="p">})(</span>
