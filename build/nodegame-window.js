@@ -3464,7 +3464,7 @@
 
 /**
  * # Canvas
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api
@@ -3480,7 +3480,7 @@
     function Canvas(canvas) {
 
         this.canvas = canvas;
-        // 2D Canvas Context
+        // 2D Canvas Context.
         this.ctx = canvas.getContext('2d');
 
         this.centerX = canvas.width / 2;
@@ -3494,16 +3494,13 @@
 
         constructor: Canvas,
 
-        drawOval: function (settings) {
+        drawOval: function(settings) {
 
-            // We keep the center fixed
+            // We keep the center fixed.
             var x = settings.x / settings.scale_x;
             var y = settings.y / settings.scale_y;
 
             var radius = settings.radius || 100;
-            //console.log(settings);
-            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
-            //    ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -3517,7 +3514,7 @@
             this.ctx.restore();
         },
 
-        drawLine: function (settings) {
+        drawLine: function(settings) {
 
             var from_x = settings.x;
             var from_y = settings.y;
@@ -3525,14 +3522,9 @@
             var length = settings.length;
             var angle = settings.angle;
 
-            // Rotation
+            // Rotation.
             var to_x = - Math.cos(angle) * length + settings.x;
             var to_y =  Math.sin(angle) * length + settings.y;
-            //console.log('aa ' + to_x + ' ' + to_y);
-
-            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x +
-            //            ', ' + to_y + ')');
-            //console.log('Length: ' + length + ', Angle: ' + angle );
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -3546,7 +3538,7 @@
             this.ctx.restore();
         },
 
-        scale: function (x,y) {
+        scale: function(x, y) {
             this.ctx.scale(x,y);
             this.centerX = this.canvas.width / 2 / x;
             this.centerY = this.canvas.height / 2 / y;
@@ -3554,7 +3546,7 @@
 
         clear: function() {
             this.ctx.clearRect(0, 0, this.width, this.height);
-            // For IE
+            // For IE.
             var w = this.canvas.width;
             this.canvas.width = 1;
             this.canvas.width = w;
@@ -3565,7 +3557,7 @@
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -3795,10 +3787,19 @@
      *
      * @param {object} e The object to transform in entity
      */
-    function Entity(e) {
-        e = e || {};
-        this.content = ('undefined' !== typeof e.content) ? e.content : '';
-        this.className = ('undefined' !== typeof e.style) ? e.style : null;
+    function Entity(o) {
+        o = o || {};
+        this.content = 'undefined' !== typeof o.content ? o.content : '';
+        if ('string' === typeof o.className) {
+            this.className = o.className;
+        }
+        else if (!o.className) {
+            this.className = null;
+        }
+        else {
+            throw new TypeError('Entity: className must ' +
+                                'be string, array, or undefined.');
+        }
     }
 
 })(
@@ -4009,10 +4010,33 @@
 
 /**
  * # Table
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
+ *
+ * Elements can be added individually, as a row, or as column.
+ * They are tranformed into `Cell` objects containining the original
+ * element and a reference to the HTMLElement (e.g. td, th, etc.)
+ *
+ * Internally, data is organized as a `NDDB` database.
+ *
+ * When `.parse()` method is called the current databaase structure is
+ * processed to create the real HTML table. Each cell is passed to the
+ * `HTMLRenderer` instance which tranforms it the correspondent HTML
+ * element based on a user-defined render function.
+ *
+ * The HTML-renderer object renders cells into HTML following a pipeline
+ * of decorator functions. By default, the following rendering operations
+ * are applied to a cell in order:
+ *
+ * - if it is already an HTML element, returns it;
+ * - if it contains a  #parse() method, tries to invoke it to generate HTML;
+ * - if it is an object, tries to render it as a table of key:value pairs;
+ * - if it is a string or number, creates an HTML text node and returns it
+ *
+ * @see NDDB
+ * @see HTMLRendered
  *
  * www.nodegame.org
  */
@@ -4033,123 +4057,15 @@
     Table.prototype = new NDDB();
     Table.prototype.constructor = Table;
 
-    // ## Helper functions
-
     /**
-     * ### validateInput
+     * ## Tan;e.
      *
-     * Validates user input and throws an error if input is not correct
+     * Returns a new cell
      *
-     * @param {string} method The name of the method validating the input
-     * @param {mixed} data The data that will be inserted in the database
-     * @param {number} x Optional. The row index
-     * @param {number} y Optional. The column index
-     * @param {boolean} dataArray TRUE, if data should be an array
-     *
-     * @return {boolean} TRUE, if input passes validation
      */
-    function validateInput(method, data, x, y, dataArray) {
-
-        if (x && 'number' !== typeof x) {
-            throw new TypeError('Table.' + method + ': x must be number or ' +
-                                'undefined.');
-        }
-        if (y && 'number' !== typeof y) {
-            throw new TypeError('Table.' + method + ': y must be number or ' +
-                                'undefined.');
-        }
-
-        if (dataArray && !J.isArray(data)) {
-            throw new TypeError('Table.' + method + ': data must be array.');
-        }
-
-        return true;
-    }
-
-    /**
-     * ### Table.addClass
-     *
-     * Adds a CSS class to each element cell in the table
-     *
-     * @param {string|array} className The name of the class/classes
-     *
-     * @return {Table} This instance for chaining
-     */
-    Table.prototype.addClass = function(className) {
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.addClass: className must be string or ' +
-                                'array.');
-        }
-        if (J.isArray(className)) {
-            className = className.join(' ');
-        }
-
-        this.each(function(el) {
-            W.addClass(el, className);
-            if (el.HTMLElement) {
-                el.HTMLElement.className = el.className;
-            }
-        });
-
-        return this;
+    Table.cell = function(o) {
+        return new Cell(o);
     };
-
-    /**
-     * ### Table.removeClass
-     *
-     * Removes a CSS class from each element cell in the table
-     *
-     * @param {string|array} className The name of the class/classes
-     *
-     * @return {Table} This instance for chaining
-     */
-    Table.prototype.removeClass = function(className) {
-        var func;
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.removeClass: className must be string ' +
-                                'or array.');
-        }
-
-        if (J.isArray(className)) {
-            func = function(el, className) {
-                for (var i = 0; i < className.length; i++) {
-                    W.removeClass(el, className[i]);
-                }
-            };
-        }
-        else {
-            func = W.removeClass;
-        }
-
-        this.each(function(el) {
-            func.call(this, el, className);
-            if (el.HTMLElement) {
-                el.HTMLElement.className = el.className;
-            }
-        });
-
-        return this;
-    };
-
-    /**
-     * ### addSpecialCells
-     *
-     * Parses an array of data and returns an array of cells
-     *
-     * @param {array} data Array containing data to transform into cells
-     *
-     * @return {array} The array of cells
-     */
-    function addSpecialCells(data) {
-        var out, i, len;
-        out = [];
-        i = -1;
-        len = data.length;
-        for ( ; ++i < len ; ) {
-            out.push({content: data[i]});
-        }
-        return out;
-    }
 
     /**
      * ## Table constructor
@@ -4171,19 +4087,30 @@
 
         NDDB.call(this, options, data);
 
-        //if (!this.row) {
-        //    this.view('row', function(c) {
-        //        return c.x;
-        //    });
-        //}
-        //if (!this.col) {
-        //    this.view('col', function(c) {
-        //        return c.y;
-        //    });
-        //}
+//         // ### Table.row
+//         // NDDB hash containing elements grouped by row index
+//         // @see NDDB.hash
+//         if (!this.row) {
+//             this.hash('row', function(c) {
+//                 return c.x;
+//             });
+//         }
+//
+//         // ### Table.col
+//         // NDDB hash containing elements grouped by column index
+//         // @see NDDB.hash
+//         if (!this.col) {
+//             this.hash('col', function(c) {
+//                 return c.y;
+//             });
+//         }
+
+        // ### Table.rowcol
+        // NDDB index to access elements with row.col notation
+        // @see NDDB.hash
         if (!this.rowcol) {
             this.index('rowcol', function(c) {
-                return c.x + '_' + c.y;
+                return c.x + '.' + c.y;
             });
         }
 
@@ -4225,12 +4152,23 @@
          */
         this.table = options.table || document.createElement('table');
 
-        if ('undefined' !== typeof options.id) {
+        if ('string' === typeof options.id) {
             this.table.id = options.id;
         }
+        else if (options.id) {
+            throw new TypeError('Table constructor: options.id must be ' +
+                                'string or undefined.');
+        }
 
-        if ('undefined' !== typeof options.className) {
+        if ('string' === typeof options.className) {
             this.table.className = options.className;
+        }
+        else if (J.isArray(options.className)) {
+            this.table.className = className.join(' ');
+        }
+        else if (options.className) {
+            throw new TypeError('Table constructor: options.className must ' +
+                                'be string, array, or undefined.');
         }
 
         /**
@@ -4242,7 +4180,18 @@
          * the table because one or more cells have been added with higher
          * row and column indexes.
          */
-        this.missingClassName = options.missingClassName || 'missing';
+        this.missingClassName = 'missing';
+
+        if ('string' === typeof options.missingClassName) {
+            this.missingClassName = options.missingClassName;
+        }
+        else if (J.isArray(options.missingClassName)) {
+            this.missingClassName = missingClassName.join(' ');
+        }
+        else if (options.missingClassName) {
+            throw new TypeError('Table constructor: options.className must ' +
+                                'be string, array, or undefined.');
+        }
 
         /**
          * ### Table.autoParse
@@ -4294,7 +4243,11 @@
      *
      * Create a cell element (td, th, etc.) and renders its content
      *
-     * It also adds an internal reference to the newly created TD/TH element
+     * It also adds an internal reference to the newly created TD/TH element,
+     * stored under a `.HTMLElement` key.
+     *
+     * If the cell contains a `.className` attribute, this is added to
+     * the HTML element.
      *
      * @param {Cell} cell The cell to transform in element
      * @param {string} tagName The name of the tag. Default: 'td'
@@ -4312,7 +4265,6 @@
         content = this.htmlRenderer.render(cell);
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
-        // Adds a reference inside the cell.
         cell.HTMLElement = TD;
         return TD;
     };
@@ -4325,17 +4277,12 @@
      * @param {number} row The row number
      * @param {number} col The column number
      *
-     * @see HTMLRenderer
-     * @see HTMLRenderer.addRenderer
+     * @return {Cell|array} The Cell or array of cells specified by indexes
      */
     Table.prototype.get = function(row, col) {
-        if ('undefined' !== typeof row && 'number' !== typeof row) {
-            throw new TypeError('Table.get: row must be number.');
-        }
-        if ('undefined' !== typeof col && 'number' !== typeof col) {
-            throw new TypeError('Table.get: col must be number.');
-        }
+        validateXY('get', row, col, 'any');
 
+        // TODO: check if we can use hashes.
         if ('undefined' === typeof row) {
             return this.select('y', '=', col);
         }
@@ -4343,13 +4290,15 @@
             return this.select('x', '=', row);
         }
 
-        return this.rowcol.get(row + '_' + col);
+        return this.rowcol.get(row + '.' + col);
     };
 
     /**
      * ### Table.getTR
      *
      * Returns a reference to the TR element at row (row)
+     *
+     * TR elements are generated only after the table is parsed.
      *
      * @param {number} row The row number
      *
@@ -4358,9 +4307,7 @@
      */
     Table.prototype.getTR = function(row) {
         var cell;
-        if ('number' !== typeof row) {
-            throw new TypeError('Table.getTr: row must be number.');
-        }
+        validateXY('getTR', row, undefined, 'x');
         cell = this.get(row, 0);
         if (!cell) return false;
         if (!cell.HTMLElement) return false;
@@ -4376,7 +4323,7 @@
      *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
-        if (!validateInput('setHeader', header, null, null, true)) return;
+        validateInput('setHeader', header, undefined, undefined, true);
         this.header = addSpecialCells(header);
     };
 
@@ -4389,7 +4336,7 @@
      *   of the left elements
      */
     Table.prototype.setLeft = function(left) {
-        if (!validateInput('setLeft', left, null, null, true)) return;
+        validateInput('setLeft', left, undefined, undefined, true);
         this.left = addSpecialCells(left);
     };
 
@@ -4402,7 +4349,7 @@
      *   of the footer elements
      */
     Table.prototype.setFooter = function(footer) {
-        if (!validateInput('setFooter', footer, null, null, true)) return;
+        validateInput('setFooter', footer, undefined, undefined, true);
         this.footer = addSpecialCells(footer);
     };
 
@@ -4424,8 +4371,7 @@
      */
     Table.prototype.updatePointer = function(pointer, value) {
         if ('undefined' === typeof this.pointers[pointer]) {
-            node.err('Table.updatePointer: invalid pointer: ' + pointer);
-            return false;
+            throw new Error('Table.updatePointer: invalid pointer: ' + pointer);
         }
         if (this.pointers[pointer] === null || value > this.pointers[pointer]) {
             this.pointers[pointer] = value;
@@ -4448,11 +4394,11 @@
      */
     Table.prototype.addMultiple = function(data, dim, x, y) {
         var i, lenI, j, lenJ;
-        if (!validateInput('addMultiple', data, x, y)) return;
+        validateInput('addMultiple', data, x, y);
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.addMultiple: dim must be a valid ' +
-                                'string (x, y) or undefined.');
+                                'dimension (x or y) or undefined.');
         }
         dim = dim || 'x';
 
@@ -4487,10 +4433,8 @@
                 }
             }
         }
-
-        if (this.autoParse) {
-            this.parse();
-        }
+        // Auto-parse.
+        if (this.autoParse) this.parse();
     };
 
     /**
@@ -4502,7 +4446,7 @@
      */
     Table.prototype.add = function(content, x, y, dim) {
         var cell;
-        if (!validateInput('addData', content, x, y)) return;
+        validateInput('add', content, x, y);
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.add: dim must be a valid string ' +
@@ -4516,11 +4460,21 @@
         y = dim === 'y' ?
             this.getNextPointer('y', y) : this.getCurrPointer('y', y);
 
-        cell = new Cell({
-            x: x,
-            y: y,
-            content: content
-        });
+        if ('object' === typeof content &&
+            'undefined' !== typeof content.content) {
+
+            if ('undefined' === typeof content.x) content.x = x;
+            if ('undefined' === typeof content.y) content.y = y;
+
+            cell = new Cell(content);
+        }
+        else {
+            cell = new Cell({
+                x: x,
+                y: y,
+                content: content
+            });
+        }
 
         this.insert(cell);
 
@@ -4540,7 +4494,7 @@
      *   will be added. Default: the last column in the table
      */
     Table.prototype.addColumn = function(data, x, y) {
-        if (!validateInput('addColumn', data, x, y)) return;
+        validateInput('addColumn', data, x, y);
         return this.addMultiple(data, 'y', x || 0, this.getNextPointer('y', y));
     };
 
@@ -4556,7 +4510,7 @@
      *   will be added. Default: column 0
      */
     Table.prototype.addRow = function(data, x, y) {
-        if (!validateInput('addRow', data, x, y)) return;
+        validateInput('addRow', data, x, y);
         return this.addMultiple(data, 'x', this.getNextPointer('x', x), y || 0);
     };
 
@@ -4683,7 +4637,7 @@
                         TR.appendChild(TD);
                     }
                 }
-                // Normal Insert.
+                // Normal insert.
                 TR.appendChild(this.renderCell(this.db[i]));
 
                 // Update old refs.
@@ -4697,7 +4651,6 @@
         if (this.footer && this.footer.length) {
             TFOOT = document.createElement('tfoot');
             TR = document.createElement('tr');
-
 
             if (this.header && this.header.length) {
                 TD = document.createElement('td');
@@ -4736,19 +4689,192 @@
     };
 
     /**
+     * ### Table.addClass
+     *
+     * Adds a CSS class to each HTML element in the table
+     *
+     * Cells not containing an HTML elements are skipped.
+     *
+     * @param {string|array} className The name of the class/classes.
+     * @param {number} x Optional. Subsets only on dimension x
+     * @param {number} y Optional. Subsets only on dimension y
+     *
+     * @return {Table} This instance for chaining
+     */
+    Table.prototype.addClass = function(className, x, y) {
+        var db;
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+        else if ('string' !== typeof className) {
+            throw new TypeError('Table.addClass: className must be string ' +
+                                'or array.');
+        }
+        validateXY('addClass', x, y);
+
+        db = this;
+        if ('undefined' !== typeof x) db = db.select('x', '=', x);
+        if ('undefined' !== typeof x) db = db.and('y', '=', y);
+
+        db.each(function(el) {
+            W.addClass(el, className);
+            if (el.HTMLElement) el.HTMLElement.className = el.className;
+        });
+
+        return this;
+    };
+
+    /**
+     * ### Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array|null} className Optional. The name of the
+     *   class/classes, or  null to remove all classes. Default: null.
+     * @param {number} x Optional. Subsets only on dimension x
+     * @param {number} y Optional. Subsets only on dimension y
+     *
+     * @return {Table} This instance for chaining
+     */
+    Table.prototype.removeClass = function(className, x, y) {
+        var func, db;
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
+                }
+            };
+        }
+        else if ('string' === typeof className) {
+            func = W.removeClass;
+        }
+        else if (null === className) {
+            func = function(el) { el.className = '' };
+        }
+        else {
+            throw new TypeError('Table.removeClass: className must be ' +
+                                'string, array, or null.');
+        }
+
+        validateXY('removeClass', x, y);
+
+        db = this;
+        if ('undefined' !== typeof x) db = db.select('x', '=', x);
+        if ('undefined' !== typeof x) db = db.and('y', '=', y);
+
+
+        db.each(function(el) {
+            func.call(this, el, className);
+            if (el.HTMLElement) el.HTMLElement.className = el.className;
+        });
+
+        return this;
+    };
+
+    /**
      * ### Table.clear
      *
      * Removes all entries and indexes, and resets the pointers
      *
-     * @param {boolean} confirm TRUE, to confirm the operation.
-     *
      * @see NDDB.clear
      */
-    Table.prototype.clear = function(confirm) {
-        if (NDDB.prototype.clear.call(this, confirm)) {
-            this.resetPointers();
-        }
+    Table.prototype.clear = function() {
+        NDDB.prototype.clear.call(this, true);
+        this.resetPointers();
     };
+
+    // ## Helper functions
+
+
+    /**
+     * ### validateXY
+     *
+     * Validates if x and y are correctly specified or throws an error
+     *
+     * @param {string} method The name of the method validating the input
+     * @param {number} x Optional. The row index
+     * @param {number} y Optional. The column index
+     * @param {string} mode Optional. Additionally check for: 'both',
+     *   'either', 'any', 'x', or 'y' parameter to be defined.
+     */
+    function validateXY(method, x, y, mode) {
+        var xOk, yOk;
+        if ('undefined' !== typeof x) {
+            if ('number' !== typeof x || x < 0) {
+                throw new TypeError('Table.' + method + ': x must be ' +
+                                    'a non-negative number or undefined.');
+            }
+            xOk = true;
+        }
+        if ('undefined' !== typeof y) {
+            if ('number' !== typeof y || y < 0) {
+                throw new TypeError('Table.' + method + ': y must be ' +
+                                    'a non-negative number or undefined.');
+            }
+            yOk = true;
+        }
+        if (mode === 'either' && xOk && yOk) {
+            throw new Error('Table.' + method + ': either x OR y can ' +
+                            'be defined.');
+        }
+        else if (mode === 'both' && (!xOk || !yOk)) {
+            throw new Error('Table.' + method + ': both x AND y must ' +
+                            'be defined.');
+        }
+        else if (mode === 'any' && (!xOk && !yOk)) {
+            throw new Error('Table.' + method + ': either x or y must ' +
+                            'be defined.');
+        }
+        else if (mode === 'x' && !xOk) {
+            throw new Error('Table.' + method + ': x must be defined.');
+        }
+        else if (mode === 'y' && !yOk) {
+            throw new Error('Table.' + method + ': y be defined.');
+        }
+    }
+
+    /**
+     * ### validateInput
+     *
+     * Validates user input and throws an error if input is not correct
+     *
+     * @param {string} method The name of the method validating the input
+     * @param {mixed} data The data that will be inserted in the database
+     * @param {number} x Optional. The row index
+     * @param {number} y Optional. The column index
+     * @param {boolean} dataArray TRUE, if data should be an array
+     *
+     * @return {boolean} TRUE, if input passes validation
+     *
+     * @see validateXY
+     */
+    function validateInput(method, data, x, y, dataArray) {
+        validateXY(method, x, y);
+        if (dataArray && !J.isArray(data)) {
+            throw new TypeError('Table.' + method + ': data must be array.');
+        }
+    }
+
+    /**
+     * ### addSpecialCells
+     *
+     * Parses an array of data and returns an array of cells
+     *
+     * @param {array} data Array containing data to transform into cells
+     *
+     * @return {array} The array of cells
+     */
+    function addSpecialCells(data) {
+        var out, i, len;
+        out = [];
+        i = -1;
+        len = data.length;
+        for ( ; ++i < len ; ) {
+            out.push({content: data[i]});
+        }
+        return out;
+    }
+
 
     // # Cell
 
@@ -4789,7 +4915,6 @@
          * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
-
     }
 
 })(

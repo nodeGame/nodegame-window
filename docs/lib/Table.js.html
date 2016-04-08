@@ -28,12 +28,6 @@
         <a href="#table-constructor">Table constructor</a>
       </div>
       <div class="heading h3">
-        <a href="#table.row">Table.row</a>
-      </div>
-      <div class="heading h3">
-        <a href="#table.col">Table.col</a>
-      </div>
-      <div class="heading h3">
         <a href="#table.rowcol">Table.rowcol</a>
       </div>
       <div class="heading h3">
@@ -291,42 +285,32 @@ www.nodegame.org
       </tr>
       <tr>
         <td class="docs">
-<div class="pilwrap" id="table.row">
-  <h3>
-    <a href="#table.row" class="pilcrow">&#182;</a>
-    Table.row
-  </h3>
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 
+<div class="highlight"><pre><code>    <span class="sr">//</span> <span class="c1">### Table.row</span>
+    <span class="sr">//</span> <span class="n">NDDB</span> <span class="n">hash</span> <span class="n">containing</span> <span class="n">elements</span> <span class="n">grouped</span> <span class="n">by</span> <span class="n">row</span> <span class="nb">index</span>
+    <span class="sr">//</span> <span class="nv">@see</span> <span class="n">NDDB</span><span class="o">.</span><span class="n">hash</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">this</span><span class="o">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="s">&#39;row&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">x</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
 
-<p>NDDB hash containing elements grouped by row index
-@see NDDB.hash</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;row&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
-            <span class="p">});</span>
-        <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap" id="table.col">
-  <h3>
-    <a href="#table.col" class="pilcrow">&#182;</a>
-    Table.col
-  </h3>
-</div>
+    <span class="sr">//</span> <span class="c1">### Table.col</span>
+    <span class="sr">//</span> <span class="n">NDDB</span> <span class="n">hash</span> <span class="n">containing</span> <span class="n">elements</span> <span class="n">grouped</span> <span class="n">by</span> <span class="n">column</span> <span class="nb">index</span>
+    <span class="sr">//</span> <span class="nv">@see</span> <span class="n">NDDB</span><span class="o">.</span><span class="n">hash</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">this</span><span class="o">.</span><span class="n">col</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">this</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="s">&#39;col&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">y</span><span class="p">;</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+</code></pre></div>
 
 
-<p>NDDB hash containing elements grouped by column index
-@see NDDB.hash</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">col</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
-            <span class="p">});</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
         </td>
       </tr>
       <tr>
@@ -517,7 +501,7 @@ Default: FALSE</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
 </div>
 <p>Init renderer.</p>
         </td>
@@ -695,7 +679,7 @@ the HTML element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>TODO: check if we can use hashes.</p>
         </td>
@@ -779,7 +763,7 @@ the HTML element.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">header</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setHeader&#39;</span><span class="p">,</span> <span class="nx">header</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setHeader&#39;</span><span class="p">,</span> <span class="nx">header</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">header</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -810,7 +794,7 @@ the HTML element.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setLeft</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">left</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setLeft&#39;</span><span class="p">,</span> <span class="nx">left</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setLeft&#39;</span><span class="p">,</span> <span class="nx">left</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">left</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -841,7 +825,7 @@ the HTML element.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setFooter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">footer</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setFooter&#39;</span><span class="p">,</span> <span class="nx">footer</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">validateInput</span><span class="p">(</span><span class="s1">&#39;setFooter&#39;</span><span class="p">,</span> <span class="nx">footer</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">footer</span> <span class="o">=</span> <span class="nx">addSpecialCells</span><span class="p">(</span><span class="nx">footer</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -956,7 +940,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Horizontal increment: dim === y.</p>
         </td>
@@ -967,7 +951,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>By default, only the second dimension is incremented, so we move</p>
         </td>
@@ -982,7 +966,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>Loop Dim 1.</p>
         </td>
@@ -1000,7 +984,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Loop Dim 2.</p>
         </td>
@@ -1017,7 +1001,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Auto-parse.</p>
         </td>
@@ -1062,7 +1046,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
+  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
 </div>
 <p>Horizontal increment: dim === y.</p>
         </td>
@@ -1298,7 +1282,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
 </div>
 <p>TODO: we could find a better way to update a table, instead of
 removing and re-inserting everything.</p>
@@ -1310,7 +1294,7 @@ removing and re-inserting everything.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>TODO: which one is faster?
 while (this.table.hasChildNodes()) {
@@ -1325,7 +1309,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>HEADER</p>
         </td>
@@ -1337,7 +1321,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>Add an empty cell to balance the left header column.</p>
         </td>
@@ -1357,7 +1341,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>BODY</p>
         </td>
@@ -1370,7 +1354,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>Forces to create a new TR element.</p>
         </td>
@@ -1380,7 +1364,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>TODO: What happens if the are missing at the beginning ??</p>
         </td>
@@ -1401,7 +1385,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>Keep a reference to current TR idx.</p>
         </td>
@@ -1413,7 +1397,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Insert left header, if any.</p>
         </td>
@@ -1424,7 +1408,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>TD.className = this.missing;</p>
         </td>
@@ -1437,7 +1421,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Insert missing cells.</p>
         </td>
@@ -1454,7 +1438,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Normal insert.</p>
         </td>
@@ -1464,7 +1448,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Update old refs.</p>
         </td>
@@ -1477,7 +1461,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>FOOTER.</p>
         </td>
@@ -1955,7 +1939,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
+  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
 </div>
 <p>Adds property: className and content.</p>
         </td>
