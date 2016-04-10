@@ -51,6 +51,9 @@
       <div class="heading h3">
         <a href="#table.autoparse">Table.autoParse</a>
       </div>
+      <div class="heading h3">
+        <a href="#table.autoparse">Table.autoParse</a>
+      </div>
       <div class="heading h2">
         <a href="#table-methods">Table methods</a>
       </div>
@@ -499,9 +502,27 @@ Default: FALSE</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="table.autoparse">
+  <h3>
+    <a href="#table.autoparse" class="pilcrow">&#182;</a>
+    Table.autoParse
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>List of TR elements indexed by their order in the parsed table</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">trs</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
 </div>
 <p>Init renderer.</p>
         </td>
@@ -679,7 +700,7 @@ the HTML element.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>TODO: check if we can use hashes.</p>
         </td>
@@ -708,6 +729,9 @@ the HTML element.</p>
   <div class="body"><p>Returns a reference to the TR element at row (row)</p>
 
 <p>TR elements are generated only after the table is parsed.</p>
+
+<p>Notice! If the table structure is manipulated externally,
+the return value of this method might be inaccurate.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">Params</div>
@@ -728,12 +752,10 @@ the HTML element.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">Table</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTR</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">cell</span><span class="p">;</span>
-        <span class="nx">validateXY</span><span class="p">(</span><span class="s1">&#39;getTR&#39;</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">);</span>
-        <span class="nx">cell</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cell</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">cell</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">row</span> <span class="o">!==</span> <span class="s1">&#39;thead&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">row</span> <span class="o">!==</span> <span class="s1">&#39;tfoot&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">validateXY</span><span class="p">(</span><span class="s1">&#39;getTR&#39;</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">trs</span><span class="p">[</span><span class="nx">row</span><span class="p">]</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -940,7 +962,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>Horizontal increment: dim === y.</p>
         </td>
@@ -951,7 +973,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>By default, only the second dimension is incremented, so we move</p>
         </td>
@@ -966,7 +988,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>Loop Dim 1.</p>
         </td>
@@ -984,7 +1006,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Loop Dim 2.</p>
         </td>
@@ -1001,7 +1023,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
+  <a class="pilcrow" href="#section-31" id="section-31">&#182;</a>
 </div>
 <p>Auto-parse.</p>
         </td>
@@ -1046,7 +1068,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-32" id="section-32">&#182;</a>
+  <a class="pilcrow" href="#section-33" id="section-33">&#182;</a>
 </div>
 <p>Horizontal increment: dim === y.</p>
         </td>
@@ -1282,7 +1304,7 @@ the current one.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-38" id="section-38">&#182;</a>
+  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
 </div>
 <p>TODO: we could find a better way to update a table, instead of
 removing and re-inserting everything.</p>
@@ -1294,7 +1316,7 @@ removing and re-inserting everything.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-39" id="section-39">&#182;</a>
+  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
 </div>
 <p>TODO: which one is faster?
 while (this.table.hasChildNodes()) {
@@ -1309,19 +1331,22 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-40" id="section-40">&#182;</a>
+  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
 </div>
 <p>HEADER</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">THEAD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;thead&#39;</span><span class="p">);</span>
-            <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span></pre></div>
+
+            <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">(</span><span class="nx">TR</span><span class="p">,</span> <span class="s1">&#39;thead&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">trs</span><span class="p">[</span><span class="s1">&#39;thead&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">TR</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-41" id="section-41">&#182;</a>
+  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
 </div>
 <p>Add an empty cell to balance the left header column.</p>
         </td>
@@ -1341,7 +1366,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-42" id="section-42">&#182;</a>
+  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
 </div>
 <p>BODY</p>
         </td>
@@ -1354,7 +1379,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
 </div>
 <p>Forces to create a new TR element.</p>
         </td>
@@ -1364,7 +1389,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
 </div>
 <p>TODO: What happens if the are missing at the beginning ??</p>
         </td>
@@ -1379,13 +1404,16 @@ while (this.table.hasChildNodes()) {
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">trid</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">(</span><span class="nx">TR</span><span class="p">,</span> <span class="nx">trid</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">trs</span><span class="p">[</span><span class="nx">trid</span><span class="p">]</span> <span class="o">=</span> <span class="nx">TR</span><span class="p">;</span>
+
                     <span class="nx">TBODY</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">TR</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
 </div>
 <p>Keep a reference to current TR idx.</p>
         </td>
@@ -1397,7 +1425,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Insert left header, if any.</p>
         </td>
@@ -1408,7 +1436,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>TD.className = this.missing;</p>
         </td>
@@ -1421,7 +1449,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Insert missing cells.</p>
         </td>
@@ -1438,7 +1466,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Normal insert.</p>
         </td>
@@ -1448,7 +1476,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
 </div>
 <p>Update old refs.</p>
         </td>
@@ -1461,13 +1489,16 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
 </div>
 <p>FOOTER.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">footer</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">footer</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">TFOOT</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tfoot&#39;</span><span class="p">);</span>
+
             <span class="nx">TR</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">trCb</span><span class="p">(</span><span class="nx">TR</span><span class="p">,</span> <span class="s1">&#39;tfoot&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">trs</span><span class="p">[</span><span class="s1">&#39;tfoot&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">TR</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">header</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">TD</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">);</span>
@@ -1577,8 +1608,10 @@ while (this.table.hasChildNodes()) {
         <span class="nx">validateXY</span><span class="p">(</span><span class="s1">&#39;addClass&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
 
         <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
@@ -1654,9 +1687,10 @@ while (this.table.hasChildNodes()) {
         <span class="nx">validateXY</span><span class="p">(</span><span class="s1">&#39;removeClass&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
 
         <span class="nx">db</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
-
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">x</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">x</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">y</span><span class="p">)</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">and</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nx">y</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="nx">db</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
@@ -1939,7 +1973,7 @@ while (this.table.hasChildNodes()) {
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-62" id="section-62">&#182;</a>
+  <a class="pilcrow" href="#section-63" id="section-63">&#182;</a>
 </div>
 <p>Adds property: className and content.</p>
         </td>
