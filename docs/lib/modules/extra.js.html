@@ -51,6 +51,9 @@
       <div class="heading h3">
         <a href="#gamewindow.addeventbutton">GameWindow.addEventButton</a>
       </div>
+      <div class="heading h3">
+        <a href="#gamewindow.setinnerhtml">GameWindow.setInnerHTML</a>
+      </div>
       <div class="heading h2">
         <a href="#helper-functions">Helper Functions</a>
       </div>
@@ -711,6 +714,100 @@ in the current screen.</p>
       </tr>
       <tr>
         <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>TODO: continue here.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.setinnerhtml">
+  <h3>
+    <a href="#gamewindow.setinnerhtml" class="pilcrow">&#182;</a>
+    GameWindow.setInnerHTML
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Replaces the innerHTML property of the element/s specified</p>
+
+<p>The function accept different input parameters </p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">Elements</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">object</span>
+      <span class="dox_type">array</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">values</span>
+      <span class="dox_type">object</span>
+      <span>Optional The values for html</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">boolean</span>
+      <span>TRUE, if all elements were found</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setInnerHTML</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elements</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">lenValues</span><span class="p">;</span>
+        <span class="nx">res</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elements</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setInnerHTML: values must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;string, if elements is string.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elements</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">values</span><span class="p">;</span>
+            <span class="k">else</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">elements</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">values</span><span class="p">)</span> <span class="nx">values</span> <span class="o">=</span> <span class="p">[</span><span class="nx">values</span><span class="p">];</span>
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">values</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setInnerHTML: values must be &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;string or non-empty array, if elements &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;is string.&#39;</span><span class="p">);</span>                
+            <span class="p">}</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">lenValues</span> <span class="o">=</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="p">;</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">elements</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">values</span><span class="p">[</span><span class="nx">i</span> <span class="o">%</span> <span class="nx">lenValues</span><span class="p">];</span>
+                <span class="k">else</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">elements</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;GameWindow.setInnerHTML: elements is &#39;</span> <span class="o">+</span>
+                          <span class="s1">&#39;object, therefore values will be ignored.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">elements</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">elements</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">elements</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">else</span> <span class="nx">res</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>            
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setInnerHTML: elements must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string, array, or object.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
 <div class="pilwrap" id="helper-functions">
   <h2>
     <a href="#helper-functions" class="pilcrow">&#182;</a>
@@ -758,7 +855,7 @@ in the current screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Set to state, or toggle.</p>
         </td>
@@ -781,7 +878,7 @@ in the current screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
