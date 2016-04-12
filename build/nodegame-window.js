@@ -4164,7 +4164,7 @@
             this.table.className = options.className;
         }
         else if (J.isArray(options.className)) {
-            this.table.className = className.join(' ');
+            this.table.className = options.className.join(' ');
         }
         else if (options.className) {
             throw new TypeError('Table constructor: options.className must ' +
@@ -4186,7 +4186,7 @@
             this.missingClassName = options.missingClassName;
         }
         else if (J.isArray(options.missingClassName)) {
-            this.missingClassName = missingClassName.join(' ');
+            this.missingClassName = options.missingClassName.join(' ');
         }
         else if (options.missingClassName) {
             throw new TypeError('Table constructor: options.className must ' +
@@ -4201,6 +4201,32 @@
          */
         this.autoParse = 'undefined' !== typeof options.autoParse ?
             options.autoParse : false;
+
+        /**
+         * ### Table.trs
+         *
+         * List of TR elements indexed by their order in the parsed table
+         */
+        this.trs = {};
+
+        /**
+         * ### Table.trCb
+         *
+         * Callback function applied to each TR HTML element
+         *
+         * Callback receives the HTML element, and the row index, or
+         * 'thead' and 'tfoot' for header and footer.
+         */
+        if ('function' === typeof options.tr) {
+            this.trCb = options.tr;
+        }
+        else if ('undefined' === typeof options.tr) {
+            this.trCb = null;
+        }
+        else {
+            throw new TypeError('Table constructor: options.tr must be ' +
+                                'function or undefined.');
+        }
 
         // Init renderer.
         this.initRenderer(options.render);
@@ -4300,18 +4326,19 @@
      *
      * TR elements are generated only after the table is parsed.
      *
+     * Notice! If the table structure is manipulated externally,
+     * the return value of this method might be inaccurate.
+     *
      * @param {number} row The row number
      *
      * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
      *   cannot be found
      */
     Table.prototype.getTR = function(row) {
-        var cell;
-        validateXY('getTR', row, undefined, 'x');
-        cell = this.get(row, 0);
-        if (!cell) return false;
-        if (!cell.HTMLElement) return false;
-        return cell.HTMLElement.parentNode;
+        if (row !== 'thead' && row !== 'tfoot') {
+            validateXY('getTR', row, undefined, 'x');
+        }
+        return this.trs[row] || false;
     };
 
     /**
@@ -4576,7 +4603,10 @@
         // HEADER
         if (this.header && this.header.length) {
             THEAD = document.createElement('thead');
+
             TR = document.createElement('tr');
+            if (this.trCb) this.trCb(TR, 'thead');
+            this.trs.thead = TR;
 
             // Add an empty cell to balance the left header column.
             if (this.left && this.left.length) {
@@ -4612,6 +4642,9 @@
 
                 if (trid !== this.db[i].x) {
                     TR = document.createElement('tr');
+                    if (this.trCb) this.trCb(TR, (trid+1));
+                    this.trs[(trid+1)] = TR;
+
                     TBODY.appendChild(TR);
 
                     // Keep a reference to current TR idx.
@@ -4650,7 +4683,10 @@
         // FOOTER.
         if (this.footer && this.footer.length) {
             TFOOT = document.createElement('tfoot');
+
             TR = document.createElement('tr');
+            if (this.trCb) this.trCb(TR, 'tfoot');
+            this.trs.tfoot = TR;
 
             if (this.header && this.header.length) {
                 TD = document.createElement('td');
@@ -4713,8 +4749,10 @@
         validateXY('addClass', x, y);
 
         db = this;
-        if ('undefined' !== typeof x) db = db.select('x', '=', x);
-        if ('undefined' !== typeof x) db = db.and('y', '=', y);
+        if (!('undefined' === typeof x && 'undefined' === typeof y)) {
+            if ('undefined' !== typeof x) db = db.select('x', '=', x);
+            if ('undefined' !== typeof y) db = db.and('y', '=', y);
+        }
 
         db.each(function(el) {
             W.addClass(el, className);
@@ -4749,7 +4787,7 @@
             func = W.removeClass;
         }
         else if (null === className) {
-            func = function(el) { el.className = '' };
+            func = function(el) { el.className = ''; };
         }
         else {
             throw new TypeError('Table.removeClass: className must be ' +
@@ -4759,9 +4797,10 @@
         validateXY('removeClass', x, y);
 
         db = this;
-        if ('undefined' !== typeof x) db = db.select('x', '=', x);
-        if ('undefined' !== typeof x) db = db.and('y', '=', y);
-
+        if (!('undefined' === typeof x && 'undefined' === typeof y)) {
+            if ('undefined' !== typeof x) db = db.select('x', '=', x);
+            if ('undefined' !== typeof y) db = db.and('y', '=', y);
+        }
 
         db.each(function(el) {
             func.call(this, el, className);
