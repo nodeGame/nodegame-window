@@ -3311,7 +3311,7 @@ and store cacheOnClose flag:</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
 </div>
-<p>Executes callback
+<p>Executes callback, autoParses,
 and updates GameWindow state.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span>
@@ -3452,8 +3452,9 @@ and updates GameWindow state.</p>
 <p>The method performs the following operations:</p>
 
 <ul>
-<li>executes a given callback function</li>
 <li>decrements the counter of loading iframes</li>
+<li>executes a given callback function</li>
+<li>auto parses the elements specified (if any)</li>
 <li>set the window state as loaded (eventually)</li>
 </ul>
   </div>

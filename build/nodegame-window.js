@@ -1543,7 +1543,7 @@
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback
+                                    // Executes callback, autoParses,
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
@@ -1605,8 +1605,9 @@
      *
      * The method performs the following operations:
      *
-     * - executes a given callback function
      * - decrements the counter of loading iframes
+     * - executes a given callback function
+     * - auto parses the elements specified (if any)
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
@@ -3447,54 +3448,6 @@
         return root.appendChild(eb);
     };
 
-// TODO: To remove.
-//     GameWindow.prototype.setInnerHTML2 = function(elements, values) {
-//         var el, i, len, res, lenValues;
-//         res = true;
-//         if ('string' === typeof elements) {
-//             if ('string' !== typeof values) {
-//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                     'string, if elements is string.');
-//             }
-//             el = W.getElementById(elements);
-//             if (el) el.innerHTML = values;
-//             else res = false;
-//         }
-//         else if (J.isArray(elements)) {
-//             if ('string' === typeof values) values = [values];
-//             else if (!J.isArray(values) || !values.length) {
-//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                     'string or non-empty array, if elements ' +
-//                                     'is string.');
-//             }
-//             i = -1, len = elements.length, lenValues = values.length;
-//             for ( ; ++i < len ; ) {
-//                 el = W.getElementById(elements[i]);
-//                 if (el) el.innerHTML = values[i % lenValues];
-//                 else res = false;
-//             }
-//         }
-//         else if ('object' === typeof elements) {
-//             if ('undefined' !== typeof values) {
-//                 node.warn('GameWindow.setInnerHTML: elements is ' +
-//                           'object, therefore values will be ignored.');
-//             }
-//             for (i in elements) {
-//                 if (elements.hasOwnProperty(i)) {
-//                     el = W.getElementById(i);
-//                     if (el) el.innerHTML = elements[i];
-//                     else res = false;
-//                 }
-//             }
-//         }
-//         else {
-//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                                 'string, array, or object.');
-//         }
-//         return res;
-//     };
-
-
     /**
      * ### GameWindow.setInnerHTML
      *
@@ -3589,6 +3542,53 @@
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
+
+
+// GameWindow.prototype.setInnerHTML2 = function(elements, values) {
+//     var el, i, len, res, lenValues;
+//     res = true;
+//     if ('string' === typeof elements) {
+//         if ('string' !== typeof values) {
+//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                 'string, if elements is string.');
+//         }
+//         el = W.getElementById(elements);
+//         if (el) el.innerHTML = values;
+//         else res = false;
+//     }
+//     else if (J.isArray(elements)) {
+//         if ('string' === typeof values) values = [values];
+//         else if (!J.isArray(values) || !values.length) {
+//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                 'string or non-empty array, if elements ' +
+//                                 'is string.');
+//         }
+//         i = -1, len = elements.length, lenValues = values.length;
+//         for ( ; ++i < len ; ) {
+//             el = W.getElementById(elements[i]);
+//             if (el) el.innerHTML = values[i % lenValues];
+//             else res = false;
+//         }
+//     }
+//     else if ('object' === typeof elements) {
+//         if ('undefined' !== typeof values) {
+//             node.warn('GameWindow.setInnerHTML: elements is ' +
+//                       'object, therefore values will be ignored.');
+//         }
+//         for (i in elements) {
+//             if (elements.hasOwnProperty(i)) {
+//                 el = W.getElementById(i);
+//                 if (el) el.innerHTML = elements[i];
+//                 else res = false;
+//             }
+//         }
+//     }
+//     else {
+//         throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+//                             'string, array, or object.');
+//     }
+//     return res;
+// };
 
 // Creates a new GameWindow instance in the global scope.
 (function() {
