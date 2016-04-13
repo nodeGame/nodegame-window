@@ -1,5 +1,11 @@
 # nodegame-window change log
 
+## 1.1.0 (current)
+
+- `#setInnerHTML()` method to set the .innerHTML property of a list of HTML elements identified by id or classname.
+- Updated Table class (easier to handle TR).
+
+
 ## 1.0.1
  - GameWindow.getElementsByClassName changed syntax. By default looks up in iframe now.
 
