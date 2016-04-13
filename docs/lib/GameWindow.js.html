@@ -3512,7 +3512,7 @@ and updates GameWindow state.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">CB_EXECUTED</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">CB_EXECUTED</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;game-window: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span> <span class="s1">&#39; frames &#39;</span> <span class="o">+</span>
