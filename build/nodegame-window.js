@@ -1,6 +1,6 @@
 /**
  * # GameWindow
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow provides a handy API to interface nodeGame with the
@@ -1392,6 +1392,7 @@
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
+        var autoParse, autoParsePrefix;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
@@ -1474,6 +1475,22 @@
             }
         }
 
+        if ('undefined' !== typeof opts.autoParse) {
+            if ('object' !== typeof opts.autoParse) {
+                throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
+                                    'must be object or undefined.');
+            }
+            if ('undefined' !== typeof opts.autoParsePrefix) {
+                if ('string' !== typeof opts.autoParsePrefix) {
+                    throw new TypeError('GameWindow.loadFrame: opts.' +
+                                        'autoParsePrefix must be string ' +
+                                        'or undefined.');
+                }
+                autoParsePrefix = opts.autoParsePrefix;
+            }
+            autoParse = opts.autoParse;
+        }
+
         // Adapt the uri if necessary.
         uri = this.processUri(uri);
 
@@ -1528,7 +1545,9 @@
 
                                     // Executes callback
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func);
+                                    that.updateLoadFrameState(func,
+                                                              autoParse,
+                                                              autoParsePrefix);
                                 });
             });
         }
@@ -1546,7 +1565,9 @@
 
                                     // Executes callback
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func);
+                                    that.updateLoadFrameState(func,
+                                                              autoParse,
+                                                              autoParsePrefix);
                                 });
             }
         }
@@ -1589,17 +1610,25 @@
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
+     * @param {object} autoParse Optional. An object containing elements
+     *    to replace in the HTML DOM.
+     * @param {string} autoParsePrefix Optional. Custom prefix to add to the
+     *    keys of the elements in autoParse object
      *
+     * @see GameWindow.setInnerHTML
      * @see updateAreLoading
      *
      * @emit FRAME_LOADED
      * @emit LOADED
      */
-    GameWindow.prototype.updateLoadFrameState = function(func) {
+    GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
+                                                         autoParsePrefix) {
+
         var loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
         if (func) func.call(node.game);
+        if (autoParse) this.setInnerHTML(autoParse, autoParsePrefix);
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -1608,7 +1637,7 @@
 
         if (loaded) {
             stageLevel = node.game.getStageLevel();
-            if (stageLevel === CB_EXECUTED) node.emit('LOADED');
+            if (stageLevel === CB_EXECUTED) node.emitAsync('LOADED');
         }
         else {
             node.silly('game-window: ' + this.areLoading + ' frames ' +
@@ -3416,6 +3445,112 @@
         eb = this.getEventButton(event, text, id, attributes);
 
         return root.appendChild(eb);
+    };
+
+// TODO: To remove.
+//     GameWindow.prototype.setInnerHTML2 = function(elements, values) {
+//         var el, i, len, res, lenValues;
+//         res = true;
+//         if ('string' === typeof elements) {
+//             if ('string' !== typeof values) {
+//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                     'string, if elements is string.');
+//             }
+//             el = W.getElementById(elements);
+//             if (el) el.innerHTML = values;
+//             else res = false;
+//         }
+//         else if (J.isArray(elements)) {
+//             if ('string' === typeof values) values = [values];
+//             else if (!J.isArray(values) || !values.length) {
+//                 throw new TypeError('GameWindow.setInnerHTML: values must be ' +
+//                                     'string or non-empty array, if elements ' +
+//                                     'is string.');
+//             }
+//             i = -1, len = elements.length, lenValues = values.length;
+//             for ( ; ++i < len ; ) {
+//                 el = W.getElementById(elements[i]);
+//                 if (el) el.innerHTML = values[i % lenValues];
+//                 else res = false;
+//             }
+//         }
+//         else if ('object' === typeof elements) {
+//             if ('undefined' !== typeof values) {
+//                 node.warn('GameWindow.setInnerHTML: elements is ' +
+//                           'object, therefore values will be ignored.');
+//             }
+//             for (i in elements) {
+//                 if (elements.hasOwnProperty(i)) {
+//                     el = W.getElementById(i);
+//                     if (el) el.innerHTML = elements[i];
+//                     else res = false;
+//                 }
+//             }
+//         }
+//         else {
+//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+//                                 'string, array, or object.');
+//         }
+//         return res;
+//     };
+
+
+    /**
+     * ### GameWindow.setInnerHTML
+     *
+     * Replaces the innerHTML of the element/s with matching id or class name
+     *
+     * It locates all the elements with classname or id equal
+     * to [prefix] + key and sets the innerHTML property accordintgly.
+     *
+     * @param {object} Elements defined as key-value pairs. If value is
+     *    not a string or a number it will be skipped.
+     * @param {string} prefix Optional. Prefix added in the search string.
+     *    Default: 'ng_replace_'.
+     */
+    GameWindow.prototype.setInnerHTML = function(elements, prefix) {
+        var el, name, text, search, len, i;
+
+        if ('object' !== typeof elements) {
+            throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+                                'object.');
+        }
+        if (prefix) {
+            if ('string' !== typeof prefix) {
+                throw new TypeError('GameWindow.setInnerHTML: prefix must be ' +
+                                    'string or undefined.');
+            }
+        }
+        else {
+            prefix = 'ng_replace_';
+        }
+
+        for (name in elements) {
+            if (elements.hasOwnProperty(name)) {
+                text = elements[name];
+                // Only process strings.
+                if ('string' !== typeof text && 'number' !== typeof text) {
+                    node.warn('GameWindow.setInnerHTML: key "' + name +
+                              '" does not contain a string value. Ignored.');
+                }
+                // Compose name with prefix and lower case.
+                search = (prefix + name).toLowerCase();
+
+                // Look by id.
+                el = W.getElementById(search);
+                if (el && el.className !== search) el.innerHTML = text;
+
+                // Look by class name.
+                el = W.getElementsByClassName(search);
+                len = el.length;
+                if (len) {
+                    i = -1;
+                    for ( ; ++i < len ; ) {
+                        elements[i].innerHTML = text;
+                    }
+                }
+            }
+        }
     };
 
     // ## Helper Functions

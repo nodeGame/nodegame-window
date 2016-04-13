@@ -3043,6 +3043,7 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">loadCache</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">storeCacheNow</span><span class="p">,</span> <span class="nx">storeCacheLater</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">autoParse</span><span class="p">,</span> <span class="nx">autoParsePrefix</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">,</span> <span class="nx">iframeDocument</span><span class="p">,</span> <span class="nx">iframeWindow</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">frameDocumentElement</span><span class="p">,</span> <span class="nx">frameReady</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">lastURI</span><span class="p">;</span>
@@ -3168,6 +3169,22 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                                     <span class="s1">&#39;.&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.autoParse &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be object or undefined.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.&#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;autoParsePrefix must be string &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">autoParsePrefix</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">autoParse</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -3297,7 +3314,9 @@ and store cacheOnClose flag:</p>
 <p>Executes callback
 and updates GameWindow state.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span>
+                                                              <span class="nx">autoParse</span><span class="p">,</span>
+                                                              <span class="nx">autoParsePrefix</span><span class="p">);</span>
                                 <span class="p">});</span>
             <span class="p">});</span>
         <span class="p">}</span></pre></div>
@@ -3345,7 +3364,9 @@ iframe.onload handles the filling of the contents.</p>
 <p>Executes callback
 and updates GameWindow state.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span>
+                                                              <span class="nx">autoParse</span><span class="p">,</span>
+                                                              <span class="nx">autoParsePrefix</span><span class="p">);</span>
                                 <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -3443,6 +3464,22 @@ and updates GameWindow state.</p>
       <span class="dox_type">function</span>
       <span>Optional. A callback function</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">autoParse</span>
+      <span class="dox_type">object</span>
+      <span>Optional. An object containing elements
+   to replace in the HTML DOM.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">autoParsePrefix</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Custom prefix to add to the
+   keys of the elements in autoParse object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.setInnerHTML</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">updateAreLoading
@@ -3451,11 +3488,14 @@ and updates GameWindow state.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateLoadFrameState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateLoadFrameState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">autoParse</span><span class="p">,</span>
+                                                         <span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">loaded</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">;</span>
         <span class="nx">loaded</span> <span class="o">=</span> <span class="nx">updateAreLoading</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">autoParse</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setInnerHTML</span><span class="p">(</span><span class="nx">autoParse</span><span class="p">,</span> <span class="nx">autoParsePrefix</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3471,7 +3511,7 @@ and updates GameWindow state.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">stageLevel</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">getStageLevel</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">CB_EXECUTED</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">stageLevel</span> <span class="o">===</span> <span class="nx">CB_EXECUTED</span><span class="p">)</span> <span class="nx">node</span><span class="p">.</span><span class="nx">emitAsync</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">silly</span><span class="p">(</span><span class="s1">&#39;game-window: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">areLoading</span> <span class="o">+</span> <span class="s1">&#39; frames &#39;</span> <span class="o">+</span>
