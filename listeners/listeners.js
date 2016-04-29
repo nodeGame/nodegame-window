@@ -54,18 +54,24 @@
 
         node.on('HIDE', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.HIDE is deprecated. Use ' +
+                        'GameWindow.hide() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.HIDE');
             if (el) el.style.display = 'none';
         });
 
         node.on('SHOW', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.SHOW is deprecated. Use ' +
+                        'GameWindow.show() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.SHOW');
             if (el) el.style.display = '';
         });
 
         node.on('TOGGLE', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
+                        'GameWindow.toggle() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
             if (el) {
                 if (el.style.display === 'none') {

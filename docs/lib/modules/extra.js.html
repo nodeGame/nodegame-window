@@ -55,10 +55,22 @@
         <a href="#gamewindow.setinnerhtml">GameWindow.setInnerHTML</a>
       </div>
       <div class="heading h2">
+        <a href="#gamewindow.hide">GameWindow.hide</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamewindow.show">GameWindow.show</a>
+      </div>
+      <div class="heading h2">
+        <a href="#gamewindow.toggle">GameWindow.toggle</a>
+      </div>
+      <div class="heading h2">
         <a href="#helper-functions">Helper Functions</a>
       </div>
       <div class="heading h3">
         <a href="#toggleinputs">toggleInputs</a>
+      </div>
+      <div class="heading h3">
+        <a href="#getelement">getElement</a>
       </div>
     </div>
   </div>
@@ -822,6 +834,170 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.hide">
+  <h2>
+    <a href="#gamewindow.hide" class="pilcrow">&#182;</a>
+    GameWindow.hide
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets and hides an HTML element</p>
+
+<p>Sets the style of the display to 'none'</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">idOrObj</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The id of or the HTML element itself</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The hidden element, if found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">getElement
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hide</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.hide&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.show">
+  <h2>
+    <a href="#gamewindow.show" class="pilcrow">&#182;</a>
+    GameWindow.show
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets and shows (makes visible) an HTML element</p>
+
+<p>Sets the style of the display to ''.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">idOrObj</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The id of or the HTML element itself</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">display</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The value of the display attribute.
+   Default: '' (empty string).</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The shown element, if found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">getElement
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="nx">display</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+        <span class="nx">display</span> <span class="o">=</span> <span class="nx">display</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">display</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.show: display must be string or &#39;</span>
+                                <span class="s1">&#39;undefined&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.show&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="nx">display</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.toggle">
+  <h2>
+    <a href="#gamewindow.toggle" class="pilcrow">&#182;</a>
+    GameWindow.toggle
+  </h2>
+</div>
+
+  </div>
+  <div class="body"><p>Gets and toggles the visibility of an HTML element</p>
+
+<p>Sets the style of the display to ''.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">idOrObj</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The id of or the HTML element itself</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">display</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The value of the display attribute
+   in case it will be set visible. Default: '' (empty string).</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The toggled element, if found</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">getElement
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toggle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="nx">display</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.toggle&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">display</span> <span class="o">=</span> <span class="nx">display</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">display</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.toggle: display must &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;be string or undefined&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="nx">display</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap" id="helper-functions">
   <h2>
@@ -870,7 +1046,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Set to state, or toggle.</p>
         </td>
@@ -885,6 +1061,61 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="getelement">
+  <h3>
+    <a href="#getelement" class="pilcrow">&#182;</a>
+    getElement
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Gets the element or returns it</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">The</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>id or the HTML element itself</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The HTML Element</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.getElementById</span>
+    </div>
+    <div class="dox_tag_title">API</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">private
+</span>
+    </span>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">el</span> <span class="o">=</span> <span class="nx">idOrObj</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;: idOrObj must be string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39; or HTML Element.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
     <span class="p">}</span>
 
 <span class="p">})(</span></pre></div>
@@ -893,7 +1124,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
@@ -906,7 +1137,7 @@ to the node.js module object is for testing purpose only</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-24" id="section-24">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>GameWindow.prototype.setInnerHTML2 = function(elements, values) {
     var el, i, len, res, lenValues;

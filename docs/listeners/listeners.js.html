@@ -119,18 +119,24 @@ MIT Licensed</p>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;HIDE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.HIDE is deprecated. Use &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;GameWindow.hide() instead.***&#39;</span><span class="p">);</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.HIDE&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
         <span class="p">});</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;SHOW&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.SHOW is deprecated. Use &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;GameWindow.show() instead.***&#39;</span><span class="p">);</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.SHOW&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">});</span>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.TOGGLE is deprecated. Use &#39;</span> <span class="o">+</span>
+                        <span class="s1">&#39;GameWindow.toggle() instead.***&#39;</span><span class="p">);</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.TOGGLE&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
