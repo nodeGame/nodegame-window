@@ -1113,7 +1113,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">prefix</span> <span class="o">+</span> <span class="s1">&#39;: idOrObj must be string &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39; or HTML Element.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39; or HTML Element. Found: &#39;</span> <span class="o">+</span> <span class="nx">idOrObj</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="nx">el</span><span class="p">;</span>
     <span class="p">}</span>

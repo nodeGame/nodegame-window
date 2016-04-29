@@ -3640,12 +3640,12 @@
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
         }
-        else if (J.isElement(idOrObj)) {
+        else if (idOrObj && J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
             throw new TypeError(prefix + ': idOrObj must be string ' +
-                                ' or HTML Element.');
+                                ' or HTML Element. Found: ' + idOrObj);
         }
         return el;
     }
