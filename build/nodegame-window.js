@@ -1638,7 +1638,7 @@
 
         if (loaded) {
             stageLevel = node.game.getStageLevel();
-            if (stageLevel === CB_EXECUTED) node.emitAsync('LOADED');
+            if (stageLevel === CB_EXECUTED) node.emit('LOADED');
         }
         else {
             node.silly('game-window: ' + this.areLoading + ' frames ' +
@@ -2480,18 +2480,24 @@
 
         node.on('HIDE', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.HIDE is deprecated. Use ' +
+                        'GameWindow.hide() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.HIDE');
             if (el) el.style.display = 'none';
         });
 
         node.on('SHOW', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.SHOW is deprecated. Use ' +
+                        'GameWindow.show() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.SHOW');
             if (el) el.style.display = '';
         });
 
         node.on('TOGGLE', function(idOrObj) {
             var el;
+            console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
+                        'GameWindow.toggle() instead.***');
             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
             if (el) {
                 if (el.style.display === 'none') {
@@ -3506,6 +3512,87 @@
         }
     };
 
+    /**
+     * ## GameWindow.hide
+     *
+     * Gets and hides an HTML element
+     *
+     * Sets the style of the display to 'none'
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     *
+     * @return {HTMLElement} The hidden element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.hide = function(idOrObj) {
+        var el;
+        el = getElement(idOrObj, 'GameWindow.hide');
+        if (el) el.style.display = 'none';
+        return el;
+    };
+
+    /**
+     * ## GameWindow.show
+     *
+     * Gets and shows (makes visible) an HTML element
+     *
+     * Sets the style of the display to ''.
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     * @param {string} display Optional. The value of the display attribute.
+     *    Default: '' (empty string).
+     *
+     * @return {HTMLElement} The shown element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.show = function(idOrObj, display) {
+        var el;
+        display = display || '';
+        if ('string' !== typeof display) {
+            throw new TypeError('GameWindow.show: display must be ' +
+                                'string or undefined');
+        }
+        el = getElement(idOrObj, 'GameWindow.show');
+        if (el) el.style.display = display;
+        return el;
+    };
+
+   /**
+     * ## GameWindow.toggle
+     *
+     * Gets and toggles the visibility of an HTML element
+     *
+     * Sets the style of the display to ''.
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     * @param {string} display Optional. The value of the display attribute
+     *    in case it will be set visible. Default: '' (empty string).
+     *
+     * @return {HTMLElement} The toggled element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.toggle = function(idOrObj, display) {
+        var el;
+        el = getElement(idOrObj, 'GameWindow.toggle');
+        if (el) {
+            if (el.style.display === 'none') {
+                display = display || '';
+                if ('string' !== typeof display) {
+                    throw new TypeError('GameWindow.toggle: display must ' +
+                                        'be string or undefined');
+                }
+                el.style.display = display;
+            }
+            else {
+                el.style.display = 'none';
+            }
+        }
+        return el;
+    };
+
     // ## Helper Functions
 
     /**
@@ -3534,6 +3621,33 @@
                 }
             }
         }
+    }
+
+    /**
+     * ### getElement
+     *
+     * Gets the element or returns it
+     *
+     * @param {string|HTMLElement} The id or the HTML element itself
+     *
+     * @return {HTMLElement} The HTML Element
+     *
+     * @see GameWindow.getElementById
+     * @api private
+     */
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = W.getElementById(idOrObj);
+        }
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
+        }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element.');
+        }
+        return el;
     }
 
 })(
