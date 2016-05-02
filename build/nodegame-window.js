@@ -438,7 +438,7 @@
             this.restoreOnleave();
         }
 
-        if (this.conf.noEscape) {
+        if ('undefined' === typeof this.conf.noEscape || this.conf.noEscape) {
             this.noEscape();
         }
         else if (this.conf.noEscape === false) {
@@ -1755,6 +1755,10 @@
             if (that.conf.rightClickDisabled) {
                 J.disableRightClick(that.frameDocument);
             }
+            // Track onkeydown Escape.
+            if (that.conf.noEscape) {
+                that.frameDocument.onkeydown = document.onkeydown;
+            }
         }
 
         // (Re-)Inject libraries and reload scripts:
@@ -2219,14 +2223,16 @@
      * @param {object} windowObj Optional. The window container in which
      *   to bind the ESC key
      */
-    GameWindow.prototype.noEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = function(e) {
+    GameWindow.prototype.noEscape = function() {
+        var frameDocument;
+        // AddEventListener seems not to work
+        // as it does not stop other listeners.
+        window.document.onkeydown = function(e) {
             var keyCode = (window.event) ? event.keyCode : e.keyCode;
-            if (keyCode === 27) {
-                return false;
-            }
+            if (keyCode === 27) return false;
         };
+        frameDocument = this.getFrameDocument();
+        if (frameDocument) frameDocument.onkeydown = window.document.onkeydown;
         this.conf.noEscape = true;
     };
 
@@ -2240,9 +2246,11 @@
      *
      * @see GameWindow.noEscape()
      */
-    GameWindow.prototype.restoreEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = null;
+    GameWindow.prototype.restoreEscape = function() {
+        var frameDocument;
+        window.document.onkeydown = null;
+        frameDocument = this.getFrameDocument();
+        if (frameDocument) frameDocument.onkeydown = null;
         this.conf.noEscape = false;
     };
 
@@ -3640,7 +3648,7 @@
         if ('string' === typeof idOrObj) {
             el = W.getElementById(idOrObj);
         }
-        else if (idOrObj && J.isElement(idOrObj)) {
+        else if (J.isElement(idOrObj)) {
             el = idOrObj;
         }
         else {
