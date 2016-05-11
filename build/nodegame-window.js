@@ -94,7 +94,7 @@
         function completed(event) {
             var iframeDoc;
 
-            // IE < 10 gives 'Permission Denied' if trying to access
+            // IE < 10 (also 11?) gives 'Permission Denied' if trying to access
             // the iframeDoc from the context of the function above.
             // We need to re-get it from the DOM.
             iframeDoc = J.getIFrameDocument(iframe);
@@ -689,16 +689,19 @@
      * @return {Document} The document object of the iframe of the game
      *
      * @see GameWindow.getFrame
+     * @see GameWindow.testDirectFrameDocumentAccess
      */
     GameWindow.prototype.getFrameDocument = function() {
         var iframe;
         if (!this.frameDocument || this.stateLevel === WIN_LOADING) {
             iframe = this.getFrame();
-            this.frameDocument = iframe ? this.getIFrameDocument(iframe) :
-                null;
+            if (!iframe) return null;
+            this.frameDocument = this.getIFrameDocument(iframe);
         }
-        return this.frameDocument;
-
+        // Some IEs give permission denied when accessing the frame document
+        // directly. We need to re-get it from the DOM.
+        if (this.directFrameDocumentAccess) return this.frameDocument;
+        else return J.getIFrameDocument(this.getFrame());
     };
 
     /**
@@ -778,6 +781,9 @@
         if (this.frameElement) {
             adaptFrame2HeaderPosition(this);
         }
+
+        // Check if the browser supports it and stores the value.
+        testDirectFrameDocumentAccess(this);
 
         return iframe;
     };
@@ -1977,6 +1983,30 @@
                                               W.frameElement.nextSibling);
             }
             break;
+        }
+    }
+
+    /**
+     * ### testDirectFrameDocumentAccess
+     *
+     * Tests whether the content of the frameDocument can be accessed directly
+     *
+     * The value of the test is stored under `directFrameDocumentAccess`.
+     *
+     * Some IEs give 'Permission denied' when accessing the frame document
+     * directly. In such a case, we need to re-get it from the DOM.
+     *
+     * @param {GameWindow} that This instance
+     *
+     * @see GameWindow.directFrameDocumentAccess
+     */
+    function testDirectFrameDocumentAccess(that) {
+        try {
+            that.frameDocument.getElementById('test');
+            that.directFrameDocumentAccess = true;
+        }
+        catch(e) {
+            that.directFrameDocumentAccess = false;
         }
     }
 
@@ -3298,8 +3328,8 @@
             // The whole page.
             toggleInputs(disabled);
             if (this.isIE) {
-                // IE < 10 (also 11?) gives 'Permission Denied' if trying to access
-                // the iframeDoc from a stored reference.
+                // IE < 10 (also 11?) gives 'Permission Denied'
+                // if trying to access the iframeDoc from a stored reference.
                 // We need to re-get it from the DOM.
                 container = J.getIFrameDocument(this.getFrame());
             }
