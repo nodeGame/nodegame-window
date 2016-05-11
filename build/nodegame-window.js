@@ -3327,19 +3327,9 @@
         else {
             // The whole page.
             toggleInputs(disabled);
-            if (this.isIE) {
-                // IE < 10 (also 11?) gives 'Permission Denied'
-                // if trying to access the iframeDoc from a stored reference.
-                // We need to re-get it from the DOM.
-                container = J.getIFrameDocument(this.getFrame());
-            }
-            else {
-                container = this.getFrameDocument();
-            }
-            // If there is Frame apply it there too.
-            if (container) {
-                toggleInputs(disabled, container);
-            }
+            container = this.getFrameDocument();
+            // If there is a frame, apply it there too.
+            if (container) toggleInputs(disabled, container);
         }
         return true;
     };
