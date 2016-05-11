@@ -782,9 +782,6 @@
             adaptFrame2HeaderPosition(this);
         }
 
-        // Check if the browser supports it and stores the value.
-        testDirectFrameDocumentAccess(this);
-
         return iframe;
     };
 
@@ -1173,6 +1170,7 @@
             catch(e) {
                 W.cacheSupported = false;
             }
+
             document.body.removeChild(iframe);
             if (cb) cb();
         });
@@ -1545,6 +1543,11 @@
         // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
+
+                if (that.directFrameDocumentAccess === null) {
+                    testDirectFrameDocumentAccess(that);
+                }
+
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
@@ -1562,7 +1565,7 @@
         if (loadCache) {
             // Load iframe contents at this point only if the iframe is already
             // "ready" (see definition of frameReady), otherwise the contents
-            // would be cleared once the iframe becomes ready.  In that case,
+            // would be cleared once the iframe becomes ready. In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
                 // Handles caching.
