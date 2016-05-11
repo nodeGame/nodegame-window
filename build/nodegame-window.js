@@ -840,7 +840,7 @@
      * Clears the content of the frame
      */
     GameWindow.prototype.clearFrame = function() {
-        var iframe, frameName;
+        var iframe, frameName, frameDocument;
         iframe = this.getFrame();
         if (!iframe) {
             throw new Error('GameWindow.clearFrame: cannot detect frame.');
@@ -852,18 +852,28 @@
         // Method .replace does not add the uri to the history.
         //iframe.contentWindow.location.replace('about:blank');
 
-        try {
-            this.getFrameDocument().documentElement.innerHTML = '';
+        frameDocument = this.getFrameDocument();
+        frameDocument.documentElement.innerHTML = '';
+
+        if (this.directFrameDocumentAccess) {
+            frameDocument.documentElement.innerHTML = '';
         }
-        catch(e) {
-            // IE < 10 gives 'Permission Denied' if trying to access
-            // the iframeDoc from the context of the function above.
-            // We need to re-get it from the DOM.
-            if (J.getIFrameDocument(iframe).documentElement) {
-                J.removeChildrenFromNode(
-                    J.getIFrameDocument(iframe).documentElement);
-            }
+        else {
+            J.removeChildrenFromNode(frameDocument.documentElement);
         }
+
+//         try {
+//             this.getFrameDocument().documentElement.innerHTML = '';
+//         }
+//         catch(e) {
+//             // IE < 10 gives 'Permission Denied' if trying to access
+//             // the iframeDoc from the context of the function above.
+//             // We need to re-get it from the DOM.
+//             if (J.getIFrameDocument(iframe).documentElement) {
+//                 J.removeChildrenFromNode(
+//                     J.getIFrameDocument(iframe).documentElement);
+//             }
+//         }
 
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
@@ -1544,6 +1554,10 @@
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
 
+                // Check if direct access to the content of the frame is
+                // allowed. Usually IEs do not allow this. Notice, this
+                // is different from preCaching, and that a newly
+                // generated frame (about:blank) will always be accessible.
                 if (that.directFrameDocumentAccess === null) {
                     testDirectFrameDocumentAccess(that);
                 }
@@ -3189,13 +3203,10 @@
      * @return {Element} The screen
      */
     GameWindow.prototype.getScreen = function() {
-        var el = this.getFrameDocument();
-        if (el) {
-            el = el.body || el;
-        }
-        else {
-            el = document.body || document.lastElementChild;
-        }
+        var el;
+        el = this.getFrameDocument();
+        if (el) el = el.body || el;
+        else el = document.body || document.lastElementChild;
         return el;
     };
 
@@ -3215,12 +3226,9 @@
      * @see GameWindow.writeln
      */
     GameWindow.prototype.write = function(text, root) {
-        if ('string' === typeof root) {
-            root = this.getElementById(root);
-        }
-        else if (!root) {
-            root = this.getScreen();
-        }
+        if ('string' === typeof root) root = this.getElementById(root);
+        else if (!root) root = this.getScreen();
+
         if (!root) {
             throw new
                 Error('GameWindow.write: could not determine where to write.');
@@ -3244,12 +3252,9 @@
      * @see GameWindow.write
      */
     GameWindow.prototype.writeln = function(text, root, br) {
-        if ('string' === typeof root) {
-            root = this.getElementById(root);
-        }
-        else if (!root) {
-            root = this.getScreen();
-        }
+        if ('string' === typeof root) root = this.getElementById(root);
+        else if (!root) root = this.getScreen();
+
         if (!root) {
             throw new Error('GameWindow.writeln: ' +
                             'could not determine where to write.');

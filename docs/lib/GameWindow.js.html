@@ -2004,7 +2004,7 @@ directly. We need to re-get it from the DOM.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">frameDocument</span><span class="p">;</span>
         <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.clearFrame: cannot detect frame.&#39;</span><span class="p">);</span>
@@ -2022,10 +2022,15 @@ directly. We need to re-get it from the DOM.</p>
 <p>Method .replace does not add the uri to the history.
 iframe.contentWindow.location.replace('about:blank');</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">try</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">().</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">frameDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">J</span><span class="p">.</span><span class="nx">removeChildrenFromNode</span><span class="p">(</span><span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2033,17 +2038,24 @@ iframe.contentWindow.location.replace('about:blank');</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
 </div>
-<p>IE &lt; 10 gives 'Permission Denied' if trying to access
-the iframeDoc from the context of the function above.
-We need to re-get it from the DOM.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">).</span><span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">J</span><span class="p">.</span><span class="nx">removeChildrenFromNode</span><span class="p">(</span>
-                    <span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">).</span><span class="nx">documentElement</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">;</span>
+<div class="highlight"><pre><code>    <span class="n">try</span> <span class="p">{</span>
+        <span class="n">this</span><span class="o">.</span><span class="n">getFrameDocument</span><span class="p">()</span><span class="o">.</span><span class="n">documentElement</span><span class="o">.</span><span class="n">innerHTML</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">catch</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="sr">//</span> <span class="n">IE</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="n">gives</span> <span class="s">&#39;Permission Denied&#39;</span> <span class="k">if</span> <span class="n">trying</span> <span class="n">to</span> <span class="n">access</span>
+        <span class="sr">//</span> <span class="n">the</span> <span class="n">iframeDoc</span> <span class="n">from</span> <span class="n">the</span> <span class="n">context</span> <span class="n">of</span> <span class="n">the</span> <span class="n">function</span> <span class="n">above</span><span class="o">.</span>
+        <span class="sr">//</span> <span class="n">We</span> <span class="n">need</span> <span class="n">to</span> <span class="n">re</span><span class="o">-</span><span class="n">get</span> <span class="n">it</span> <span class="n">from</span> <span class="n">the</span> <span class="n">DOM</span><span class="o">.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">getIFrameDocument</span><span class="p">(</span><span class="n">iframe</span><span class="p">)</span><span class="o">.</span><span class="n">documentElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">J</span><span class="o">.</span><span class="n">removeChildrenFromNode</span><span class="p">(</span>
+                <span class="n">J</span><span class="o">.</span><span class="n">getIFrameDocument</span><span class="p">(</span><span class="n">iframe</span><span class="p">)</span><span class="o">.</span><span class="n">documentElement</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">frameWindow</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">frameName</span><span class="p">];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
