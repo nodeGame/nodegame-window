@@ -400,7 +400,8 @@ disabled or enabled (and not toggled).</p>
 </div>
 <p>The whole page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isIE</span><span class="p">)</span> <span class="p">{</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -408,10 +409,25 @@ disabled or enabled (and not toggled).</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
+<p>IE &lt; 10 (also 11?) gives 'Permission Denied'
+if trying to access the iframeDoc from a stored reference.
+We need to re-get it from the DOM.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="nx">container</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">());</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
 <p>If there is Frame apply it there too.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">container</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">toggleInputs</span><span class="p">(</span><span class="nx">disabled</span><span class="p">,</span> <span class="nx">container</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -513,7 +529,7 @@ starts from the beginning.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
 </div>
 <p>Refreshing the dots...</p>
         </td>
@@ -782,7 +798,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
 </div>
 <p>Only process strings.</p>
         </td>
@@ -795,7 +811,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
 </div>
 <p>Compose name with prefix and lower case.</p>
         </td>
@@ -805,7 +821,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Look by id.</p>
         </td>
@@ -816,7 +832,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
 </div>
 <p>Look by class name.</p>
         </td>
@@ -1046,7 +1062,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>Set to state, or toggle.</p>
         </td>
@@ -1124,7 +1140,7 @@ to [prefix] + key and sets the innerHTML property accordintgly.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-27" id="section-27">&#182;</a>
+  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
@@ -1137,7 +1153,7 @@ to the node.js module object is for testing purpose only</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-28" id="section-28">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>GameWindow.prototype.setInnerHTML2 = function(elements, values) {
     var el, i, len, res, lenValues;

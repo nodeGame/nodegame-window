@@ -2219,9 +2219,6 @@
      * Binds the ESC key to a function that always returns FALSE
      *
      * This prevents socket.io to break the connection with the server.
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
      */
     GameWindow.prototype.noEscape = function() {
         var frameDocument;
@@ -2241,10 +2238,7 @@
      *
      * Removes the the listener on the ESC key
      *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.noEscape()
+     * @see GameWindow.noEscape
      */
     GameWindow.prototype.restoreEscape = function() {
         var frameDocument;
@@ -3303,8 +3297,16 @@
         else {
             // The whole page.
             toggleInputs(disabled);
+            if (this.isIE) {
+                // IE < 10 (also 11?) gives 'Permission Denied' if trying to access
+                // the iframeDoc from a stored reference.
+                // We need to re-get it from the DOM.
+                container = J.getIFrameDocument(this.getFrame());
+            }
+            else {
+                container = this.getFrameDocument();
+            }
             // If there is Frame apply it there too.
-            container = this.getFrameDocument();
             if (container) {
                 toggleInputs(disabled, container);
             }
