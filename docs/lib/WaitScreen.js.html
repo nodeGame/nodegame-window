@@ -89,7 +89,7 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2016 Stefano Balietti
 MIT Licensed</p>
   </div>
   <div class="body"><p>Covers the screen with a gray layer, disables inputs, and displays a message</p>
@@ -564,7 +564,9 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
 </div>
 <p>Disables all input forms in the page.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
+
+        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -572,12 +574,11 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
-<p>frameDoc = W.getFrameDocument();
-Using this for IE8 compatibility.</p>
+<p>TODO: cleanup refactor.
+Using this for IE8 compatibility.
+frameDoc = W.getIFrameDocument(W.getFrame());</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">());</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>

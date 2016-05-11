@@ -862,6 +862,7 @@
             J.removeChildrenFromNode(frameDocument.documentElement);
         }
 
+// TODO: cleanup refactor.
 //         try {
 //             this.getFrameDocument().documentElement.innerHTML = '';
 //         }
@@ -2601,7 +2602,7 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -2852,9 +2853,11 @@
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
 
-        //frameDoc = W.getFrameDocument();
+        frameDoc = W.getFrameDocument();
+
+        // TODO: cleanup refactor.
         // Using this for IE8 compatibility.
-        frameDoc = W.getIFrameDocument(W.getFrame());
+        // frameDoc = W.getIFrameDocument(W.getFrame());
 
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
