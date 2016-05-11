@@ -3310,9 +3310,20 @@ and store cacheOnClose flag:</p>
 <p>Add the onLoad event listener:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loadCache</span> <span class="o">||</span> <span class="o">!</span><span class="nx">frameReady</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">onLoad</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">onLoad</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+</div>
+<p>Check if direct access to the content of the frame is
+allowed. Usually IEs do not allow this. Notice, this
+is different from preCaching, and that a newly
+generated frame (about:blank) will always be accessible.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">testDirectFrameDocumentAccess</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
                 <span class="p">}</span></pre></div>
         </td>
@@ -3320,7 +3331,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>Handles caching.</p>
         </td>
@@ -3331,7 +3342,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
 <p>Executes callback, autoParses,
 and updates GameWindow state.</p>
@@ -3347,7 +3358,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
 </div>
 <p>Cache lookup:</p>
         </td>
@@ -3357,7 +3368,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>Load iframe contents at this point only if the iframe is already
 "ready" (see definition of frameReady), otherwise the contents
@@ -3370,7 +3381,7 @@ iframe.onload handles the filling of the contents.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>Handles caching.</p>
         </td>
@@ -3381,7 +3392,7 @@ iframe.onload handles the filling of the contents.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Executes callback
 and updates GameWindow state.</p>
@@ -3398,7 +3409,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>Update the frame location:</p>
         </td>
@@ -3409,7 +3420,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>Adding a reference to nodeGame also in the iframe.</p>
         </td>
@@ -3524,7 +3535,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
 </div>
 <p>ng event emitter is not used.</p>
         </td>
@@ -3759,7 +3770,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
 </div>
 <p>Needed for IE8.</p>
         </td>
@@ -3772,7 +3783,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>Load frame from cache:</p>
         </td>
@@ -3783,7 +3794,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
+  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
 </div>
 <p>Update references to frameWindow and frameDocument
 if this was the frame of the game.</p>
@@ -3796,7 +3807,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
+  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
 </div>
 <p>Disable right click in loaded iframe document, if necessary.</p>
         </td>
@@ -3808,7 +3819,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
 </div>
 <p>Track onkeydown Escape.</p>
         </td>
@@ -3821,7 +3832,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
+  <a class="pilcrow" href="#section-143" id="section-143">&#182;</a>
 </div>
 <p>(Re-)Inject libraries and reload scripts:</p>
         </td>
@@ -3836,7 +3847,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-143" id="section-143">&#182;</a>
+  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
 </div>
 <p>Store frame in cache:</p>
         </td>
@@ -3901,7 +3912,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-145" id="section-145">&#182;</a>
+  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
 </div>
 <p>Old IEs do not have getElementsByClassName.</p>
         </td>
@@ -3912,7 +3923,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
 </div>
 <p>It was. To check.
 scriptNodes = contentDocument.getElementsByClassName('injectedlib');</p>
@@ -3975,7 +3986,7 @@ scripts. The placement of the tags can change, but the order is kept.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
 </div>
 <p>Start counting loading tags at 1 instead of 0 and decrement the
 count after the loop.
@@ -3991,7 +4002,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
 </div>
 <p>Remove tag:</p>
         </td>
@@ -4002,7 +4013,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
 </div>
 <p>Reinsert tag for reloading:</p>
         </td>
@@ -4020,7 +4031,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
 </div>
 <p>scriptNode.async = true;</p>
         </td>
@@ -4184,7 +4195,7 @@ iframe object, one for every given library.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
 </div>
 <p>If no header is found, simulate the 'top' position to better
 fit the whole screen.</p>
@@ -4195,7 +4206,7 @@ fit the whole screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
 </div>
 <p>When we move from bottom to any other configuration, we need
 to move the header before the frame.</p>
@@ -4219,7 +4230,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
 </div>
 <p>There might be no header yet.</p>
         </td>
@@ -4234,7 +4245,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+  <a class="pilcrow" href="#section-159" id="section-159">&#182;</a>
 </div>
 <p>There might be no header yet.</p>
         </td>
@@ -4294,7 +4305,7 @@ directly. In such a case, we need to re-get it from the DOM.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-160" id="section-160">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>Expose GameWindow prototype to the global object.</p>
         </td>
@@ -4306,7 +4317,7 @@ directly. In such a case, we need to re-get it from the DOM.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
+  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>
