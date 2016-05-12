@@ -484,6 +484,10 @@
             this.enableRightClick();
         }
 
+        if ('undefined' !== typeof this.conf.disableBackButton) {
+            this.disableBackButton(this.conf.disableBackButton);
+        }
+
         if ('undefined' !== typeof this.conf.uriPrefix) {
             this.setUriPrefix(this.conf.uriPrefix);
         }
@@ -2373,6 +2377,37 @@
         }
         J.enableRightClick(document);
         this.conf.rightClickDisabled = false;
+    };
+
+    /**
+     * ### GameWindow.disableBackButton
+     *
+     * Disables/re-enables backward navigation in history of browsed pages
+     *
+     * When disabling, it inserts twice the current url.
+     *
+     * @param {boolean} disable Optional. If TRUE disables back button,
+     *   if FALSE, re-enables it. Default: TRUE.
+     */
+    GameWindow.prototype.disableBackButton = function(disable) {
+        disable = 'undefined' === typeof disable ? true : disable;
+        if (disable) {
+            if (this.conf.backButtonDisabled) return;
+            if (!history.pushState || !history.go) {
+                node.warn('GameWindow.disableBackButton: method not ' +
+                          'supported by browser.');
+                return;
+            }
+            history.pushState(null, null, location.href);
+            window.onpopstate = function(event) {
+                history.go(1);
+            };
+        }
+        else {
+            if (!this.conf.backButtonDisabled) return;
+            window.onpopstate = null;
+        }
+        this.conf.backButtonDisabled = !!disable;
     };
 
 })(

@@ -1,7 +1,9 @@
 # nodegame-window change log
 
-## 1.1.0 (current)
+## 1.1.0
 
+- Fixed bug with Explorer and accessing iframe content
+- `#disableBackButton()` method added to disable the back button.
 - `#setInnerHTML()` method to set the .innerHTML property of a list of HTML elements identified by id or classname.
 - Updated Table class (easier to handle TR).
 
