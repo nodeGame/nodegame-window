@@ -1270,6 +1270,10 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">enableRightClick</span><span class="p">();</span>
         <span class="p">}</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setUriPrefix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">);</span>
         <span class="p">}</span>
