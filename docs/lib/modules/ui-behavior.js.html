@@ -351,28 +351,16 @@ as it does not stop other listeners.</p>
       <span>Optional. If TRUE disables back button,
   if FALSE, re-enables it. Default: TRUE.</span>
     </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">JSUS.disableBackButton
+  </span>
+    </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">disableBackButton</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">disable</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">disable</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">disable</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">disable</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">backButtonDisabled</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span> <span class="o">||</span> <span class="o">!</span><span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;GameWindow.disableBackButton: method not &#39;</span> <span class="o">+</span>
-                          <span class="s1">&#39;supported by browser.&#39;</span><span class="p">);</span>
-                <span class="k">return</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">history</span><span class="p">.</span><span class="nx">pushState</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">);</span>
-            <span class="nb">window</span><span class="p">.</span><span class="nx">onpopstate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-            <span class="p">};</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">backButtonDisabled</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-            <span class="nb">window</span><span class="p">.</span><span class="nx">onpopstate</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">backButtonDisabled</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">disable</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">backButtonDisabled</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">(</span><span class="nx">disable</span><span class="p">);</span>
     <span class="p">};</span>
 
 <span class="p">})(</span></pre></div>
