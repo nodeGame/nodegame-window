@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 1.1.1
+- Disable back button method is imported from JSUS.
+
 ## 1.1.0
 
 - Fixed bug with Explorer and accessing iframe content
