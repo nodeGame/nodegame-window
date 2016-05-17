@@ -288,6 +288,17 @@
         this.cacheSupported = null;
 
         /**
+         * ### GameWindow.cacheSupported
+         *
+         * Flag that direct access to the iframe content is allowed
+         *
+         * Usually false, on IEs
+         *
+         * @see testdirectFrameDocumentAccess
+         */
+        this.directFrameDocumentAccess = null;
+
+        /**
          * ### GameWindow.cache
          *
          * Cache for loaded iframes
@@ -3195,7 +3206,7 @@
 
 /**
  * # extra
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -3516,62 +3527,196 @@
     };
 
     /**
-     * ### GameWindow.setInnerHTML
+     * ### GameWindow.searchReplace
      *
      * Replaces the innerHTML of the element/s with matching id or class name
      *
-     * It locates all the elements with classname or id equal
-     * to [prefix] + key and sets the innerHTML property accordintgly.
+     * It iterates through each element and passes it to
+     * `GameWindow.setInnerHTML`.
      *
-     * @param {object} Elements defined as key-value pairs. If value is
-     *    not a string or a number it will be skipped.
-     * @param {string} prefix Optional. Prefix added in the search string.
-     *    Default: 'ng_replace_'.
+     * If elements is array, each item in the array must be of the type:
+     *
+     * ```javascript
+     *
+     *   { search: 'key', replace: 'value' }
+     *
+     *   // or
+     *
+     *   { search: 'key', replace: 'value', mod: 'id' }
+     * ```
+     *
+     * If elements is object, it must be of the type:
+     *
+     * ```javascript
+     *
+     *    {
+     *      search1: value1, search2: value 2 // etc.
+     *    }
+     * ```
+     *
+     * @param {object|array} Elements to search and replace
+     * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
+     * @param {string} prefix Optional. Prefix added to the search string.
+     *    Default: 'ng_replace_', null or '' equals no prefix.
+     *
+     * @see GameWindow.setInnerHTML
      */
-    GameWindow.prototype.setInnerHTML = function(elements, prefix) {
-        var el, name, text, search, len, i;
+    GameWindow.prototype.searchReplace = function() {
+        var elements, mod, prefix;
+        var name, len, i;
 
-        if ('object' !== typeof elements) {
-            throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-                                'object.');
+        if (arguments.length === 2) {
+            mod = 'g';
+            prefix = arguments[1];
         }
-        if (prefix) {
-            if ('string' !== typeof prefix) {
-                throw new TypeError('GameWindow.setInnerHTML: prefix must be ' +
-                                    'string or undefined.');
+        else if (arguments.length > 2) {
+            mod = arguments[1];
+            prefix = arguments[2];
+        }
+
+        if ('undefined' !== typeof prefix) {
+            prefix = 'ng_replace_';
+        }
+        else if (null === prefix) {
+            prefix = '';
+        }
+        else if ('string' !== typeof prefix) {
+            throw new TypeError('GameWindow.searchReplace: prefix ' +
+                                'must be string, null or undefined. Found: ' +
+                                prefix);
+        }
+
+        elements = arguments[0];
+        if (J.isArray(elements)) {
+            i = -1, len = elements.length;
+            for ( ; ++i < len ; ) {
+                this.setInnerHTML(prefix + elements[i].search,
+                                  elements[i].replace,
+                                  elements[i].mod || mod);
+            }
+
+        }
+        else if ('object' !== typeof elements) {
+            for (name in elements) {
+                if (elements.hasOwnProperty(name)) {
+                    this.setInnerHTML(prefix + name, elements[name], mod);
+                }
             }
         }
         else {
-            prefix = 'ng_replace_';
+            throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+                                'object or arrray. Found: ' + elements);
         }
 
-        for (name in elements) {
-            if (elements.hasOwnProperty(name)) {
-                text = elements[name];
-                // Only process strings.
-                if ('string' !== typeof text && 'number' !== typeof text) {
-                    node.warn('GameWindow.setInnerHTML: key "' + name +
-                              '" does not contain a string value. Ignored.');
-                }
-                // Compose name with prefix and lower case.
-                search = (prefix + name).toLowerCase();
+    };
 
-                // Look by id.
-                el = W.getElementById(search);
-                if (el && el.className !== search) el.innerHTML = text;
+    /**
+     * ### GameWindow.setInnerHTML
+     *
+     * Replaces the innerHTML of the element with matching id or class name
+     *
+     * @param {string|number} search Element id or className
+     * @param {string|number} replace The new value of the property innerHTML
+     * @param {string} mod Optional. A modifier defining how to use the
+     *    search parameter. Values:
+     *
+     *    - 'id': replaces at most one element with the same id (default)
+     *    - 'className': replaces all elements with same class name
+     *    - 'g': replaces globally, both by id and className
+     */
+    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+        var el, i, len;
 
-                // Look by class name.
-                el = W.getElementsByClassName(search);
-                len = el.length;
-                if (len) {
-                    i = -1;
-                    for ( ; ++i < len ; ) {
-                        elements[i].innerHTML = text;
-                    }
+        // Only process strings or numbers.
+        if ('string' !== typeof search && 'number' !== typeof search) {
+            throw new TypeError('GameWindow.setInnerHTML: search must be ' +
+                                'string or number. Found: ' + search);
+        }
+
+        // Only process strings or numbers.
+        if ('string' !== typeof replace && 'number' !== typeof replace) {
+            throw new TypeError('GameWindow.setInnerHTML: replace must be ' +
+                                'string or number. Found: ' + replace);
+        }
+
+        if ('undefined' === typeof mod) {
+            mod = 'id';
+        }
+        else if ('string' === typeof mod) {
+            if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
+                throw new Error('GameWindow.setInnerHTML: invalid ' +
+                                'mod value: ' + mod);
+            }
+        }
+        else {
+            throw new TypeError('GameWindow.setInnerHTML: mod must be ' +
+                                'string or undefined. Found: ' + mod);
+        }
+
+        if (mod === 'id' || mod === 'g') {
+            // Look by id.
+            el = W.getElementById(search);
+            if (el && el.className !== search) el.innerHTML = replace;
+        }
+
+        if (mod === 'className' || mod === 'g') {
+            // Look by class name.
+            el = W.getElementsByClassName(search);
+            len = el.length;
+            if (len) {
+                i = -1;
+                for ( ; ++i < len ; ) {
+                    el[i].innerHTML = replace;
                 }
             }
         }
     };
+
+//     GameWindow.prototype.setInnerHTML_old = function(elements, prefix) {
+//         var el, name, text, search, len, i;
+//
+//         if ('object' !== typeof elements) {
+//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+//                                 'object.');
+//         }
+//         if (prefix) {
+//             if ('string' !== typeof prefix) {
+//                 throw new TypeError('GameWindow.setInnerHTML: prefix must be ' +
+//                                     'string or undefined.');
+//             }
+//         }
+//         else {
+//             prefix = 'ng_replace_';
+//         }
+//
+//         for (name in elements) {
+//             if (elements.hasOwnProperty(name)) {
+//                 text = elements[name];
+//                 // Only process strings.
+//                 if ('string' !== typeof text && 'number' !== typeof text) {
+//                     node.warn('GameWindow.setInnerHTML: key "' + name +
+//                               '" does not contain a string value. Ignored.');
+//                     continue;
+//                 }
+//                 // Compose name with prefix and lower case.
+//                 search = (prefix + name).toLowerCase();
+//
+//                 // Look by id.
+//                 el = W.getElementById(search);
+//                 if (el && el.className !== search) el.innerHTML = text;
+//
+//                 // Look by class name.
+//                 el = W.getElementsByClassName(search);
+//                 len = el.length;
+//                 if (len) {
+//                     i = -1;
+//                     for ( ; ++i < len ; ) {
+//                         elements[i].innerHTML = text;
+//                     }
+//                 }
+//             }
+//         }
+//     };
 
     /**
      * ## GameWindow.hide
