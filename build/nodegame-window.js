@@ -1422,7 +1422,7 @@
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
-        var autoParse, autoParsePrefix;
+        var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
@@ -1518,6 +1518,14 @@
                 }
                 autoParsePrefix = opts.autoParsePrefix;
             }
+            if ('undefined' !== typeof opts.autoParseMod) {
+                if ('string' !== typeof opts.autoParseMod) {
+                    throw new TypeError('GameWindow.loadFrame: opts.' +
+                                        'autoParseMod must be string ' +
+                                        'or undefined.');
+                }
+                autoParseMod = opts.autoParseMod;
+            }
             autoParse = opts.autoParse;
         }
 
@@ -1586,6 +1594,7 @@
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
+                                                              autoParseMod,
                                                               autoParsePrefix);
                                 });
             });
@@ -1606,6 +1615,7 @@
                                     // and updates GameWindow state.
                                     that.updateLoadFrameState(func,
                                                               autoParse,
+                                                              autoParseMod,
                                                               autoParsePrefix);
                                 });
             }
@@ -1652,23 +1662,27 @@
      * @param {function} func Optional. A callback function
      * @param {object} autoParse Optional. An object containing elements
      *    to replace in the HTML DOM.
+     * @param {string} autoParseMod Optional. Modifier for search and replace
      * @param {string} autoParsePrefix Optional. Custom prefix to add to the
      *    keys of the elements in autoParse object
      *
-     * @see GameWindow.setInnerHTML
+     * @see GameWindow.searchReplace
      * @see updateAreLoading
      *
      * @emit FRAME_LOADED
      * @emit LOADED
      */
     GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
+                                                         autoParseMod,
                                                          autoParsePrefix) {
 
         var loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
         if (func) func.call(node.game);
-        if (autoParse) this.setInnerHTML(autoParse, autoParsePrefix);
+        if (autoParse) {
+            this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
+        }
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -1813,6 +1827,7 @@
 
             func();
         };
+
         if (loadCache) {
             reloadScripts(iframe, afterScripts);
         }
@@ -3554,6 +3569,11 @@
      *    }
      * ```
      *
+     * It accepts a variable number of input parameters. The first is always
+     * _elements_. If there are 2 input parameters, the second is _prefix_,
+     * while if there are 3 input parameters, the second is _mod_ and the third
+     * is _prefix_.
+     *
      * @param {object|array} Elements to search and replace
      * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
      * @param {string} prefix Optional. Prefix added to the search string.
@@ -3671,52 +3691,6 @@
             }
         }
     };
-
-//     GameWindow.prototype.setInnerHTML_old = function(elements, prefix) {
-//         var el, name, text, search, len, i;
-//
-//         if ('object' !== typeof elements) {
-//             throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                                 'object.');
-//         }
-//         if (prefix) {
-//             if ('string' !== typeof prefix) {
-//                 throw new TypeError('GameWindow.setInnerHTML: prefix must be ' +
-//                                     'string or undefined.');
-//             }
-//         }
-//         else {
-//             prefix = 'ng_replace_';
-//         }
-//
-//         for (name in elements) {
-//             if (elements.hasOwnProperty(name)) {
-//                 text = elements[name];
-//                 // Only process strings.
-//                 if ('string' !== typeof text && 'number' !== typeof text) {
-//                     node.warn('GameWindow.setInnerHTML: key "' + name +
-//                               '" does not contain a string value. Ignored.');
-//                     continue;
-//                 }
-//                 // Compose name with prefix and lower case.
-//                 search = (prefix + name).toLowerCase();
-//
-//                 // Look by id.
-//                 el = W.getElementById(search);
-//                 if (el && el.className !== search) el.innerHTML = text;
-//
-//                 // Look by class name.
-//                 el = W.getElementsByClassName(search);
-//                 len = el.length;
-//                 if (len) {
-//                     i = -1;
-//                     for ( ; ++i < len ; ) {
-//                         elements[i].innerHTML = text;
-//                     }
-//                 }
-//             }
-//         }
-//     };
 
     /**
      * ## GameWindow.hide
@@ -3862,53 +3836,6 @@
     ('undefined' !== typeof window) ? window : module.parent.exports.window,
     ('undefined' !== typeof window) ? window.node : module.parent.exports.node
 );
-
-
-// GameWindow.prototype.setInnerHTML2 = function(elements, values) {
-//     var el, i, len, res, lenValues;
-//     res = true;
-//     if ('string' === typeof elements) {
-//         if ('string' !== typeof values) {
-//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                 'string, if elements is string.');
-//         }
-//         el = W.getElementById(elements);
-//         if (el) el.innerHTML = values;
-//         else res = false;
-//     }
-//     else if (J.isArray(elements)) {
-//         if ('string' === typeof values) values = [values];
-//         else if (!J.isArray(values) || !values.length) {
-//             throw new TypeError('GameWindow.setInnerHTML: values must be ' +
-//                                 'string or non-empty array, if elements ' +
-//                                 'is string.');
-//         }
-//         i = -1, len = elements.length, lenValues = values.length;
-//         for ( ; ++i < len ; ) {
-//             el = W.getElementById(elements[i]);
-//             if (el) el.innerHTML = values[i % lenValues];
-//             else res = false;
-//         }
-//     }
-//     else if ('object' === typeof elements) {
-//         if ('undefined' !== typeof values) {
-//             node.warn('GameWindow.setInnerHTML: elements is ' +
-//                       'object, therefore values will be ignored.');
-//         }
-//         for (i in elements) {
-//             if (elements.hasOwnProperty(i)) {
-//                 el = W.getElementById(i);
-//                 if (el) el.innerHTML = elements[i];
-//                 else res = false;
-//             }
-//         }
-//     }
-//     else {
-//         throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
-//                             'string, array, or object.');
-//     }
-//     return res;
-// };
 
 // Creates a new GameWindow instance in the global scope.
 (function() {
