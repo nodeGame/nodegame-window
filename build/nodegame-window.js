@@ -758,6 +758,8 @@
      * @see GameWindow.setFrame
      * @see GameWindow.clearFrame
      * @see GameWindow.destroyFrame
+     *
+     * @emit FRAME_GENERATED
      */
     GameWindow.prototype.generateFrame = function(root, frameName, force) {
         var iframe;
@@ -796,6 +798,9 @@
         if (this.frameElement) {
             adaptFrame2HeaderPosition(this);
         }
+
+        // Emit event.
+        node.events.ng.emit('FRAME_GENERATED', iframe);
 
         return iframe;
     };
@@ -1039,6 +1044,10 @@
         this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
+
+
+        // Emit event.
+        node.events.ng.emit('HEADER_GENERATED', header);
 
         return this.headerElement;
     };
