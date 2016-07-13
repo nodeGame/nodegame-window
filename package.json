@@ -24,7 +24,6 @@
     "url": "https://github.com/nodeGame/nodegame-window.git"
   },
   "scripts": {
-    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs http://localhost:8080/testergame/test/index.htm",
-    "prepublish": "node bin/make.js build -a"
+    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs http://localhost:8080/testergame/test/index.htm"
   }
 }
