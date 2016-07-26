@@ -1,8 +1,11 @@
 # nodegame-window change log
 
+## 2.0.1
+- Minor cleanup.
+
 ## 2.0.0
 
-- 'HEADER_GENERATED' and 'FRAME_GENERATED' events emitted on `ng` event emietter.
+- 'HEADER_GENERATED' and 'FRAME_GENERATED' events emitted on `ng` event emitter.
 
 ## 1.2.0
 - `GameWindow.setInnerHTML(search, replace, mod) (break v.1.1.0).
