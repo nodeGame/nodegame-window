@@ -800,7 +800,7 @@
         }
 
         // Emit event.
-        // node.events.ng.emit('FRAME_GENERATED', iframe);
+        node.events.ng.emit('FRAME_GENERATED', iframe);
 
         return iframe;
     };
@@ -1047,7 +1047,7 @@
 
 
         // Emit event.
-        // node.events.ng.emit('HEADER_GENERATED', header);
+        node.events.ng.emit('HEADER_GENERATED', header);
 
         return this.headerElement;
     };
