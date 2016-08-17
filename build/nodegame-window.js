@@ -3440,34 +3440,34 @@
      *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
-        var span_dots, i, limit, intervalId;
+        var spanDots, i, limit, intervalId;
         if (len & len < 0) {
             throw new Error('GameWindow.getLoadingDots: len < 0.');
         }
         len = len || 5;
-        span_dots = document.createElement('span');
-        span_dots.id = id || 'span_dots';
+        spanDots = document.createElement('span');
+        spanDots.id = id || 'span_dots';
         limit = '';
         for (i = 0; i < len; i++) {
             limit = limit + '.';
         }
         // Refreshing the dots...
         intervalId = setInterval(function() {
-            if (span_dots.innerHTML !== limit) {
-                span_dots.innerHTML = span_dots.innerHTML + '.';
+            if (spanDots.innerHTML !== limit) {
+                spanDots.innerHTML = spanDots.innerHTML + '.';
             }
             else {
-                span_dots.innerHTML = '.';
+                spanDots.innerHTML = '.';
             }
         }, 1000);
 
         function stop() {
-            span_dots.innerHTML = '.';
+            spanDots.innerHTML = '.';
             clearInterval(intervalId);
         }
 
         return {
-            span: span_dots,
+            span: spanDots,
             stop: stop
         };
     };
@@ -3976,7 +3976,7 @@
     // ## Global scope
 
     var document = window.document,
-    JSUS = node.JSUS;
+    J = node.JSUS;
 
     var TriggerManager = node.TriggerManager;
 
@@ -4065,12 +4065,13 @@
         });
 
         this.tm.addTrigger(function(el) {
+            var div, key, str;
             if (!el) return;
             if (el.content && 'object' === typeof el.content) {
-                var div = document.createElement('div');
-                for (var key in el.content) {
+                div = document.createElement('div');
+                for (key in el.content) {
                     if (el.content.hasOwnProperty(key)) {
-                        var str = key + ':\t' + el.content[key];
+                        str = key + ':\t' + el.content[key];
                         div.appendChild(document.createTextNode(str));
                         div.appendChild(document.createElement('br'));
                     }
@@ -4086,7 +4087,7 @@
                 'function' === typeof el.content.parse) {
 
                 html = el.content.parse();
-                if (JSUS.isElement(html) || JSUS.isNode(html)) {
+                if (J.isElement(html) || J.isNode(html)) {
                     return html;
                 }
             }
@@ -4094,7 +4095,7 @@
 
         this.tm.addTrigger(function(el) {
             if (!el) return;
-            if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
+            if (J.isElement(el.content) || J.isNode(el.content)) {
                 return el.content;
             }
         });
@@ -4179,18 +4180,35 @@
      *
      * Creates a new instace of Entity
      *
+     * An `Entity` is an abstract representation of an HTML element.
+     *
+     * May contains the following properties: 
+     *
+     *   - `content` (that will be processed upon rendering),
+     *   - `id` (if specified)
+     *   - 'className` (if specified)
+     *
      * @param {object} e The object to transform in entity
      */
     function Entity(o) {
         o = o || {};
+
         this.content = 'undefined' !== typeof o.content ? o.content : '';
+
+        if ('string' === typeof o.id) {
+            this.id = o.id;
+        }
+        else if ('undefined' !== typeof o.id) {
+            throw new TypeError('Entity: id must ' +
+                                'be string or undefined.');
+        }
         if ('string' === typeof o.className) {
             this.className = o.className;
         }
-        else if (!o.className) {
-            this.className = null;
+        else if (J.isArray(o.className)) {
+            this.className = o.join(' ');
         }
-        else {
+        else if ('undefined' !== typeof o.className) {
             throw new TypeError('Entity: className must ' +
                                 'be string, array, or undefined.');
         }
@@ -4685,6 +4703,7 @@
         content = this.htmlRenderer.render(cell);
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
+        if (cell.id) TD.id = cell.id;
         cell.HTMLElement = TD;
         return TD;
     };
