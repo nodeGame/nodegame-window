@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 2.1.0
+- Table class checks for null values as input.
+
 ## 2.0.1
 - Minor cleanup.
 
