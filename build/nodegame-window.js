@@ -4182,7 +4182,7 @@
      *
      * An `Entity` is an abstract representation of an HTML element.
      *
-     * May contains the following properties: 
+     * May contains the following properties:
      *
      *   - `content` (that will be processed upon rendering),
      *   - `id` (if specified)
@@ -4664,7 +4664,7 @@
         this.htmlRenderer = new HTMLRenderer(options);
         this.htmlRenderer.addRenderer(function(el) {
             var tbl, key;
-            if ('object' === typeof el.content) {
+            if (content && 'object' === typeof el.content) {
                 tbl = new Table();
                 for (key in el.content) {
                     if (el.content.hasOwnProperty(key)) {
@@ -4900,7 +4900,7 @@
         y = dim === 'y' ?
             this.getNextPointer('y', y) : this.getCurrPointer('y', y);
 
-        if ('object' === typeof content &&
+        if (content && 'object' === typeof content &&
             'undefined' !== typeof content.content) {
 
             if ('undefined' === typeof content.x) content.x = x;
