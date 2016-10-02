@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 3.0.0
+- 02/10/2016 NodeGame Version Upgrade.
+
 ## 2.1.0
 - Table class checks for null values as input.
 
