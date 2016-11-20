@@ -248,6 +248,18 @@ MIT Licensed</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
+<p>Uri prefix.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setUriPrefix</span><span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
 <p>Load.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">load</span><span class="p">)</span> <span class="p">{</span>
@@ -265,18 +277,6 @@ MIT Licensed</p>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
                 <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">cb</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-            <span class="p">}</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
-</div>
-<p>Uri prefix.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">setUriPrefix</span><span class="p">(</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">);</span>
             <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -317,7 +317,7 @@ MIT Licensed</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">registerSetup</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">rootName</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">force</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">rootName</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">conf</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -338,7 +338,7 @@ MIT Licensed</p>
                         <span class="p">}</span>
                         <span class="nx">rootName</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
                         <span class="nx">force</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">force</span><span class="p">;</span>
-                        <span class="nx">frameName</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                        <span class="nx">headerName</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">generate</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
@@ -350,12 +350,12 @@ MIT Licensed</p>
                 <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">rootName</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">getScreen</span><span class="p">();</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.frame: could not find valid &#39;</span> <span class="o">+</span>
-                              <span class="s1">&#39;root element to generate new frame.&#39;</span><span class="p">);</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;node.setup.header: could not find valid &#39;</span> <span class="o">+</span>
+                              <span class="s1">&#39;root element to generate new header.&#39;</span><span class="p">);</span>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">generateFrame</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">generateHeader</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">force</span><span class="p">);</span>
             <span class="p">}</span></pre></div>
         </td>
       </tr>
