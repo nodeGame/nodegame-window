@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 3.0.1
+- Fixed `#W.generateHeader()`.
+
 ## 3.0.0
 - 02/10/2016 NodeGame Version Upgrade.
 
