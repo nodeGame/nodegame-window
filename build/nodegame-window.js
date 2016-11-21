@@ -910,7 +910,7 @@
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Default: 'gn_header'
+     *   Default: 'ng_header'
      * @param {boolean} force Optional. Will create the header even if an
      *   existing one is found. Default: FALSE
      *
@@ -2185,6 +2185,11 @@
                 this.window.generateFrame(root, frameName, force);
             }
 
+            // Uri prefix.
+            if ('undefined' !== typeof conf.uriPrefix) {
+                this.window.setUriPrefix(conf.uriPrefix);
+            }
+
             // Load.
             if (conf.load) {
                 if ('object' === typeof conf.load) {
@@ -2203,11 +2208,6 @@
                 this.window.loadFrame(url, cb, options);
             }
 
-            // Uri prefix.
-            if ('undefined' !== typeof conf.uriPrefix) {
-                this.window.setUriPrefix(conf.uriPrefix);
-            }
-
             // Clear and destroy.
             if (conf.clear) this.window.clearFrame();
             if (conf.destroy) this.window.destroyFrame();
@@ -2223,7 +2223,7 @@
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var frameName, force, root, rootName;
+            var headerName, force, root, rootName;
             if (!conf) return;
 
             // Generate.
@@ -2237,7 +2237,7 @@
                         }
                         rootName = conf.generate.root;
                         force = conf.generate.force;
-                        frameName = conf.generate.name;
+                        headerName = conf.generate.name;
                     }
                 }
                 else {
@@ -2249,12 +2249,12 @@
                 root = this.window.getElementById(rootName);
                 if (!root) root = this.window.getScreen();
                 if (!root) {
-                    node.warn('node.setup.frame: could not find valid ' +
-                              'root element to generate new frame.');
+                    node.warn('node.setup.header: could not find valid ' +
+                              'root element to generate new header.');
                     return;
                 }
 
-                this.window.generateFrame(root, frameName, force);
+                this.window.generateHeader(root, headerName, force);
             }
 
             // Position.
@@ -2673,7 +2673,7 @@
 
     // ## Meta-data
 
-    WaitScreen.version = '0.7.0';
+    WaitScreen.version = '0.8.0';
     WaitScreen.description = 'Show a standard waiting screen';
 
     // ## Helper functions
@@ -2971,12 +2971,8 @@
         if ('string' !== typeof text) {
             throw new TypeError('WaitScreen.updateText: text must be string.');
         }
-        if (append) {
-            this.waitingDiv.appendChild(document.createTextNode(text));
-        }
-        else {
-            this.waitingDiv.innerHTML = text;
-        }
+        if (append) this.waitingDiv.innerHTML += text;
+        else this.waitingDiv.innerHTML = text;
     };
 
     /**
