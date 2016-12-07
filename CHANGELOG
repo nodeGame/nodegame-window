@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## current
+- `#W.addLoadingDots()` returns an object containing the stop method and the span.
+
 ## 3.0.1
 - Fixed `#W.generateHeader()`.
 

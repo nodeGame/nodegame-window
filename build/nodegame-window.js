@@ -3482,12 +3482,16 @@
      *   Default: 5
      * @param {string} id Optional The id of the span
      *
-     * @return {object} The span with the loading dots
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval
      *
      * @see GameWindow.getLoadingDots
      */
     GameWindow.prototype.addLoadingDots = function(root, len, id) {
-        return root.appendChild(this.getLoadingDots(len, id).span);
+        var ld;
+        ld = this.getLoadingDots(len, id);
+        root.appendChild(ld.span);
+        return ld;
     };
 
      /**

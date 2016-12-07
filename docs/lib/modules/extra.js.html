@@ -569,7 +569,8 @@ starts from the beginning.</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
       <span class="dox_type">object</span>
-      <span>The span with the loading dots</span>
+      <span>An object containing two properties: the span element
+  and a method stop, that clears the interval</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -580,7 +581,10 @@ starts from the beginning.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addLoadingDots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getLoadingDots</span><span class="p">(</span><span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">).</span><span class="nx">span</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">ld</span><span class="p">;</span>
+        <span class="nx">ld</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLoadingDots</span><span class="p">(</span><span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">ld</span><span class="p">.</span><span class="nx">span</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">ld</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
