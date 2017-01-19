@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 3.5.1
+- `#W.unprocessedUri keeps reference of the last uri parameter passed to `#W.loadFrame()`.
+
 ## 3.5.0
 - `#W.addLoadingDots()` returns an object containing the stop method and the span.
 
