@@ -327,7 +327,7 @@
          * TODO: check: this is still having the test frame, should it be
          * removed instead?
          */
-        this.currentURIs = {};      
+        this.currentURIs = {};
 
         /**
          * ### GameWindow.unprocessedUri
@@ -1558,15 +1558,16 @@
         // Store unprocessed uri parameter.
         this.unprocessedUri = uri;
 
-        // Adapt the uri if necessary.
-        uri = this.processUri(uri);
-
         if (this.cacheSupported === null) {
             this.preCacheTest(function() {
                 that.loadFrame(uri, func, opts);
             });
             return;
         }
+
+        // Adapt the uri if necessary. Important! Must follow
+        // the assignment to unprocessedUri AND preCacheTest.
+        uri = this.processUri(uri);
 
         if (this.cacheSupported === false) {
             storeCacheNow = false;

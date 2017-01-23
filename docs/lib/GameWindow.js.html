@@ -3326,7 +3326,14 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
 </div>
 <p>Store unprocessed uri parameter.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">unprocessedUri</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">unprocessedUri</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">preCacheTest</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span>
+            <span class="p">});</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -3334,16 +3341,10 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
-<p>Adapt the uri if necessary.</p>
+<p>Adapt the uri if necessary. Important! Must follow
+the assignment to unprocessedUri AND preCacheTest.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processUri</span><span class="p">(</span><span class="nx">uri</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">preCacheTest</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span>
-            <span class="p">});</span>
-            <span class="k">return</span><span class="p">;</span>
-        <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">storeCacheNow</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
