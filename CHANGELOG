@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 3.5.2
+- Fixed bug overwriting `#W.unprocessedUri`.
+
 ## 3.5.1
 - `#W.unprocessedUri keeps reference of the last uri parameter passed to `#W.loadFrame()`.
 
