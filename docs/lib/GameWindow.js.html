@@ -3798,8 +3798,18 @@ and updates GameWindow state.</p>
 
   </div>
   <div class="body"><p>Sets the variable uriChannel</p>
+
+<p>Trailing and preceding slashes are added if missing.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">uriChannel</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The current uri of the channel,
+  or NULL to delete it</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.uriChannel
@@ -3809,10 +3819,17 @@ and updates GameWindow state.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setUriChannel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.uriChannel: uriChannel must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string or null.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">uriChannel</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">uriChannel</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">uriChannel</span> <span class="o">=</span> <span class="nx">uriChannel</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.uriChannel: uriChannel must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string or null. Found: &#39;</span> <span class="o">+</span> <span class="nx">uriChannel</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span> <span class="o">=</span> <span class="nx">uriChannel</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
