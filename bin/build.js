@@ -39,7 +39,8 @@ function build(options) {
         modulesDir + 'ui-behavior.js',
         modulesDir + 'lockScreen.js',
         listDir + 'listeners.js',
-        libDir + 'WaitScreen.js'
+        libDir + 'WaitScreen.js',
+        libDir + 'InfoPanel.js'
     ];
 
     if (!options.bare) {
