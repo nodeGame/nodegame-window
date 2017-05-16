@@ -62,6 +62,7 @@
         storeCacheNow:   false,
         storeCacheLater: false
     };
+    GameWindow.defaults.infoPanel = undefined;
 
     function onLoadStd(iframe, cb) {
         var iframeWin;
@@ -820,6 +821,14 @@
         node.events.ng.emit('FRAME_GENERATED', iframe);
 
         return iframe;
+    };
+
+    // generate info panel
+    // and return the object
+    GameWindow.prototype.generateInfoPanel = function() {
+        // return info panel also add it to the html
+        // create a reference inside game window
+        // infoPanel (this)
     };
 
     /**
@@ -1781,7 +1790,7 @@
      * Sets the variable uriChannel
      *
      * Trailing and preceding slashes are added if missing.
-     * 
+     *
      * @param {string|null} uriChannel The current uri of the channel,
      *   or NULL to delete it
      *
@@ -1798,7 +1807,7 @@
             throw new TypeError('GameWindow.uriChannel: uriChannel must be ' +
                                 'string or null. Found: ' + uriChannel);
         }
-        
+
         this.uriChannel = uriChannel;
     };
 
@@ -3038,6 +3047,65 @@
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
 
+(function(exports, window) {
+
+    "use strict";
+
+    exports.InfoPanel = InfoPanel;
+
+    function InfoPanel(options) {
+        this.init();
+    }
+
+    InfoPanel.prototype.init = function(options) {
+        this.infoPanelDiv = document.createElement('div');
+        this.infoPanelDiv.id = 'ng_info-panel';
+        this.infoPanelDiv.className = options.className || '';
+    };
+
+    InfoPanel.prototype.clear = function() {
+        return this.infoPanelDiv.innerHTML = '';
+    };
+
+    InfoPanel.prototype.getPanel = function() {
+        return this.infoPanelDiv;
+    };
+
+    InfoPanel.prototype.destroy = function() {
+        if (this.infoPanelDiv.parentNode) {
+            this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
+        }
+
+        this.infoPanelDiv = null;
+    };
+
+    InfoPanel.prototype.bindListener = function() {
+        // first thing in body of page ? or below header ? or above main frame ?
+        // STEPPING -- currently moving step
+        // node.game.getRound('remaining')  === 0 or 1 that means its the last step of a stage
+    };
+
+    InfoPanel.prototype.toggle = function() {
+
+    };
+
+    InfoPanel.prototype.open = function() {
+
+    };
+
+    InfoPanel.prototype.close = function() {
+
+    };
+
+    InfoPanel.prototype.createToggleButton = function() {
+        // return a button that toggles info panel
+    };
+
+})(
+    ('undefined' !== typeof node) ? node : module.parent.exports.node,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window
+);;
+
 /**
  * # selector
  * Copyright(c) 2015 Stefano Balietti
@@ -3282,8 +3350,9 @@
     /**
      * ### GameWindow.getScreen
      *
-     * Returns the screen of the game, i.e. the innermost element
-     * inside which to display content
+     * Returns the "screen" of the game
+     *
+     * i.e. the innermost element inside which to display content
      *
      * In the following order the screen can be:
      *
