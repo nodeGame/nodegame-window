@@ -830,8 +830,24 @@
         // create a reference inside game window
         // infoPanel (this)
 
+        var infoPanelDiv;
+
         this.infoPanel = new node.InfoPanel({});
-        document.body.appendChild(this.infoPanel.infoPanelDiv);
+        infoPanelDiv = this.infoPanel.infoPanelDiv;
+
+        if (this.frameElement) {
+            document.body.insertBefore(infoPanelDiv, this.frameElement);
+        }
+        else if (this.headerElement) {
+            insertAfter(this.headerElement, infoPanelDiv);
+        }
+        else {
+            document.body.appendChild(infoPanelDiv);
+        }
+
+        function insertAfter(referenceNode, newNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextElementSibling);
+        }
 
         return this.infoPanel;
     };
@@ -3163,8 +3179,6 @@
     InfoPanel.prototype.toggle = function() {
       this.isVisible = !this.isVisible;
 
-      console.log(this);
-
       if (this.isVisible) {
         this.open();
       }
@@ -3183,7 +3197,7 @@
       this.isVisible = false;
     };
 
-    InfoPanel.prototype.createToggleButton = function() {
+    InfoPanel.prototype.createToggleButton = function(buttonLabel) {
         // return a button that toggles info panel
         var button;
         var that;
@@ -3192,7 +3206,7 @@
 
         button = document.createElement('button');
         button.className = 'btn btn-lg btn-warning';
-        button.innerHTML = 'History';
+        button.innerHTML = buttonLabel;
 
         button.onclick = function() {
           that.toggle();
