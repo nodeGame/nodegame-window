@@ -1,6 +1,6 @@
 /**
  * # GameWindow
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -25,14 +25,9 @@
     var CB_EXECUTED, WIN_LOADING, lockedUpdate;
 
     J = node.JSUS;
-    if (!J) {
-        throw new Error('GameWindow: JSUS object not found. Aborting.');
-    }
-
+    if (!J) throw new Error('GameWindow: JSUS not found. Aborting.');
     DOM = J.get('DOM');
-    if (!DOM) {
-        throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
-    }
+    if (!DOM) throw new Error('GameWindow: JSUS=>DOM not found. Aborting.');
 
     constants = node.constants;
     windowLevels = constants.windowLevels;
@@ -761,6 +756,8 @@
      *
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
+     * @TODO: Shall force destroy the frame?
+     *
      * @param {Element} root Optional. The HTML element to which the iframe
      *   will be appended. Default: this.frameRoot or document.body
      * @param {string} frameName Optional. The name of the iframe. Default:
@@ -783,25 +780,27 @@
         var iframe;
         if (!force && this.frameElement) {
             throw new Error('GameWindow.generateFrame: a frame element is ' +
-                            'already existing. It cannot be duplicated.');
+                            'already existing. Use force to regenerate.');
         }
 
         root = root || this.frameRoot || document.body;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateFrame: invalid root element.');
+            throw new Error('GameWindow.generateFrame: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         frameName = frameName || 'ng_mainframe';
 
-        if ('string' !== typeof frameName) {
+        if ('string' !== typeof frameName || frameName.trim() === '') {
             throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'string.');
+                            'undefined or a non-empty string. Found: ' +
+                            frameName);
         }
 
         if (document.getElementById(frameName)) {
-            throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateFrame: frameName is not ' +
+                            'unique in DOM: ' + frameName);
         }
 
         iframe = W.addIFrame(root, frameName);
@@ -813,9 +812,7 @@
 
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) {
-            adaptFrame2HeaderPosition(this);
-        }
+        if (this.frameElement) adaptFrame2HeaderPosition(this);
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
@@ -823,31 +820,65 @@
         return iframe;
     };
 
-    // generate info panel
-    // and return the object
-    GameWindow.prototype.generateInfoPanel = function() {
-        // return info panel also add it to the html
-        // create a reference inside game window
-        // infoPanel (this)
-
+    /**
+     * ### GameWindow.generateInfoPanel
+     *
+     * Appends a configurable div element at to "top" of the page
+     *
+     * @param {Element} root Optional. The HTML element to which the info
+     *   panel will be appended. Default:
+     *
+     *   - above the main frame, or
+     *   - below the header, or
+     *   - inside _documents.body_.
+     *
+     * @param {string} frameName Optional. The name of the iframe. Default:
+     *   'ng_mainframe'
+     * @param {boolean} force Optional. Will create the frame even if an
+     *   existing one is found. Default: FALSE
+     *
+     * @return {InfoPanel} A reference to the InfoPanel object
+     *
+     * @see GameWindow.infoPanel
+     *
+     * @emit INFOPANEL_GENERATED
+     */
+    GameWindow.prototype.generateInfoPanel = function(root, options, force) {
         var infoPanelDiv;
 
-        this.infoPanel = new node.InfoPanel({});
+        if (this.infoPanel) {
+            if (!force) {
+                throw new Error('GameWindow.generateInfoPanel: info panel is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            else {
+                this.infoPanel.destroy();
+                this.infoPanel = null;
+            }
+        }
+
+        this.infoPanel = new node.InfoPanel(options);
         infoPanelDiv = this.infoPanel.infoPanelDiv;
 
-        if (this.frameElement) {
+        if (root) {
+            if (!J.isElement(root)) {
+                throw new Error('GameWindow.generateInfoPanel: root must be ' +
+                                'undefined or HTMLElement. Found: ' + root);
+            }
+            root.appendChild(infoPanelDiv);
+        }
+        else if (this.frameElement) {
             document.body.insertBefore(infoPanelDiv, this.frameElement);
         }
         else if (this.headerElement) {
-            insertAfter(this.headerElement, infoPanelDiv);
+           J.insertAfter(this.headerElement, infoPanelDiv);
         }
         else {
             document.body.appendChild(infoPanelDiv);
         }
 
-        function insertAfter(referenceNode, newNode) {
-            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextElementSibling);
-        }
+        // Emit event.
+        node.events.ng.emit('INFOPANEL_GENERATED', this.infoPanel);
 
         return this.infoPanel;
     };
@@ -953,6 +984,8 @@
      *
      * Adds a a div element and sets it as the header of the page
      *
+     * @TODO: Shall force destroy the frame?
+     *
      * @param {Element} root Optional. The HTML element to which the header
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
@@ -968,25 +1001,26 @@
 
         if (!force && this.headerElement) {
             throw new Error('GameWindow.generateHeader: a header element is ' +
-                            'already existing. It cannot be duplicated.');
+                            'already existing. Use force to regenerate.');
         }
 
         root = root || document.body || document.lastElementChild;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateHeader: invalid root element.');
+            throw new Error('GameWindow.generateHeader: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         headerName = headerName || 'ng_header';
 
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'string.');
+                            'string. Found: ' + headerName);
         }
 
         if (document.getElementById(headerName)) {
-            throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateHeader: headerName is not ' +
+                            'unique in DOM: ' + headerName);
         }
 
         header = this.addElement('div', root, headerName);
@@ -2648,36 +2682,36 @@
             W.init(node.conf.window);
         });
 
-        node.on('HIDE', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.HIDE is deprecated. Use ' +
-                        'GameWindow.hide() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            if (el) el.style.display = 'none';
-        });
-
-        node.on('SHOW', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.SHOW is deprecated. Use ' +
-                        'GameWindow.show() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            if (el) el.style.display = '';
-        });
-
-        node.on('TOGGLE', function(idOrObj) {
-            var el;
-            console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
-                        'GameWindow.toggle() instead.***');
-            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-            if (el) {
-                if (el.style.display === 'none') {
-                    el.style.display = '';
-                }
-                else {
-                    el.style.display = 'none';
-                }
-            }
-        });
+//         node.on('HIDE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.HIDE is deprecated. Use ' +
+//                         'GameWindow.hide() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.HIDE');
+//             if (el) el.style.display = 'none';
+//         });
+// 
+//         node.on('SHOW', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
+//                         'GameWindow.show() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.SHOW');
+//             if (el) el.style.display = '';
+//         });
+// 
+//         node.on('TOGGLE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
+//                         'GameWindow.toggle() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+//             if (el) {
+//                 if (el.style.display === 'none') {
+//                     el.style.display = '';
+//                 }
+//                 else {
+//                     el.style.display = 'none';
+//                 }
+//             }
+//         });
 
         // Disable all the input forms found within a given id element.
         node.on('INPUT_DISABLE', function(id) {
@@ -2799,20 +2833,15 @@
         }
     }
 
-    function event_STEPPING(text) {
-        text = text || W.waitScreen.defaultTexts.stepping;
-        if (W.isScreenLocked()) {
-            W.waitScreen.updateText(text);
-        }
-        else {
-            W.lockScreen(text);
-        }
+    function event_STEPPING() {
+        var text;
+        text = W.waitScreen.defaultTexts.stepping;
+        if (W.isScreenLocked()) W.waitScreen.updateText(text);
+        else W.lockScreen(text);
     }
 
     function event_PLAYING() {
-        if (W.isScreenLocked()) {
-            W.unlockScreen();
-        }
+        if (W.isScreenLocked()) W.unlockScreen();
     }
 
     function event_PAUSED(text) {
@@ -3068,9 +3097,23 @@
     ('undefined' !== typeof window) ? window : module.parent.exports.window
 );
 
+/**
+ * # InfoPanel
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
+ * MIT Licensed
+ *
+ * Adds a configurable extra panel at the top of the screen
+ *
+ * InfoPanel is normally placed between header and main frame.
+ *
+ * www.nodegame.org
+ */
 (function(exports, window) {
 
     "use strict";
+
+    var J;
+    J = exports.JSUS;
 
     exports.InfoPanel = InfoPanel;
 
@@ -3079,8 +3122,32 @@
     }
 
     InfoPanel.prototype.init = function(options) {
+        var that;
+
         this.infoPanelDiv = document.createElement('div');
         this.infoPanelDiv.id = 'ng_info-panel';
+
+        /**
+         * ### InfoPanel.actionsLog
+         *
+         * Array containing the list of open/close events and a timestamp
+         *
+         * Entries in the actions log are objects: with keys 'create', 
+         * 'open', 'close', 'clear', 'destroy' and a timestamp.
+         *
+         * @see InfoPanel.open
+         * @see InfoPanel.close
+         */
+        this.actionsLog = [];
+
+        /**
+         * ### InfoPanel._buttons
+         *
+         * Collection of buttons created via `createToggleButton` method
+         *
+         * @see InfoPanel.createToggleButton
+         */
+        this._buttons = [];
 
         /**
          * ### InfoPanel.className
@@ -3106,7 +3173,7 @@
          *
          * Boolean indicating visibility of info panel div
          *
-         * Default: false
+         * Default: FALSE
          */
         if ('undefined' === typeof options.isVisible) {
             this.isVisible = false;
@@ -3120,97 +3187,205 @@
                                 'Found: ' + options.isVisible);
         }
 
-        if (!this.isVisible) {
-            this.infoPanelDiv.style.display = 'none';
+        this.infoPanelDiv.style.display = this.isVisible ? 'block' : 'none';
+        this.actionsLog.push({ created: J.now() });
+
+        /**
+         * ### InfoPanel.onStep
+         *
+         * Performs an action ('clear', 'open', 'close') at every new step
+         *
+         * Default: null
+         */
+        if ('undefined' !== typeof options.onStep) {
+            if ('open' === options.onStep ||
+                'close' === options.onStep ||
+                'clear' ===  options.onStep) {
+
+                this.onStep = options.onStep;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStep ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStep);
+            }
         }
         else {
-            this.infoPanelDiv.style.display = 'block';
+            options.onStep = null;
         }
 
         /**
-         * ### InfoPanel.clearPattern
+         * ### InfoPanel.onStage
          *
-         * String indicating when Info Panel should automatically clear:
-         * either: 'STEP', 'STAGE', 'NONE'
-         * (after each step, after each stage, or entirely manually)
+         * Performs an action ('clear', 'open', 'close') at every new stage
          *
-         * Default: 'NONE'
+         * Default: null
          */
-        if ('undefined' === typeof options.clearPattern) {
-            this.clearPattern = 'NONE';
-        }
-        else if ('string' === typeof options.clearPattern &&
-                ['STEP', 'STAGE', 'NONE'].reduce(function(acc, value) {
-                  return options.clearPattern === value;
-                }, false)) {
-            this.clearPattern = options.clearPattern;
+        if ('undefined' !== typeof options.onStage) {
+            if ('open' === options.onStage ||
+                'close' === options.onStage ||
+                'clear' ===  options.onStage) {
+
+                this.onStage = options.onStage;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStage ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStage);
+            }
         }
         else {
-            throw new TypeError('InfoPanel constructor: options.clearPattern ' +
-                                'must be string "STEP", "STAGE", "NONE", ' +
-                                'or undefined. ' +
-                                'Found: ' + options.clearPattern);
+            options.onStage = null;
         }
 
+        if (this.onStep || this.onStage) {
+            that = this;
+            node.events.game.on('STEPPING', function(curStep, newStep) {
+                var newStage;
+                newStage = curStep.stage !== newStep.stage;
+
+                if ((that.onStep === 'close' && that.isVisible) ||
+                    (newStage && that.onStage === 'close')) {
+
+                    that.close();
+                }
+                else if (that.onStep === 'open' ||
+                         (newStage && that.onStage === 'open')) {
+
+                    that.open();
+                }
+                else if (that.onStep === 'clear' ||
+                         (newStage && that.onStage === 'clear')) {
+
+                    that.clear();
+                }
+            });
+        }
     };
 
+    /**
+     * ### InfoPanel.clear
+     *
+     * Clears the content of the Info Panel
+     */
     InfoPanel.prototype.clear = function() {
-        return this.infoPanelDiv.innerHTML = '';
+        this.infoPanelDiv.innerHTML = '';
+        this.actionsLog.push({ clear: J.now() });
     };
 
+    /**
+     * ### InfoPanel.getPanel
+     *
+     * Returns the HTML element of the panel (div)
+     *
+     * @return {HTMLElement} The Info Panel
+     *
+     * @see InfoPanel.infoPanelDiv
+     */
     InfoPanel.prototype.getPanel = function() {
         return this.infoPanelDiv;
     };
 
+    /**
+     * ### InfoPanel.destroy
+     *
+     * Removes the Info Panel from the DOM and the internal references to it
+     *
+     * @see InfoPanel.infoPanelDiv
+     * @see InfoPanel._buttons
+     */
     InfoPanel.prototype.destroy = function() {
+        var i, len;
         if (this.infoPanelDiv.parentNode) {
             this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
         }
-
+        this.actionsLog.push({ destroy: J.now() });
         this.infoPanelDiv = null;
+        i = -1, len = this._buttons.length;
+        for ( ; ++i < len ; ) {
+            if (this._buttons[i].parentNode) {
+                this._buttons[i].parentNode.removeChild(this._buttons[i]);
+            }
+        }
     };
 
-    InfoPanel.prototype.bindListener = function() {
-        // first thing in body of page ? or below header ? or above main frame ?
-        // STEPPING -- currently moving step
-        // node.game.getRound('remaining')  === 0 or 1 that means its the last step of a stage
-    };
-
+    /**
+     * ### InfoPanel.toggle
+     *
+     * Toggles the visibility of the Info Panel
+     *
+     * @see InfoPanel.open
+     * @see InfoPanel.close
+     */
     InfoPanel.prototype.toggle = function() {
-      this.isVisible = !this.isVisible;
-
-      if (this.isVisible) {
-        this.open();
-      }
-      else {
-        this.close();
-      }
+        if (this.isVisible) this.close();
+        else this.open();
     };
 
+    /**
+     * ### InfoPanel.open
+     *
+     * Opens the Info Panel (if not already open)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.close
+     * @see InfoPanel.isVisible
+     */
     InfoPanel.prototype.open = function() {
-      this.infoPanelDiv.style.display = 'block';
-      this.isVisible = true;
+        if (this.isVisible) return;
+        this.actionsLog.push({ open: J.now() });
+        this.infoPanelDiv.style.display = 'block';
+        this.isVisible = true;
     };
 
+    /**
+     * ### InfoPanel.close
+     *
+     * Closes the Info Panel (if not already closed)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.open
+     * @see InfoPanel.isVisible
+     */
     InfoPanel.prototype.close = function() {
-      this.infoPanelDiv.style.display = 'none';
-      this.isVisible = false;
+        if (!this.isVisible) return;
+        this.actionsLog.push({ close: J.now() });
+        this.infoPanelDiv.style.display = 'none';
+        this.isVisible = false;
     };
 
+    /**
+     * ### InfoPanel.createToggleButton
+     *
+     * Creates an HTML button with a listener to toggle the InfoPanel
+     *
+     * Adds the button to the internal collection `_buttons`. All buttons
+     * are destroyed if the Info Panel is destroyed.
+     *
+     * @return {HTMLElement} button A button that toggles info panel
+     *
+     * @see InfoPanel._buttons
+     * @see InfoPanel.toggle
+     */
     InfoPanel.prototype.createToggleButton = function(buttonLabel) {
-        // return a button that toggles info panel
-        var button;
-        var that;
+        var that, button;
 
-        that = this;
-
+        buttonLabel = buttonLabel || 'Toggle Info Panel';
+        if ('string' !== typeof buttonLabel || buttonLabel.trim() === '') {
+            throw new Error('InfoPanel.createToggleButton: buttonLabel ' +
+                            'must be undefined or a non-empty string. Found: ' +
+                            buttonLabel);
+        }
         button = document.createElement('button');
         button.className = 'btn btn-lg btn-warning';
-        button.innerHTML = buttonLabel;
+        button.innerHTML = buttonLabel ;
 
+        that = this;
         button.onclick = function() {
-          that.toggle();
+            that.toggle();
         };
+
+        this._buttons.push(button);
 
         return button;
     };
