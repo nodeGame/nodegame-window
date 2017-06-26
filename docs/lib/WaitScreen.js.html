@@ -218,20 +218,15 @@ be re-activated later.</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kd">function</span> <span class="nx">event_STEPPING</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">defaultTexts</span><span class="p">.</span><span class="nx">stepping</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">updateText</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">lockScreen</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
-        <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">event_STEPPING</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">text</span><span class="p">;</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">defaultTexts</span><span class="p">.</span><span class="nx">stepping</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">updateText</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+        <span class="k">else</span> <span class="nx">W</span><span class="p">.</span><span class="nx">lockScreen</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">event_PLAYING</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">unlockScreen</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="nx">W</span><span class="p">.</span><span class="nx">unlockScreen</span><span class="p">();</span>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">event_PAUSED</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>

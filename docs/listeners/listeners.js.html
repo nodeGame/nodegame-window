@@ -115,37 +115,6 @@ MIT Licensed</p>
 
         <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;NODEGAME_GAME_CREATED&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nb">window</span><span class="p">);</span>
-        <span class="p">});</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;HIDE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.HIDE is deprecated. Use &#39;</span> <span class="o">+</span>
-                        <span class="s1">&#39;GameWindow.hide() instead.***&#39;</span><span class="p">);</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.HIDE&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
-        <span class="p">});</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;SHOW&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.SHOW is deprecated. Use &#39;</span> <span class="o">+</span>
-                        <span class="s1">&#39;GameWindow.show() instead.***&#39;</span><span class="p">);</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.SHOW&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="p">});</span>
-
-        <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">el</span><span class="p">;</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;***GameWindow.on.TOGGLE is deprecated. Use &#39;</span> <span class="o">+</span>
-                        <span class="s1">&#39;GameWindow.toggle() instead.***&#39;</span><span class="p">);</span>
-            <span class="nx">el</span> <span class="o">=</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">idOrObj</span><span class="p">,</span> <span class="s1">&#39;GameWindow.on.TOGGLE&#39;</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">el</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
         <span class="p">});</span></pre></div>
         </td>
       </tr>
@@ -153,6 +122,49 @@ MIT Licensed</p>
         <td class="docs">
 <div class="pilwrap">
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+
+<div class="highlight"><pre><code>    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;HIDE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
+        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.HIDE is deprecated. Use &#39;</span> <span class="o">+</span>
+                    <span class="s">&#39;GameWindow.hide() instead.***&#39;</span><span class="p">);</span>
+        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.HIDE&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;SHOW&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
+        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.SHOW is deprecated. Use &#39;</span> <span class="o">+</span>
+                    <span class="s">&#39;GameWindow.show() instead.***&#39;</span><span class="p">);</span>
+        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.SHOW&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
+        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.TOGGLE is deprecated. Use &#39;</span> <span class="o">+</span>
+                    <span class="s">&#39;GameWindow.toggle() instead.***&#39;</span><span class="p">);</span>
+        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.TOGGLE&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">===</span> <span class="s">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+</code></pre></div>
+
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
@@ -164,7 +176,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
@@ -176,7 +188,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
 </div>
 <p>Disable all the input forms found within a given id element.</p>
         </td>
@@ -188,7 +200,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
 </div>
 <div class="dox">
   <div class="summary"><p>Force disconnection upon page unload</p>
@@ -208,7 +220,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
 </div>
 <p>Do nothing, but gain time.</p>
         </td>
@@ -219,7 +231,7 @@ MIT Licensed</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
 </div>
 <p>Mark listeners as added.</p>
         </td>
