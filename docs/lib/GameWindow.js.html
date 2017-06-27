@@ -263,7 +263,7 @@
 </div>
 
 
-<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;a&#105;&#x6C;&#x74;&#x6F;:&#115;&#x74;&#101;&#64;&#110;&#x6F;&#x64;&#101;&#103;&#97;&#x6D;&#101;&#x2E;&#x6F;&#x72;&#103;">&#115;&#x74;&#101;&#64;&#110;&#x6F;&#x64;&#101;&#103;&#97;&#x6D;&#101;&#x2E;&#x6F;&#x72;&#103;</a>
+<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#x6C;&#x74;&#x6F;:&#x73;&#x74;&#101;&#x40;&#110;&#x6F;&#x64;&#101;&#103;&#x61;&#109;&#x65;&#x2E;&#111;&#x72;&#x67;">&#x73;&#x74;&#101;&#x40;&#110;&#x6F;&#x64;&#101;&#103;&#x61;&#109;&#x65;&#x2E;&#111;&#x72;&#x67;</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>API to interface nodeGame with the browser window</p>
@@ -1911,9 +1911,12 @@ directly. We need to re-get it from the DOM.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: a frame element is &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: frame is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroyFrame</span><span class="p">();</span>
         <span class="p">}</span>
 
         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameRoot</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
@@ -2042,10 +2045,12 @@ directly. We need to re-get it from the DOM.</p>
                 <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">InfoPanel</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
         <span class="nx">infoPanelDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">;</span>
 
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateInfoPanel: root must be &#39;</span> <span class="o">+</span>
@@ -2275,8 +2280,8 @@ iframe.contentWindow.location.replace('about:blank');</p>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">force</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. Will create the header even if an
-  existing one is found. Default: FALSE</span>
+      <span>Optional. Destroys the existing header,
+  if found. Default: FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -2290,9 +2295,12 @@ iframe.contentWindow.location.replace('about:blank');</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">header</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: a header element is &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: header is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroyHeader</span><span class="p">();</span>
         <span class="p">}</span>
 
         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
