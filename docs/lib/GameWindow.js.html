@@ -263,7 +263,7 @@
 </div>
 
 
-<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#x6C;&#x74;&#x6F;:&#x73;&#x74;&#101;&#x40;&#110;&#x6F;&#x64;&#101;&#103;&#x61;&#109;&#x65;&#x2E;&#111;&#x72;&#x67;">&#x73;&#x74;&#101;&#x40;&#110;&#x6F;&#x64;&#101;&#103;&#x61;&#109;&#x65;&#x2E;&#111;&#x72;&#x67;</a>
+<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;&#x61;&#x69;&#x6C;&#116;&#x6F;:&#x73;&#116;&#101;&#64;&#110;&#111;&#x64;&#101;&#103;&#97;&#x6D;&#x65;&#46;&#x6F;&#114;g">&#x73;&#116;&#101;&#64;&#110;&#111;&#x64;&#101;&#103;&#97;&#x6D;&#x65;&#46;&#x6F;&#114;g</a>
 MIT Licensed</p>
   </div>
   <div class="body"><p>API to interface nodeGame with the browser window</p>
@@ -1475,14 +1475,13 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;level must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: level must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: unrecognized level: &#39;</span> <span class="o">+</span>
-                            <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                            <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -1581,12 +1580,12 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setScreenLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;level must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: level must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">screenLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: unrecognized level: &#39;</span> <span class="o">+</span>
-                            <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                            <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">screenState</span> <span class="o">=</span> <span class="nx">screenLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
@@ -2128,13 +2127,16 @@ directly. We need to re-get it from the DOM.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">iframe</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframe must be HTMLElement.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframe must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">iframe</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">iframeName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframeName must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframeName must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">iframeName</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: root must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">frameRoot</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
@@ -2392,7 +2394,7 @@ added later.</p>
         <span class="kd">var</span> <span class="nx">validPositions</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">oldPos</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: position &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be string.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;must be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">position</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">pos</span> <span class="o">=</span> <span class="nx">position</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span></pre></div>
         </td>
@@ -2415,15 +2417,15 @@ added later.</p>
 <p>Map: position - css class.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">validPositions</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-t&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;bottom&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-b&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;right&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-r&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-l&#39;</span>
+            <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-t&#39;</span><span class="p">,</span>
+            <span class="nx">bottom</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-b&#39;</span><span class="p">,</span>
+            <span class="nx">right</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-r&#39;</span><span class="p">,</span>
+            <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-l&#39;</span>
         <span class="p">};</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validPositions</span><span class="p">[</span><span class="nx">pos</span><span class="p">])</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: invalid header &#39;</span> <span class="o">+</span>
-                     <span class="s1">&#39;position: &#39;</span> <span class="o">+</span> <span class="nx">pos</span>  <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                     <span class="s1">&#39;position: &#39;</span> <span class="o">+</span> <span class="nx">pos</span><span class="p">);</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
@@ -2470,7 +2472,7 @@ added later.</p>
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">header</span>
-      <span class="dox_type">Element</span>
+      <span class="dox_type">HTMLElement</span>
       <span>The new header</span>
     </div>
     <div class="dox_tag_detail">
@@ -2480,14 +2482,14 @@ added later.</p>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">root</span>
-      <span class="dox_type">Element</span>
-      <span>The HTML element to which the header is appended</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The element to which the header is appended</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">Element</span>
-      <span>The new header</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The header</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -2500,13 +2502,16 @@ added later.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">header</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">header</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
-                <span class="s1">&#39;GameWindow.setHeader: header must be HTMLElement.&#39;</span><span class="p">);</span>
+                <span class="s1">&#39;GameWindow.setHeader: header must be HTMLElement. Found: &#39;</span> <span class="o">+</span>
+                    <span class="nx">header</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">headerName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: headerName must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: headerName must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">headerName</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: root must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span> <span class="o">=</span> <span class="nx">header</span><span class="p">;</span>
@@ -2722,11 +2727,11 @@ Deletion must be done manually.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initLibs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">globalLibs</span><span class="p">,</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">globalLibs</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">globalLibs</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: globalLibs must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;array or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">globalLibs</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">frameLibs</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: frameLibs must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;object or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">frameLibs</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">globalLibs</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: frameLibs and frameLibs &#39;</span> <span class="o">+</span>
@@ -2778,8 +2783,8 @@ Deletion must be done manually.</p>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">;</span>
         <span class="nx">uri</span> <span class="o">=</span> <span class="nx">uri</span> <span class="o">||</span> <span class="s1">&#39;/pages/testpage.htm&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.precacheTest: uri must string or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.precacheTest: uri must string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;iframe&#39;</span><span class="p">);</span>
         <span class="nx">iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
@@ -2886,11 +2891,11 @@ being loaded.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">uris</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.preCache: uris must be string &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or array.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or array. Found: &#39;</span> <span class="o">+</span> <span class="nx">uris</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.preCache: callback must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;function or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">callback</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -3281,15 +3286,16 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
         <span class="kd">var</span> <span class="nx">lastURI</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: uri must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: uri must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: func must be function &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">func</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts must be object &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">opts</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -3379,7 +3385,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: unkown cache &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;load mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">loadMode</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                                    <span class="s1">&#39;load mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">loadMode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">)</span> <span class="p">{</span>
@@ -3397,8 +3403,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: unkown cache &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;store mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span> <span class="o">+</span>
-                                    <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                                    <span class="s1">&#39;store mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -3406,13 +3411,15 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.autoParse &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;must be object or undefined.&#39;</span><span class="p">);</span>
+                                    <span class="s1">&#39;must be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.&#39;</span> <span class="o">+</span>
                                         <span class="s1">&#39;autoParsePrefix must be string &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                        <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">autoParsePrefix</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">;</span>
             <span class="p">}</span>
@@ -3420,7 +3427,8 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                 <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.&#39;</span> <span class="o">+</span>
                                         <span class="s1">&#39;autoParseMod must be string &#39;</span> <span class="o">+</span>
-                                        <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                        <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">autoParseMod</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">;</span>
             <span class="p">}</span>
@@ -3889,7 +3897,7 @@ and updates GameWindow state.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setUriPrefix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">uriPrefix</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setUriPrefix: uriPrefix must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string or null.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;string or null. Found: &#39;</span> <span class="o">+</span> <span class="nx">uriPrefix</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">=</span> <span class="nx">uriPrefix</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
