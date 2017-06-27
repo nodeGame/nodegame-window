@@ -570,14 +570,13 @@
      */
     GameWindow.prototype.setStateLevel = function(level) {
         if ('string' !== typeof level) {
-            throw new TypeError('GameWindow.setStateLevel: ' +
-                                'level must be string.');
+            throw new TypeError('GameWindow.setStateLevel: level must ' +
+                                'be string. Found: ' + level);
         }
         if ('undefined' === typeof windowLevels[level]) {
             throw new Error('GameWindow.setStateLevel: unrecognized level: ' +
-                            level + '.');
+                            level);
         }
-
         this.stateLevel = windowLevels[level];
     };
 
@@ -619,12 +618,12 @@
      */
     GameWindow.prototype.setScreenLevel = function(level) {
         if ('string' !== typeof level) {
-            throw new TypeError('GameWindow.setScreenLevel: ' +
-                                'level must be string.');
+            throw new TypeError('GameWindow.setScreenLevel: level must ' +
+                                'be string. Found: ' + level);
         }
         if ('undefined' === typeof screenLevels[level]) {
             throw new Error('GameWindow.setScreenLevel: unrecognized level: ' +
-                            level + '.');
+                            level);
         }
 
         this.screenState = screenLevels[level];
@@ -756,8 +755,6 @@
      *
      * Appends a new iframe to _documents.body_ and sets it as the default one
      *
-     * @TODO: Shall force destroy the frame?
-     *
      * @param {Element} root Optional. The HTML element to which the iframe
      *   will be appended. Default: this.frameRoot or document.body
      * @param {string} frameName Optional. The name of the iframe. Default:
@@ -778,9 +775,12 @@
      */
     GameWindow.prototype.generateFrame = function(root, frameName, force) {
         var iframe;
-        if (!force && this.frameElement) {
-            throw new Error('GameWindow.generateFrame: a frame element is ' +
-                            'already existing. Use force to regenerate.');
+        if (this.frameElement) {
+            if (!force) {
+                throw new Error('GameWindow.generateFrame: frame is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            this.destroyFrame();
         }
 
         root = root || this.frameRoot || document.body;
@@ -856,10 +856,12 @@
                 this.infoPanel = null;
             }
         }
+        options = options || {};
 
         this.infoPanel = new node.InfoPanel(options);
         infoPanelDiv = this.infoPanel.infoPanelDiv;
 
+        root = options.root;
         if (root) {
             if (!J.isElement(root)) {
                 throw new Error('GameWindow.generateInfoPanel: root must be ' +
@@ -898,13 +900,16 @@
      */
     GameWindow.prototype.setFrame = function(iframe, iframeName, root) {
         if (!J.isElement(iframe)) {
-            throw new Error('GameWindow.setFrame: iframe must be HTMLElement.');
+            throw new TypeError('GameWindow.setFrame: iframe must be ' +
+                                'HTMLElement. Found: ' + iframe);
         }
         if ('string' !== typeof iframeName) {
-            throw new Error('GameWindow.setFrame: iframeName must be string.');
+            throw new TypeError('GameWindow.setFrame: iframeName must be ' +
+                                'string. Found: ' + iframeName);
         }
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.setFrame: invalid root element.');
+            throw new TypeError('GameWindow.setFrame: root must be ' +
+                                'HTMLElement. Found: ' + root);
         }
 
         this.frameRoot = root;
@@ -984,24 +989,25 @@
      *
      * Adds a a div element and sets it as the header of the page
      *
-     * @TODO: Shall force destroy the header?
-     *
      * @param {Element} root Optional. The HTML element to which the header
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
      *   Default: 'ng_header'
-     * @param {boolean} force Optional. Will create the header even if an
-     *   existing one is found. Default: FALSE
+     * @param {boolean} force Optional. Destroys the existing header,
+     *   if found. Default: FALSE
      *
      * @return {Element} The header element
      */
     GameWindow.prototype.generateHeader = function(root, headerName, force) {
         var header;
 
-        if (!force && this.headerElement) {
-            throw new Error('GameWindow.generateHeader: a header element is ' +
-                            'already existing. Use force to regenerate.');
+        if (this.headerElement) {
+            if (!force) {
+                throw new Error('GameWindow.generateHeader: header is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            this.destroyHeader();
         }
 
         root = root || document.body || document.lastElementChild;
@@ -1058,7 +1064,7 @@
         var validPositions, pos, oldPos;
         if ('string' !== typeof position) {
             throw new TypeError('GameWindow.setHeaderPosition: position ' +
-                                'must be string.');
+                                'must be string. Found: ' + position);
         }
         pos = position.toLowerCase();
 
@@ -1067,15 +1073,15 @@
 
         // Map: position - css class.
         validPositions = {
-            'top': 'ng_header_position-horizontal-t',
-            'bottom': 'ng_header_position-horizontal-b',
-            'right': 'ng_header_position-vertical-r',
-            'left': 'ng_header_position-vertical-l'
+            top: 'ng_header_position-horizontal-t',
+            bottom: 'ng_header_position-horizontal-b',
+            right: 'ng_header_position-vertical-r',
+            left: 'ng_header_position-vertical-l'
         };
 
         if ('undefined' === typeof validPositions[pos]) {
             node.err('GameWindow.setHeaderPosition: invalid header ' +
-                     'position: ' + pos  + '.');
+                     'position: ' + pos);
             return;
         }
         if (!this.headerElement) {
@@ -1102,30 +1108,32 @@
      *
      * Sets the new header element and update related references
      *
-     * @param {Element} header The new header
+     * @param {HTMLElement} header The new header
      * @param {string} headerName The name of the header
-     * @param {Element} root The HTML element to which the header is appended
+     * @param {HTMLElement} root The element to which the header is appended
      *
-     * @return {Element} The new header
+     * @return {HTMLElement} The header
      *
      * @see GameWindow.generateHeader
      */
     GameWindow.prototype.setHeader = function(header, headerName, root) {
         if (!J.isElement(header)) {
             throw new Error(
-                'GameWindow.setHeader: header must be HTMLElement.');
+                'GameWindow.setHeader: header must be HTMLElement. Found: ' +
+                    header);
         }
         if ('string' !== typeof headerName) {
-            throw new Error('GameWindow.setHeader: headerName must be string.');
+            throw new Error('GameWindow.setHeader: headerName must be ' +
+                            'string. Found: ' + headerName);
         }
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.setHeader: invalid root element.');
+            throw new Error('GameWindow.setHeader: root must be ' +
+                            'HTMLElement. Found: ' + root);
         }
 
         this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
-
 
         // Emit event.
         node.events.ng.emit('HEADER_GENERATED', header);
@@ -1230,11 +1238,11 @@
     GameWindow.prototype.initLibs = function(globalLibs, frameLibs) {
         if (globalLibs && !J.isArray(globalLibs)) {
             throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
-                                'array or undefined.');
+                                'array or undefined. Found: ' + globalLibs);
         }
         if (frameLibs && 'object' !== typeof frameLibs) {
             throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
-                                'object or undefined.');
+                                'object or undefined. Found: ' + frameLibs);
         }
         if (!globalLibs && !frameLibs) {
             throw new Error('GameWindow.initLibs: frameLibs and frameLibs ' +
@@ -1262,8 +1270,8 @@
         var iframe, iframeName;
         uri = uri || '/pages/testpage.htm';
         if ('string' !== typeof uri) {
-            throw new TypeError('GameWindow.precacheTest: uri must string or ' +
-                                'undefined.');
+            throw new TypeError('GameWindow.precacheTest: uri must string ' +
+                                'or undefined. Found: ' + uri);
         }
         iframe = document.createElement('iframe');
         iframe.style.display = 'none';
@@ -1323,11 +1331,11 @@
 
         if (!J.isArray(uris)) {
             throw new TypeError('GameWindow.preCache: uris must be string ' +
-                                'or array.');
+                                'or array. Found: ' + uris);
         }
         if (callback && 'function' !== typeof callback) {
             throw new TypeError('GameWindow.preCache: callback must be ' +
-                                'function or undefined.');
+                                'function or undefined. Found: ' + callback);
         }
 
         // Don't preload if an empty array is passed.
@@ -1518,15 +1526,16 @@
         var lastURI;
 
         if ('string' !== typeof uri) {
-            throw new TypeError('GameWindow.loadFrame: uri must be string.');
+            throw new TypeError('GameWindow.loadFrame: uri must be ' +
+                                'string. Found: ' + uri);
         }
         if (func && 'function' !== typeof func) {
             throw new TypeError('GameWindow.loadFrame: func must be function ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + func);
         }
         if (opts && 'object' !== typeof opts) {
             throw new TypeError('GameWindow.loadFrame: opts must be object ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + opts);
         }
         opts = opts || {};
 
@@ -1571,7 +1580,7 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'load mode: ' + opts.cache.loadMode + '.');
+                                    'load mode: ' + opts.cache.loadMode);
                 }
             }
             if (opts.cache.storeMode) {
@@ -1589,8 +1598,7 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode +
-                                    '.');
+                                    'store mode: ' + opts.cache.storeMode);
                 }
             }
         }
@@ -1598,13 +1606,15 @@
         if ('undefined' !== typeof opts.autoParse) {
             if ('object' !== typeof opts.autoParse) {
                 throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
-                                    'must be object or undefined.');
+                                    'must be object or undefined. Found: ' +
+                                    opts.autoParse);
             }
             if ('undefined' !== typeof opts.autoParsePrefix) {
                 if ('string' !== typeof opts.autoParsePrefix) {
                     throw new TypeError('GameWindow.loadFrame: opts.' +
                                         'autoParsePrefix must be string ' +
-                                        'or undefined.');
+                                        'or undefined. Found: ' +
+                                        opts.autoParsePrefix);
                 }
                 autoParsePrefix = opts.autoParsePrefix;
             }
@@ -1612,7 +1622,8 @@
                 if ('string' !== typeof opts.autoParseMod) {
                     throw new TypeError('GameWindow.loadFrame: opts.' +
                                         'autoParseMod must be string ' +
-                                        'or undefined.');
+                                        'or undefined. Found: ' +
+                                        opts.autoParseMod);
                 }
                 autoParseMod = opts.autoParseMod;
             }
@@ -1834,7 +1845,7 @@
     GameWindow.prototype.setUriPrefix = function(uriPrefix) {
         if (uriPrefix !== null && 'string' !== typeof uriPrefix) {
             throw new TypeError('GameWindow.setUriPrefix: uriPrefix must be ' +
-                                'string or null.');
+                                'string or null. Found: ' + uriPrefix);
         }
         this.conf.uriPrefix = this.uriPrefix = uriPrefix;
     };
@@ -3124,7 +3135,7 @@
     /**
      * ### InfoPanel.init
      *
-     * Inits the Info panel 
+     * Inits the Info panel
      *
      * @param {object} options Optional. Configuration options.
      *   Available options (defaults):
