@@ -246,9 +246,9 @@
         /**
          * ### GameWindow.defaultHeaderPosition
          *
-         * The default header position. 'left'.
+         * The default header position. 'top'.
          */
-        this.defaultHeaderPosition = 'left';
+        this.defaultHeaderPosition = 'top';
 
         /**
          * ### GameWindow.conf
@@ -984,7 +984,7 @@
      *
      * Adds a a div element and sets it as the header of the page
      *
-     * @TODO: Shall force destroy the frame?
+     * @TODO: Shall force destroy the header?
      *
      * @param {Element} root Optional. The HTML element to which the header
      *   will be appended. Default: _document.body_ or
@@ -2689,7 +2689,7 @@
 //             el = getElement(idOrObj, 'GameWindow.on.HIDE');
 //             if (el) el.style.display = 'none';
 //         });
-// 
+//
 //         node.on('SHOW', function(idOrObj) {
 //             var el;
 //             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
@@ -2697,7 +2697,7 @@
 //             el = getElement(idOrObj, 'GameWindow.on.SHOW');
 //             if (el) el.style.display = '';
 //         });
-// 
+//
 //         node.on('TOGGLE', function(idOrObj) {
 //             var el;
 //             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
@@ -3121,8 +3121,22 @@
         this.init(options || {});
     }
 
+    /**
+     * ### InfoPanel.init
+     *
+     * Inits the Info panel 
+     *
+     * @param {object} options Optional. Configuration options.
+     *   Available options (defaults):
+     *
+     *    - 'className': a class name for the info panel div (''),
+     *    - 'isVisible': if TRUE, the info panel is open immediately (false),
+     *    - 'onStep:' an action to perform every new step (null),
+     *    - 'onStage:' an action to perform every new stage (null).
+     */
     InfoPanel.prototype.init = function(options) {
         var that;
+        options = options || {};
 
         this.infoPanelDiv = document.createElement('div');
         this.infoPanelDiv.id = 'ng_info-panel';
@@ -3132,7 +3146,7 @@
          *
          * Array containing the list of open/close events and a timestamp
          *
-         * Entries in the actions log are objects: with keys 'create', 
+         * Entries in the actions log are objects: with keys 'create',
          * 'open', 'close', 'clear', 'destroy' and a timestamp.
          *
          * @see InfoPanel.open
