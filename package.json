@@ -1,12 +1,12 @@
 {
   "name": "nodegame-window",
   "description": "Provides a handy API to interface nodeGame with the browser window.",
-  "version": "3.5.2",
-  "keywords": [ "nodegame", "window", "browser", "frame" ],
+  "version": "4.0.0",
+  "keywords": [ "nodegame", "window", "browser", "frame", "behavioral", "multiplayer", "games" ],
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "JSUS": ">= 0.10.0",
+    "JSUS": ">= 0.17.0",
     "NDDB": ">= 1.2.1",
     "commander": ">= 2.8.1",
     "smoosh": "0.4.0"
@@ -18,7 +18,7 @@
     "jsdom" : ">= 0.2.14",
     "docker": "0.2.2"
   },
-  "engines": { "node":  ">= 0.10.0" },
+  "engines": { "node":  ">= 0.12.0" },
   "repository": {
     "type": "git",
     "url": "https://github.com/nodeGame/nodegame-window.git"
