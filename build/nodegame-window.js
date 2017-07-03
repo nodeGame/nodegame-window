@@ -1024,7 +1024,7 @@
                             'unique in DOM: ' + headerName);
         }
 
-        header = this.addElement('div', root, headerName);
+        header = this.add('div', root, headerName);
 
         // If generateHeader is called after generateFrame, and the default
         // header position is not bottom, we need to move the header in front.
