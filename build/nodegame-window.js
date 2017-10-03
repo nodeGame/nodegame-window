@@ -802,7 +802,7 @@
                             'unique in DOM: ' + frameName);
         }
 
-        iframe = W.addIFrame(root, frameName);
+        iframe = W.add('iframe', root, frameName);
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
@@ -2766,7 +2766,7 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Covers the screen with a gray layer, disables inputs, and displays a message
@@ -2782,7 +2782,7 @@
 
     // ## Meta-data
 
-    WaitScreen.version = '0.8.0';
+    WaitScreen.version = '0.8.1';
     WaitScreen.description = 'Show a standard waiting screen';
 
     // ## Helper functions
@@ -3024,7 +3024,7 @@
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
             }
-            this.waitingDiv = W.addDiv(this.root, this.id);
+            this.waitingDiv = W.add('div', this.root, this.id);
         }
         if (this.waitingDiv.style.display === 'none') {
             this.waitingDiv.style.display = '';
