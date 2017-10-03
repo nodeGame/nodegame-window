@@ -2188,7 +2188,7 @@
 
 /**
  * # setup.window
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow setup functions
@@ -2198,7 +2198,6 @@
 (function(window, node) {
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
 
     /**
      * ### GameWindow.addDefaultSetups
@@ -3122,9 +3121,6 @@
 
     "use strict";
 
-    var J;
-    J = exports.JSUS;
-
     exports.InfoPanel = InfoPanel;
 
     function InfoPanel(options) {
@@ -3421,11 +3417,12 @@
 
 /**
  * # selector
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
- * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame
+ * Utility functions to create and manipulate HTML select lists
+ *
+ * Extra methods relevant for nodeGame variables are added.
  *
  * http://www.nodegame.org
  */
@@ -3433,7 +3430,6 @@
 
     "use strict";
 
-    var J = node.JSUS;
     var constants = node.constants;
     var GameWindow = node.GameWindow;
 
@@ -3645,7 +3641,7 @@
 
 /**
  * # extra
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -3657,8 +3653,7 @@
     "use strict";
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
-    var DOM = J.get('DOM');
+    var DOM = J.require('DOM');
 
     /**
      * ### GameWindow.getScreen
@@ -4392,8 +4387,7 @@
 
     // ## Global scope
 
-    var document = window.document,
-    J = node.JSUS;
+    var document = window.document;
 
     var TriggerManager = node.TriggerManager;
 
@@ -4839,7 +4833,7 @@
 
 /**
  * # Table
- * Copyright(c) 2016 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
@@ -4878,7 +4872,6 @@
     exports.Table = Table;
     exports.Table.Cell = Cell;
 
-    var J = node.JSUS;
     var NDDB = node.NDDB;
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
