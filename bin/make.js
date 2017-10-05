@@ -62,7 +62,7 @@ program
         }
         catch(e) {
             console.log('module Docker not found. Cannot build doc.');
-            consoel.log('Do \'npm install docker\' to install it.');
+            console.log('Do \'npm install docker\' to install it.');
             return false;
         }
         var command = dockerDir + 'docker -i ' + rootDir +
