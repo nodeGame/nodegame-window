@@ -413,6 +413,15 @@
          * Boolean flag saying whether we are in IE or not
          */
         this.isIE = !!document.createElement('span').attachEvent;
+        
+        /**
+         * ### GameWindow.willResizeFrame
+         *
+         * Boolean flag saying whether a call to resize the frame is in progress
+         *
+         * @see W.adjustFrameHeight
+         */
+        this.willResizeFrame = false;
 
         // Add setup functions.
         this.addDefaultSetups();
@@ -818,6 +827,31 @@
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
+
+        // Add listener on resizing the page.
+        (function() {
+            var nextTimeout;
+            document.body.onresize = function() {
+                if (W.willResizeFrame) {
+                    console.log('no timeout now');
+                    nextTimeout = true
+                    return;
+                }
+                W.willResizeFrame = setTimeout(function() {                   
+                    W.willResizeFrame = null;
+                    // If another timeout call was requested, do nothing now.
+                    if (nextTimeout) {
+                        console.log('one more timeout');
+                        nextTimeout = false;
+                        document.body.onresize();
+                    }
+                    else {
+                        console.log('now is ok');
+                        W.adjustFrameHeight();
+                    }
+                }, 100);
+            };
+        })();
 
         return iframe;
     };
@@ -1881,6 +1915,54 @@
         this.uriChannel = uriChannel;
     };
 
+    /**
+     * ### GameWindow.adjustFrameHeight
+     *
+     * Resets the min-height style of the iframe to fit its content properly
+     *
+     * Takes into account header position and height, the available
+     * height of the page, and the actual content of the iframe and 
+     * Stretches the iframe to the either:
+     *
+     *  - (almost) till the end of the page,
+     *  - or to fit its content, if higher (will have scrollbar).
+     *
+     * @param {number} userMinHeight Optional. If set minHeight cannot be
+     *  less than this value.
+     */
+    GameWindow.prototype.adjustFrameHeight = function(userMinHeight) {
+        var iframe, minHeight, contentHeight;
+        iframe = W.getFrame();
+        // Iframe might have been destroyed already, e.g. in a test.
+        if (!iframe || !iframe.contentWindow) return;
+
+        // Try to find out how tall the frame should be.
+        minHeight = window.innerHeight || window.clientHeight;
+
+        console.log('availHeight: ', minHeight);
+        
+        if (W.headerPosition === 'top' ||
+            W.headerPosition === 'bottom') {
+
+            minHeight -= W.getHeader().offsetHeight;
+
+            console.log('minus header: ', minHeight);
+        }
+        contentHeight =
+            iframe.contentWindow.document.body.offsetHeight + 100;
+
+        console.log('contentHeight: ', contentHeight);
+
+        
+        if (minHeight < contentHeight) minHeight = contentHeight;
+        if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+        
+        // Adjust min-height based on content.
+        iframe.style['min-height'] = minHeight + 'px';
+
+        console.log('adjusting!!!! ', minHeight);
+    };
+    
     // ## Helper functions
 
     /**
@@ -1950,20 +2032,16 @@
 
             func();
 
+            // Important. We need a timeout, because some changes might
+            // take time to be reflected in the DOM.
             setTimeout(function() {
-                // Adjust min-height based on content.
-                iframe.style['min-height'] =
-                    iframe.contentWindow.document.body.offsetHeight + 100 + 'px';
-            });
+                W.adjustFrameHeight();
+            }, 120);
 
         };
 
-        if (loadCache) {
-            reloadScripts(iframe, afterScripts);
-        }
-        else {
-            afterScripts();
-        }
+        if (loadCache) reloadScripts(iframe, afterScripts);
+        else afterScripts();
     }
 
     /**
@@ -3835,25 +3913,6 @@
     };
 
     /**
-     * ### GameWindow.getScreenInfo
-     *
-     * Returns information about the screen in which nodeGame is running
-     *
-     * @return {object} A object containing the scren info
-     */
-    GameWindow.prototype.getScreenInfo = function() {
-        var screen = window.screen;
-        return {
-            height: screen.height,
-            widht: screen.width,
-            availHeight: screen.availHeight,
-            availWidth: screen.availWidht,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixedDepth
-        };
-    };
-
-    /**
      * ### GameWindow.getLoadingDots
      *
      * Creates and returns a span element with incrementing dots inside
@@ -3935,24 +3994,28 @@
      * Creates an HTML button element that will emit an event when clicked
      *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {string|object} attributes Optional. The attributes of the 
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
+     *
+     * @see GameWindow.get
      */
-    GameWindow.prototype.getEventButton =
-    function(event, text, id, attributes) {
-
+    GameWindow.prototype.getEventButton = function(event, attributes) {
         var b;
         if ('string' !== typeof event) {
             throw new TypeError('GameWindow.getEventButton: event must ' +
-                                'be string.');
+                                'be string. Found: ' + event);
         }
-        b = this.getButton(id, text, attributes);
-        b.onclick = function() {
-            node.emit(event);
-        };
+        if ('string' === typeof attributes) {
+            attributes = { innerHTML: attributes };
+        }
+        else if (!attributes) {
+            attributes = {};
+        }
+        if (!attributes.innerHTML) attributes.innerHTML = event;
+        b = this.get('button', attributes);
+        b.onclick = function() { node.emit(event); };
         return b;
     };
 
@@ -3961,30 +4024,21 @@
      *
      * Adds an EventButton to the specified root element
      *
-     * If no valid root element is provided, it is append as last element
-     * in the current screen.
-     *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {Element} root Optional. The root element. Default: last element
+     * on the page
+     * @param {string|object} attributes Optional. The attributes of the 
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
      *
+     * @see GameWindow.get
      * @see GameWindow.getEventButton
      */
-    GameWindow.prototype.addEventButton =
-    function(event, text, root, id, attributes) {
+    GameWindow.prototype.addEventButton = function(event, root, attributes) {
         var eb;
-
-        if (!event) return;
-        if (!root) {
-            root = this.getScreen();
-        }
-
-        eb = this.getEventButton(event, text, id, attributes);
-
+        eb = this.getEventButton(event, attributes);
+        if (!root) root = this.getScreen();   
         return root.appendChild(eb);
     };
 
