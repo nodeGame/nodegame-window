@@ -413,7 +413,7 @@
          * Boolean flag saying whether we are in IE or not
          */
         this.isIE = !!document.createElement('span').attachEvent;
-        
+
         /**
          * ### GameWindow.willResizeFrame
          *
@@ -435,7 +435,7 @@
                 if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
             })(document.getElementsByTagName('noscript'));
         }, 1000);
-
+        
         // Init.
         this.init(GameWindow.defaults);
 
@@ -829,29 +829,11 @@
         node.events.ng.emit('FRAME_GENERATED', iframe);
 
         // Add listener on resizing the page.
-        (function() {
-            var nextTimeout;
-            document.body.onresize = function() {
-                if (W.willResizeFrame) {
-                    console.log('no timeout now');
-                    nextTimeout = true
-                    return;
-                }
-                W.willResizeFrame = setTimeout(function() {                   
-                    W.willResizeFrame = null;
-                    // If another timeout call was requested, do nothing now.
-                    if (nextTimeout) {
-                        console.log('one more timeout');
-                        nextTimeout = false;
-                        document.body.onresize();
-                    }
-                    else {
-                        console.log('now is ok');
-                        W.adjustFrameHeight();
-                    }
-                }, 100);
-            };
-        })();
+        document.body.onresize = function() {
+            W.adjustFrameHeight(0, 120);
+        };
+        
+       
 
         return iframe;
     };
@@ -1921,7 +1903,7 @@
      * Resets the min-height style of the iframe to fit its content properly
      *
      * Takes into account header position and height, the available
-     * height of the page, and the actual content of the iframe and 
+     * height of the page, and the actual content of the iframe and
      * Stretches the iframe to the either:
      *
      *  - (almost) till the end of the page,
@@ -1930,39 +1912,66 @@
      * @param {number} userMinHeight Optional. If set minHeight cannot be
      *  less than this value.
      */
-    GameWindow.prototype.adjustFrameHeight = function(userMinHeight) {
-        var iframe, minHeight, contentHeight;
-        iframe = W.getFrame();
-        // Iframe might have been destroyed already, e.g. in a test.
-        if (!iframe || !iframe.contentWindow) return;
+    GameWindow.prototype.adjustFrameHeight = (function() {
+        var nextTimeout, adjustIt;
 
-        // Try to find out how tall the frame should be.
-        minHeight = window.innerHeight || window.clientHeight;
+        adjustIt = function (userMinHeight) {
+            var iframe, minHeight, contentHeight;
+            iframe = W.getFrame();
+            // Iframe might have been destroyed already, e.g. in a test.
+            if (!iframe || !iframe.contentWindow) return;
 
-        console.log('availHeight: ', minHeight);
+            // Try to find out how tall the frame should be.
+            minHeight = window.innerHeight || window.clientHeight;
+
+            console.log('availHeight: ', minHeight);
+
+            contentHeight = iframe.contentWindow.document.body.offsetHeight +
+                100;
+
+            console.log('contentHeight: ', contentHeight);
+
+
+            if (minHeight < contentHeight) minHeight = contentHeight;
+            if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+
+            // Adjust min-height based on content.
+            iframe.style['min-height'] = minHeight + 'px';
+
+            console.log('adjusting!!!! ', minHeight);
+        };
         
-        if (W.headerPosition === 'top' ||
-            W.headerPosition === 'bottom') {
-
-            minHeight -= W.getHeader().offsetHeight;
-
-            console.log('minus header: ', minHeight);
-        }
-        contentHeight =
-            iframe.contentWindow.document.body.offsetHeight + 100;
-
-        console.log('contentHeight: ', contentHeight);
-
+        return function(userMinHeight, delay) {
+            if ('undefined' === typeof delay) {
+                adjustIt(userMinHeight);
+                return;
+            }
+            if (W.willResizeFrame) {
+                console.log('no timeout now');
+                nextTimeout = true
+                return;
+            }
+            W.willResizeFrame = setTimeout(function() {
+                W.willResizeFrame = null;
+                // If another timeout call was requested, do nothing now.
+                if (nextTimeout) {
+                    console.log('one more timeout');
+                    nextTimeout = false;
+                    W.adjustFrameHeight(userMinHeight, delay);
+                }
+                else {
+                    console.log('now is ok');
+                    adjustIt(userMinHeight);
+                }
+            }, delay);
+        };    
         
-        if (minHeight < contentHeight) minHeight = contentHeight;
-        if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
-        
-        // Adjust min-height based on content.
-        iframe.style['min-height'] = minHeight + 'px';
+    })();
+            
 
-        console.log('adjusting!!!! ', minHeight);
-    };
-    
+            
+      
+
     // ## Helper functions
 
     /**
@@ -2032,12 +2041,9 @@
 
             func();
 
-            // Important. We need a timeout, because some changes might
+            // Important. We need a timeout (120), because some changes might
             // take time to be reflected in the DOM.
-            setTimeout(function() {
-                W.adjustFrameHeight();
-            }, 120);
-
+            W.adjustFrameHeight(0, 120);
         };
 
         if (loadCache) reloadScripts(iframe, afterScripts);
@@ -3994,7 +4000,7 @@
      * Creates an HTML button element that will emit an event when clicked
      *
      * @param {string} event The event to emit when clicked
-     * @param {string|object} attributes Optional. The attributes of the 
+     * @param {string|object} attributes Optional. The attributes of the
      *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
@@ -4027,7 +4033,7 @@
      * @param {string} event The event to emit when clicked
      * @param {Element} root Optional. The root element. Default: last element
      * on the page
-     * @param {string|object} attributes Optional. The attributes of the 
+     * @param {string|object} attributes Optional. The attributes of the
      *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
@@ -4038,7 +4044,7 @@
     GameWindow.prototype.addEventButton = function(event, root, attributes) {
         var eb;
         eb = this.getEventButton(event, attributes);
-        if (!root) root = this.getScreen();   
+        if (!root) root = this.getScreen();
         return root.appendChild(eb);
     };
 
