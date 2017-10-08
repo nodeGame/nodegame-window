@@ -435,7 +435,7 @@
                 if (scriptTag.length >= 1) scriptTag[0].style.display = 'none';
             })(document.getElementsByTagName('noscript'));
         }, 1000);
-        
+
         // Init.
         this.init(GameWindow.defaults);
 
@@ -832,8 +832,8 @@
         document.body.onresize = function() {
             W.adjustFrameHeight(0, 120);
         };
-        
-       
+
+
 
         return iframe;
     };
@@ -1902,15 +1902,19 @@
      *
      * Resets the min-height style of the iframe to fit its content properly
      *
-     * Takes into account header position and height, the available
-     * height of the page, and the actual content of the iframe and
-     * Stretches the iframe to the either:
+     * Takes into the available height of the page, and the actual
+     * content of the iframe, which is stretched to either:
      *
      *  - (almost) till the end of the page,
-     *  - or to fit its content, if higher (will have scrollbar).
+     *  - or to fit its content, if larger than page height (with scrollbar).
      *
      * @param {number} userMinHeight Optional. If set minHeight cannot be
-     *  less than this value.
+     *   less than this value. Default: 0
+     * @param {number} delay. If set, a timeout is created before the
+     *   the frame is actually adjusted. Multiple calls will be
+     *   evaluated only once at the end of a new timeout. Default: undefined
+     *
+     * @see W.willResizeFrame
      */
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
@@ -1924,30 +1928,22 @@
             // Try to find out how tall the frame should be.
             minHeight = window.innerHeight || window.clientHeight;
 
-            console.log('availHeight: ', minHeight);
-
-            contentHeight = iframe.contentWindow.document.body.offsetHeight +
-                100;
-
-            console.log('contentHeight: ', contentHeight);
-
+            contentHeight =
+                iframe.contentWindow.document.body.offsetHeight + 100;
 
             if (minHeight < contentHeight) minHeight = contentHeight;
             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
 
             // Adjust min-height based on content.
             iframe.style['min-height'] = minHeight + 'px';
-
-            console.log('adjusting!!!! ', minHeight);
         };
-        
+
         return function(userMinHeight, delay) {
             if ('undefined' === typeof delay) {
                 adjustIt(userMinHeight);
                 return;
             }
             if (W.willResizeFrame) {
-                console.log('no timeout now');
                 nextTimeout = true
                 return;
             }
@@ -1955,22 +1951,16 @@
                 W.willResizeFrame = null;
                 // If another timeout call was requested, do nothing now.
                 if (nextTimeout) {
-                    console.log('one more timeout');
                     nextTimeout = false;
                     W.adjustFrameHeight(userMinHeight, delay);
                 }
                 else {
-                    console.log('now is ok');
                     adjustIt(userMinHeight);
                 }
             }, delay);
-        };    
-        
-    })();
-            
+        };
 
-            
-      
+    })();
 
     // ## Helper functions
 
@@ -2231,13 +2221,13 @@
         case 'right':
             W.addClass(frame, 'ng_mainframe-header-vertical-r');
             if (header) {
-                frame.style['padding-right'] = header.offsetWidth + 10 + 'px';
+                frame.style['padding-right'] = header.offsetWidth + 50 + 'px';
             }
             break;
         case 'left':
             W.addClass(frame, 'ng_mainframe-header-vertical-l');
             if (header) {
-                frame.style['padding-left'] = header.offsetWidth + 10 + 'px';
+                frame.style['padding-left'] = header.offsetWidth + 50 + 'px';
             }
             break;
         case 'top':
@@ -2245,7 +2235,7 @@
             // There might be no header yet.
             if (header) {
                 W.getFrameRoot().insertBefore(header, frame);
-                frame.style['padding-top'] = header.offsetHeight + 10 + 'px';
+                frame.style['padding-top'] = header.offsetHeight + 50 + 'px';
             }
             break;
         case 'bottom':
@@ -2253,7 +2243,7 @@
             // There might be no header yet.
             if (header) {
                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
-                frame.style['padding-bottom'] = header.offsetHeight + 10 + 'px';
+                frame.style['padding-bottom'] = header.offsetHeight + 50 + 'px';
             }
             break;
         }
