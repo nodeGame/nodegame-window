@@ -8,36 +8,32 @@ addons:
     - expect
 language: node_js
 node_js:
-  - "4.5"
+  - 8
+
 before_install:
 # Get installer script.
-  - cd bin
-  - wget https://github.com/nodeGame/nodegame/raw/master/bin/install-nodegame-for-module.sh
-  - chmod a+x install-nodegame-for-module.sh
-  - cd ..
+  - wget https://github.com/nodeGame/nodegame-test/raw/master/nodegame-installer.js
+  - chmod a+x nodegame-installer.js
+
 install:
 # Make this nodegame-window available to nodeGame.
-  - mkdir -p nodegame/node_modules
-  - ln -s ../.. nodegame/node_modules/nodegame-window
 # Old phantomjs has no "unsafe access" warning bug.
 # Disregard that; only newer phantomjs works with node v0.12.
   #- npm install 'phantomjs@<1.9.8'
-  - npm install
-  - ./bin/install-nodegame-for-module.sh -g "nodegame-widgets JSUS NDDB shelf.js nodegame-client nodegame-server descil-mturk nodegame-requirements nodegame-monitor nodegame-db nodegame-mongodb" -n "smoosh ya-csv"
+   - npm install --only=dev
+   - node nodegame-installer.js @dev --install-dir node_modules --no-spinner --branch v4 --yes
+
 # Install tester game.
-  - git clone https://github.com/nodeGame/testergame nodegame/games/testergame
+  - git clone https://github.com/nodeGame/testergame node_modules/nodegame/games/testergame
 #before_script:
 # Link testing directory into game.
   - cd nodegame/games/testergame/public
-  - ln -s ../../../../test test
-  - ln -s ../../../../node_modules node_modules
-  - cd ../../../..
 # Add servernode conf file (to increase verbosity)
-  - ln -sf test/servernode.conf.js nodegame/conf/servernode.js
+  - ln -sf test/servernode.conf.js node_modules/nodegame/conf/servernode.js
+
 script:
   - expect test/runtest.exp
+
 # Test Ultimatum game.
-  - cd nodegame/games
-  - git clone https://github.com/nodeGame/ultimatum.git
-  - cd ultimatum
-  - ./bin/run-standalone-test.sh
+  - cd node_modules/nodegame/games/ultimatum-game
+  - ./bin/run-standalone-test-v4.sh
