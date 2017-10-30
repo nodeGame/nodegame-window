@@ -26,7 +26,7 @@ install:
   - git clone https://github.com/nodeGame/testergame node_modules/nodegame/games/testergame
 #before_script:
 # Link testing directory into game.
-  - cd nodegame/games/testergame/public
+  - cd node_modules/nodegame/games/testergame/public
 # Add servernode conf file (to increase verbosity)
   - ln -sf test/servernode.conf.js node_modules/nodegame/conf/servernode.js
 
