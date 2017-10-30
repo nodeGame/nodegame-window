@@ -27,6 +27,8 @@ install:
 #before_script:
 # Link testing directory into game.
   - cd node_modules/nodegame/games/testergame/public
+  - ln -s ../../../../../test test
+  - cd ../../../../../
 # Add servernode conf file (to increase verbosity)
   - ln -sf test/servernode.conf.js node_modules/nodegame/conf/servernode.js
 
