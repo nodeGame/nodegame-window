@@ -1929,7 +1929,7 @@
             minHeight = window.innerHeight || window.clientHeight;
 
             contentHeight =
-                iframe.contentWindow.document.body.offsetHeight + 100;
+                iframe.contentWindow.document.body.offsetHeight + 120;
 
             if (minHeight < contentHeight) minHeight = contentHeight;
             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
