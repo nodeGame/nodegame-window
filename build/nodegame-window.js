@@ -415,6 +415,18 @@
         this.isIE = !!document.createElement('span').attachEvent;
 
         /**
+         * ### GameWindow.headerOffset
+         *
+         * Contains the current offset (widht or height) for the header
+         *
+         * Content below/above/next to it needs to be slided accordingly.
+         *
+         * @see adaptFrame2HeaderPosition
+         * @see W.adjustFrameHeight
+         */
+        this.headerOffset = 0;
+        
+        /**
          * ### GameWindow.willResizeFrame
          *
          * Boolean flag saying whether a call to resize the frame is in progress
@@ -823,13 +835,14 @@
 
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) adaptFrame2HeaderPosition(this);
+        if (this.frameElement) adaptFrame2HeaderPosition();
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
 
         // Add listener on resizing the page.
         document.body.onresize = function() {
+            console.log('RESIZE!!!!!!!!!!!!!!!!!!!!!!!!!!');
             W.adjustFrameHeight(0, 120);
         };
 
@@ -1078,17 +1091,8 @@
      * @see GameWindow.defaultHeaderPosition
      * @see adaptFrame2HeaderPosition
      */
-    GameWindow.prototype.setHeaderPosition = function(position) {
-        var validPositions, pos, oldPos;
-        if ('string' !== typeof position) {
-            throw new TypeError('GameWindow.setHeaderPosition: position ' +
-                                'must be string. Found: ' + position);
-        }
-        pos = position.toLowerCase();
-
-        // Do something only if there is a change in the position.
-        if (this.headerPosition === pos) return;
-
+    GameWindow.prototype.setHeaderPosition = (function() {
+        var validPositions;
         // Map: position - css class.
         validPositions = {
             top: 'ng_header_position-horizontal-t',
@@ -1097,29 +1101,39 @@
             left: 'ng_header_position-vertical-l'
         };
 
-        if ('undefined' === typeof validPositions[pos]) {
-            node.err('GameWindow.setHeaderPosition: invalid header ' +
-                     'position: ' + pos);
-            return;
-        }
-        if (!this.headerElement) {
-            throw new Error('GameWindow.setHeaderPosition: headerElement ' +
-                            'not found.');
-        }
+        return function(position) {
+            var pos, oldPos;
+            if ('string' !== typeof position) {
+                throw new TypeError('GameWindow.setHeaderPosition: position ' +
+                                    'must be string. Found: ' + position);
+            }
+            pos = position.toLowerCase();
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
-        W.addClass(this.headerElement, validPositions[pos]);
+            // Do something only if there is a change in the position.
+            if (this.headerPosition === pos) return;
 
-        oldPos = this.headerPosition;
+            if ('undefined' === typeof validPositions[pos]) {
+                node.err('GameWindow.setHeaderPosition: invalid header ' +
+                         'position: ' + pos);
+                return;
+            }
+            if (!this.headerElement) {
+                throw new Error('GameWindow.setHeaderPosition: headerElement ' +
+                                'not found.');
+            }
 
-        // Store the new position in a reference variable
-        // **before** adaptFrame2HeaderPosition is called
-        this.headerPosition = pos;
+            W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
+            W.addClass(this.headerElement, validPositions[pos]);
 
-        if (this.frameElement) {
-            adaptFrame2HeaderPosition(this, oldPos);
-        }
-    };
+            oldPos = this.headerPosition;
+
+            // Store the new position in a reference variable
+            // **before** adaptFrame2HeaderPosition is called
+            this.headerPosition = pos;
+
+            if (this.frameElement) adaptFrame2HeaderPosition(oldPos);
+        };
+    })();
 
     /**
      * ### GameWindow.setHeader
@@ -1916,11 +1930,71 @@
      *
      * @see W.willResizeFrame
      */
+//     GameWindow.prototype.adjustFrameHeight = (function() {
+//         var nextTimeout, adjustIt;
+// 
+//         adjustIt = function (userMinHeight) {
+//             var iframe, minHeight, contentHeight;
+//             var d;
+// 
+//             iframe = W.getFrame();
+//             // Iframe might have been destroyed already, e.g. in a test.
+//             if (!iframe || !iframe.contentWindow) return;
+// 
+//             // Try to find out how tall the frame should be.
+//             minHeight = window.innerHeight || window.clientHeight;
+// 
+//             d = iframe.contentWindow.document;
+// 
+//             contentHeight = Math.max(
+//                 d.body.offsetHeight,
+//                 d.body.scrollHeight
+//             );
+// 
+//             // Rule of thumb.
+//             contentHeight += 120;
+// 
+//             if (minHeight < contentHeight) minHeight = contentHeight;
+//             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+// 
+//             // Adjust min-height based on content.
+//             iframe.style['min-height'] = minHeight + 'px';
+//         };
+// 
+//         return function(userMinHeight, delay) {
+//             if ('undefined' === typeof delay) {
+//                 adjustIt(userMinHeight);
+//                 return;
+//             }
+//             if (W.willResizeFrame) {
+//                 nextTimeout = true;
+//                 return;
+//             }
+//             W.willResizeFrame = setTimeout(function() {
+//                 W.willResizeFrame = null;
+//                 // If another timeout call was requested, do nothing now.
+//                 if (nextTimeout) {
+//                     nextTimeout = false;
+//                     W.adjustFrameHeight(userMinHeight, delay);
+//                 }
+//                 else {
+//                     adjustIt(userMinHeight);
+//                 }
+//             }, delay);
+//         };
+// 
+//     })();
+
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
 
         adjustIt = function (userMinHeight) {
             var iframe, minHeight, contentHeight;
+            var b;
+
+            W.adjustHeaderPadding();
+            
+            
             iframe = W.getFrame();
             // Iframe might have been destroyed already, e.g. in a test.
             if (!iframe || !iframe.contentWindow) return;
@@ -1928,14 +2002,36 @@
             // Try to find out how tall the frame should be.
             minHeight = window.innerHeight || window.clientHeight;
 
-            contentHeight =
-                iframe.contentWindow.document.body.offsetHeight + 120;
+            b = iframe.contentWindow.document.body;
+            if (false && 'function' === typeof getComputedStyle) {
+                contentHeight = parseFloat(getComputedStyle(b).height);
+            }
+            else {
+                contentHeight = b.offsetHeight;
+            }
+                
+            // contentHeight = Math.max(
+                // d.body.offsetHeight,
+                // d.body.scrollHeight
+                // d.documentElement.offsetHeight,
+                // d.documentElement.scrollHeight,
+                // d.documentElement.clientHeight
+            // );
+
+            // Rule of thumb.
+            // contentHeight += 120;
+
+            if (W.headerPosition === "top") {
+                contentHeight -= W.headerOffset;
+            }
 
             if (minHeight < contentHeight) minHeight = contentHeight;
             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
 
             // Adjust min-height based on content.
             iframe.style['min-height'] = minHeight + 'px';
+
+            
         };
 
         return function(userMinHeight, delay) {
@@ -1944,7 +2040,7 @@
                 return;
             }
             if (W.willResizeFrame) {
-                nextTimeout = true
+                nextTimeout = true;
                 return;
             }
             W.willResizeFrame = setTimeout(function() {
@@ -2196,22 +2292,78 @@
      *
      * @api private
      */
-    function adaptFrame2HeaderPosition(W, oldHeaderPos) {
-        var position, frame, header;
+//     function adaptFrame2HeaderPosition(W, oldHeaderPos) {
+//         var position, frame, header;
+// 
+//         frame = W.getFrame();
+//         if (!frame) {
+//             throw new Error('adaptFrame2HeaderPosition: frame not found.');
+//         }
+// 
+//         // If no header is found, simulate the 'top' position to better
+//         // fit the whole screen.
+//         position = W.headerPosition || 'top';
+// 
+//         header = W.getHeader();
+// 
+//         // When we move from bottom to any other configuration, we need
+//         // to move the header before the frame.
+//         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
+//             W.getFrameRoot().insertBefore(W.headerElement, frame);
+//         }
+// 
+//         W.removeClass(frame, 'ng_mainframe-header-[a-z-]*');
+//         switch(position) {
+//         case 'right':
+//             W.addClass(frame, 'ng_mainframe-header-vertical-r');
+//             if (header) {
+//                 frame.style['padding-right'] = header.offsetWidth + 50 + 'px';
+//             }
+//             break;
+//         case 'left':
+//             W.addClass(frame, 'ng_mainframe-header-vertical-l');
+//             if (header) {
+//                 frame.style['padding-left'] = header.offsetWidth + 50 + 'px';
+//             }
+//             break;
+//         case 'top':
+//             W.addClass(frame, 'ng_mainframe-header-horizontal-t');
+//             // There might be no header yet.
+//             if (header) {
+//                 W.getFrameRoot().insertBefore(header, frame);
+//                 frame.style['padding-top'] = header.offsetHeight + 50 + 'px';
+//             }
+//             break;
+//         case 'bottom':
+//             W.addClass(frame, 'ng_mainframe-header-horizontal-b');
+//             // There might be no header yet.
+//             if (header) {
+//                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
+//                 frame.style['padding-bottom'] = header.offsetHeight + 50 + 'px';
+//             }
+//             break;
+//         }
+//     }
 
+    var extraPad = 0;
+    function adaptFrame2HeaderPosition(oldHeaderPos) {
+        var position, frame, header, infoPanel, offset, offsetPx;
+
+        console.log('adaptFrame2Header!!!!!!!!!!!!!!!!!!');
         frame = W.getFrame();
-        if (!frame) {
-            throw new Error('adaptFrame2HeaderPosition: frame not found.');
-        }
+        infoPanel = W.infoPanel ? W.infoPanel.infoPanelDiv : null;
+
+        if (!frame && !infoPanel) return;
 
         // If no header is found, simulate the 'top' position to better
         // fit the whole screen.
         position = W.headerPosition || 'top';
 
+        // TODO: here!
         header = W.getHeader();
-
-        // When we move from bottom to any other configuration, we need
-        // to move the header before the frame.
+        
+        // When we move from bottom to any other configuration,
+        // we need to move the header before the frame.
         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
             W.getFrameRoot().insertBefore(W.headerElement, frame);
         }
@@ -2221,34 +2373,104 @@
         case 'right':
             W.addClass(frame, 'ng_mainframe-header-vertical-r');
             if (header) {
-                frame.style['padding-right'] = header.offsetWidth + 50 + 'px';
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                frame.style['padding-right'] = offsetPx;
+                if (infoPanel) infoPanel.style['padding-right'] = offsetPx;
             }
             break;
         case 'left':
             W.addClass(frame, 'ng_mainframe-header-vertical-l');
             if (header) {
-                frame.style['padding-left'] = header.offsetWidth + 50 + 'px';
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                frame.style['padding-left'] = offsetPx;
+                if (infoPanel) infoPanel.style['padding-left'] = offsetPx;
             }
             break;
         case 'top':
             W.addClass(frame, 'ng_mainframe-header-horizontal-t');
-            // There might be no header yet.
             if (header) {
                 W.getFrameRoot().insertBefore(header, frame);
-                frame.style['padding-top'] = header.offsetHeight + 50 + 'px';
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
+                if (infoPanel) infoPanel.style['padding-top'] = offsetPx;
+                else frame.style['padding-top'] = offsetPx;
             }
             break;
         case 'bottom':
             W.addClass(frame, 'ng_mainframe-header-horizontal-b');
-            // There might be no header yet.
             if (header) {
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
-                frame.style['padding-bottom'] = header.offsetHeight + 50 + 'px';
+                frame.style['padding-bottom'] = offsetPx;
             }
             break;
         }
+
+        W.headerOffset = offset;
     }
 
+    GameWindow.prototype.adjustHeaderPadding = (function() {
+        var extraPad;
+        extraPad = 0;
+        
+        return function() {
+            var position, frame, header, infoPanel, offset, offsetPx;
+
+            console.log('PADDING!!!!!!!!!!!!!!!!!!');
+            // TODO: here!
+            header = W.getHeader();
+            position = W.headerPosition;
+
+            if (!header && !W.headerOffset ||
+                (position === "top" && header.offsetHeight === W.headerOffset)) {
+                
+                return;
+            }
+
+            frame = W.getFrame();
+            infoPanel = W.infoPanel;
+            if (!frame && !infoPanel) return;
+
+            switch(position) {
+            case 'right':
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                if (frame) frame.style['padding-right'] = offsetPx;
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+                }
+                break;
+            case 'left':
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                if (frame) frame.style['padding-left'] = offsetPx;
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
+                }
+                break;
+            case 'top':
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
+                }
+                else frame.style['padding-top'] = offsetPx;
+                
+                break;
+            case 'bottom':
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
+                frame.style['padding-bottom'] = offsetPx;
+                break;
+            }
+
+            W.headerOffset = offset;
+        };
+    })();
+    
     /**
      * ### testDirectFrameDocumentAccess
      *
@@ -3214,7 +3436,7 @@
  *
  * www.nodegame.org
  */
-(function(exports, window) {
+(function(exports, W) {
 
     "use strict";
 
@@ -3388,6 +3610,7 @@
     InfoPanel.prototype.clear = function() {
         this.infoPanelDiv.innerHTML = '';
         this.actionsLog.push({ clear: J.now() });
+        W.adjustHeaderPadding();
     };
 
     /**
@@ -3424,6 +3647,7 @@
                 this._buttons[i].parentNode.removeChild(this._buttons[i]);
             }
         }
+        W.adjustHeaderPadding();
     };
 
     /**
@@ -3453,6 +3677,8 @@
         this.actionsLog.push({ open: J.now() });
         this.infoPanelDiv.style.display = 'block';
         this.isVisible = true;
+        // Must be at the end.
+        W.adjustHeaderPadding();
     };
 
     /**
@@ -3469,6 +3695,8 @@
         this.actionsLog.push({ close: J.now() });
         this.infoPanelDiv.style.display = 'none';
         this.isVisible = false;
+        // Must be at the end.
+        W.adjustHeaderPadding();
     };
 
     /**
