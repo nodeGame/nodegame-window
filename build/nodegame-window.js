@@ -2018,10 +2018,10 @@
             // );
 
             // Rule of thumb.
-            // contentHeight += 120;
+            contentHeight += 120;
 
             if (W.headerPosition === "top") {
-                contentHeight -= W.headerOffset;
+                // contentHeight -= W.headerOffset;
             }
 
             if (minHeight < contentHeight) minHeight = contentHeight;
@@ -2352,7 +2352,7 @@
         if (!frame) return;
 
         header = W.getHeader();
-        
+
         // If no header is found, simulate the 'top' position
         // to better fit the whole screen.
         position = W.headerPosition || 'top';
@@ -2377,7 +2377,9 @@
             break;
         case 'bottom':
             W.addClass(frame, 'ng_mainframe-header-horizontal-b');
-            if (header) W.getFrameRoot().insertBefore(header, frame.nextSibling);
+            if (header) {
+                W.getFrameRoot().insertBefore(header, frame.nextSibling);
+            }
             break;
         }
     }
