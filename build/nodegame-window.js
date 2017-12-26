@@ -834,18 +834,15 @@
 
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) adaptFrame2HeaderPosition();
+        if (this.getHeader()) adaptFrame2HeaderPosition();
 
         // Emit event.
         node.events.ng.emit('FRAME_GENERATED', iframe);
 
         // Add listener on resizing the page.
         document.body.onresize = function() {
-            console.log('RESIZE!!!!!!!!!!!!!!!!!!!!!!!!!!');
             W.adjustFrameHeight(0, 120);
         };
-
-
 
         return iframe;
     };
@@ -1234,6 +1231,7 @@
         this.headerRoot = null;
         this.headerPosition = null;
         this.headerOffset = 0;
+        this.adjustHeaderOffset(true);
     };
 
     /**
@@ -1929,13 +1927,13 @@
      *   evaluated only once at the end of a new timeout. Default: undefined
      *
      * @see W.willResizeFrame
+     * @see W.adjustHeaderOffset
      */
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
 
         adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
-            var b;
 
             W.adjustHeaderOffset();
 
@@ -1948,10 +1946,9 @@
 
             contentHeight = iframe.contentWindow.document.body.offsetHeight;
             // Rule of thumb.
-            contentHeight += 120;
+            contentHeight += 60;
 
-            // TODO: check if there are cases when we need to subtract
-            // the value of W.headerOffset (i.e., padding is offsetHeight).
+            if (W.headerPosition === "top") contentHeight += W.headerOffset;
 
             if (minHeight < contentHeight) minHeight = contentHeight;
             if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
@@ -1993,8 +1990,9 @@
      * position, but only if the size of of the header has changed from
      * last time.
      *
-     * @param {force} If TRUE, padding is adjusted regardless of whether
-     *   the size of the header has changed from last time
+     * @param {boolean} force Optional. If TRUE, padding is adjusted
+     *   regardless of whether the size of the header has changed
+     *   from last time
      *
      * @see W.headerOffset
      */
@@ -2296,69 +2294,14 @@
      *
      * The frame element must exists or an error will be thrown.
      *
-     * @param {GameWindow} W The current GameWindow object
      * @param {string} oldHeaderPos Optional. The previous position of the
      *   header
      *
      * @api private
      */
-//     function adaptFrame2HeaderPosition(W, oldHeaderPos) {
-//         var position, frame, header;
-//
-//         frame = W.getFrame();
-//         if (!frame) {
-//             throw new Error('adaptFrame2HeaderPosition: frame not found.');
-//         }
-//
-//         // If no header is found, simulate the 'top' position to better
-//         // fit the whole screen.
-//         position = W.headerPosition || 'top';
-//
-//         header = W.getHeader();
-//
-//         // When we move from bottom to any other configuration, we need
-//         // to move the header before the frame.
-//         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
-//             W.getFrameRoot().insertBefore(W.headerElement, frame);
-//         }
-//
-//         W.removeClass(frame, 'ng_mainframe-header-[a-z-]*');
-//         switch(position) {
-//         case 'right':
-//             W.addClass(frame, 'ng_mainframe-header-vertical-r');
-//             if (header) {
-//                 frame.style['padding-right'] = header.offsetWidth + 50+'px';
-//             }
-//             break;
-//         case 'left':
-//             W.addClass(frame, 'ng_mainframe-header-vertical-l');
-//             if (header) {
-//                 frame.style['padding-left'] = header.offsetWidth + 50+'px';
-//             }
-//             break;
-//         case 'top':
-//             W.addClass(frame, 'ng_mainframe-header-horizontal-t');
-//             // There might be no header yet.
-//             if (header) {
-//                 W.getFrameRoot().insertBefore(header, frame);
-//                 frame.style['padding-top'] = header.offsetHeight + 50+'px';
-//             }
-//             break;
-//         case 'bottom':
-//             W.addClass(frame, 'ng_mainframe-header-horizontal-b');
-//             // There might be no header yet.
-//             if (header) {
-//                 W.getFrameRoot().insertBefore(header, frame.nextSibling);
-//                 frame.style['padding-bottom'] = header.offsetHeight +50+'px';
-//             }
-//             break;
-//         }
-//     }
-
     function adaptFrame2HeaderPosition(oldHeaderPos) {
         var position, frame, header;
 
-        console.log('adaptFrame2Header!!!!!!!!!!!!!!!!!!');
         frame = W.getFrame();
         if (!frame) return;
 
