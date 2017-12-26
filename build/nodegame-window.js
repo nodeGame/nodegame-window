@@ -1996,81 +1996,71 @@
      *
      * @see W.headerOffset
      */
-    GameWindow.prototype.adjustHeaderOffset = (function() {
-        var extraPad;
-        extraPad = 0;
+    GameWindow.prototype.adjustHeaderOffset = function(force) {
+        var position, frame, header, infoPanel, offset, offsetPx;
 
-        return function(force) {
-            var position, frame, header, infoPanel, offset, offsetPx;
+        header = W.getHeader();
+        position = W.headerPosition;
 
-            header = W.getHeader();
-            position = W.headerPosition;
+        // Do not apply padding if nothing has changed.
+        if (!force &&
+            (!header && W.headerOffset ||
+             (position === "top" &&
+              header.offsetHeight === W.headerOffset))) {
 
-            // Do not apply padding if nothing has changed.
-            if (!force &&
-                (!header && W.headerOffset ||
-                (position === "top" &&
-                 header.offsetHeight === W.headerOffset))) {
+            return;
+        }
 
-                return;
+        frame = W.getFrame();
+        infoPanel = W.infoPanel;
+        // No frame nor infoPanel, nothing to do.
+        if (!frame && !infoPanel) return;
+
+        switch(position) {
+        case 'top':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
+                frame.style['padding-top'] = 0;
             }
-
-            // TODO: improve.
-            if (!header) {
-                header = {
-                    offsetWidth: 0,
-                    offsetHeight: 0
-                }
-            }
-            
-            frame = W.getFrame();
-            infoPanel = W.infoPanel;
-            // No frame nor infoPanel, nothing to do.
-            if (!frame && !infoPanel) return;
-
-            switch(position) {
-            case 'right':
-                if (frame) frame.style['padding-right'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
-                }
-                break;
-            case 'left':
-                offset = header.offsetWidth;
-                offsetPx = (offset + extraPad) + 'px';
-                if (frame) frame.style['padding-left'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
-                }
-                break;
-            case 'top':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
-                    frame.style['padding-top'] = 0;
-                }
-                else {
-                    if (infoPanel && infoPanel.infoPanelDiv) {
-                        infoPanel.infoPanelDiv.style['padding-top'] = 0;
-                    }
-                    frame.style['padding-top'] = offsetPx;
-                }
-                break;
-            case 'bottom':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                frame.style['padding-bottom'] = offsetPx;
+            else {
                 if (infoPanel && infoPanel.infoPanelDiv) {
                     infoPanel.infoPanelDiv.style['padding-top'] = 0;
                 }
-                break;
+                frame.style['padding-top'] = offsetPx;
             }
+            break;
+        case 'bottom':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            frame.style['padding-bottom'] = offsetPx;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.style['padding-top'] = 0;
+            }
+            break;
+        case 'right':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-right'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+            }
+            break;
+        case 'left':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-left'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
+            }
+            break;
+        }
 
-            // Store the value of current offset.
-            W.headerOffset = offset;
-        };
-    })();
+        // Store the value of current offset.
+        W.headerOffset = offset;
+    };
+
 
     // ## Helper functions
 
@@ -3512,6 +3502,7 @@
         if (this.infoPanelDiv.parentNode) {
             this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
         }
+        this.isVisible = false;
         this.actionsLog.push({ destroy: J.now() });
         this.infoPanelDiv = null;
         i = -1, len = this._buttons.length;
