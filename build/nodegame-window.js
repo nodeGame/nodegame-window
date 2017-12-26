@@ -1234,6 +1234,7 @@
         this.headerName = null;
         this.headerRoot = null;
         this.headerPosition = null;
+        this.headerOffset = 0;
     };
 
     /**
@@ -1988,7 +1989,7 @@
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
 
-        adjustIt = function (userMinHeight) {
+        adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
             var b;
 
@@ -2029,8 +2030,6 @@
 
             // Adjust min-height based on content.
             iframe.style['min-height'] = minHeight + 'px';
-
-
         };
 
         return function(userMinHeight, delay) {
@@ -2057,6 +2056,78 @@
 
     })();
 
+
+    GameWindow.prototype.adjustHeaderPadding = (function() {
+        var extraPad;
+        extraPad = 0;
+
+        return function(force) {
+            var position, frame, header, infoPanel, offset, offsetPx;
+
+            console.log('PADDING!!!!!!!!!!!!!!!!!!');
+debugger
+            // TODO: here!
+            header = W.getHeader();
+            position = W.headerPosition;
+
+            if (!force &&
+                (!header && W.headerOffset ||
+                (position === "top" &&
+                 header.offsetHeight === W.headerOffset))) {
+
+                return;
+            }
+
+            frame = W.getFrame();
+            infoPanel = W.infoPanel;
+            if (!frame && !infoPanel) return;
+
+            switch(position) {
+            case 'right':
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                if (frame) frame.style['padding-right'] = offsetPx;
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+                }
+                break;
+            case 'left':
+                offset = header.offsetWidth;
+                offsetPx = (offset + extraPad) + 'px';
+                if (frame) frame.style['padding-left'] = offsetPx;
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
+                }
+                break;
+            case 'top':
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
+                if (infoPanel && infoPanel.isVisible) {
+                    infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
+                    frame.style['padding-top'] = 0;
+                }
+                else {
+                    if (infoPanel) {
+                        infoPanel.infoPanelDiv.style['padding-top'] = 0;
+                    }
+                    frame.style['padding-top'] = offsetPx;
+                }
+
+                break;
+            case 'bottom':
+                offset = header.offsetHeight;
+                offsetPx = (offset + extraPad) + 'px';
+                frame.style['padding-bottom'] = offsetPx;
+                if (infoPanel) {
+                    infoPanel.infoPanelDiv.style['padding-top'] = 0;
+                }
+                break;
+            }
+
+            W.headerOffset = offset;
+        };
+    })();
+    
     // ## Helper functions
 
     /**
@@ -2383,67 +2454,6 @@
             break;
         }
     }
-
-    GameWindow.prototype.adjustHeaderPadding = (function() {
-        var extraPad;
-        extraPad = 0;
-
-        return function() {
-            var position, frame, header, infoPanel, offset, offsetPx;
-
-            console.log('PADDING!!!!!!!!!!!!!!!!!!');
-
-            // TODO: here!
-            header = W.getHeader();
-            position = W.headerPosition;
-
-            if (!header && !W.headerOffset ||
-                (position === "top" &&
-                 header.offsetHeight === W.headerOffset)) {
-
-                return;
-            }
-
-            frame = W.getFrame();
-            infoPanel = W.infoPanel;
-            if (!frame && !infoPanel) return;
-
-            switch(position) {
-            case 'right':
-                offset = header.offsetWidth;
-                offsetPx = (offset + extraPad) + 'px';
-                if (frame) frame.style['padding-right'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
-                }
-                break;
-            case 'left':
-                offset = header.offsetWidth;
-                offsetPx = (offset + extraPad) + 'px';
-                if (frame) frame.style['padding-left'] = offsetPx;
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
-                }
-                break;
-            case 'top':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                if (infoPanel && infoPanel.isVisible) {
-                    infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
-                }
-                else frame.style['padding-top'] = offsetPx;
-
-                break;
-            case 'bottom':
-                offset = header.offsetHeight;
-                offsetPx = (offset + extraPad) + 'px';
-                frame.style['padding-bottom'] = offsetPx;
-                break;
-            }
-
-            W.headerOffset = offset;
-        };
-    })();
 
     /**
      * ### testDirectFrameDocumentAccess
@@ -3410,7 +3420,7 @@
  *
  * www.nodegame.org
  */
-(function(exports, W) {
+(function(exports, window) {
 
     "use strict";
 
@@ -3584,7 +3594,7 @@
     InfoPanel.prototype.clear = function() {
         this.infoPanelDiv.innerHTML = '';
         this.actionsLog.push({ clear: J.now() });
-        W.adjustHeaderPadding();
+        W.adjustHeaderPadding(true);
     };
 
     /**
@@ -3621,7 +3631,7 @@
                 this._buttons[i].parentNode.removeChild(this._buttons[i]);
             }
         }
-        W.adjustHeaderPadding();
+        W.adjustHeaderPadding(true);
     };
 
     /**
@@ -3652,7 +3662,7 @@
         this.infoPanelDiv.style.display = 'block';
         this.isVisible = true;
         // Must be at the end.
-        W.adjustHeaderPadding();
+        W.adjustHeaderPadding(true);
     };
 
     /**
@@ -3670,7 +3680,7 @@
         this.infoPanelDiv.style.display = 'none';
         this.isVisible = false;
         // Must be at the end.
-        W.adjustHeaderPadding();
+        W.adjustHeaderPadding(true);
     };
 
     /**
