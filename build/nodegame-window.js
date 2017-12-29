@@ -2055,6 +2055,20 @@
                 infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
             }
             break;
+        default:
+            // When header is destroyed, for example.
+            if (position !== null) {
+                throw new Error('GameWindow.adjustHeaderOffset: invalid ' +
+                                'header position. Found: ' + position);
+            }
+            if (header) {
+                throw new Error('GameWindow.adjustHeaderOffset: something ' +
+                                'is wrong. Header found, but position is ' +
+                                'null.');
+            }
+            // Remove all padding.
+            if (frame) frame.style.padding = 0;
+            if (infoPanel && infoPanelDiv) infoPanel.infoPanelDiv.padding = 0;
         }
 
         // Store the value of current offset.
