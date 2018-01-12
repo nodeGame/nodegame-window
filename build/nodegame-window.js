@@ -2068,7 +2068,9 @@
             }
             // Remove all padding.
             if (frame) frame.style.padding = 0;
-            if (infoPanel && infoPanelDiv) infoPanel.infoPanelDiv.padding = 0;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.padding = 0;
+            }
         }
 
         // Store the value of current offset.
@@ -2768,30 +2770,28 @@
      * Requires the waitScreen widget to be loaded.
      *
      * @param {string} text Optional. The text to be shown in the locked screen
+     * @param {number} countdown Optional. The expected max total time the 
+     *   the screen will stay locked (in ms). A countdown will be displayed
      *
+     * @see WaitScreen.lock
      * TODO: check if this can be called in any stage.
      */
-    GameWindow.prototype.lockScreen = function(text) {
-        var that;
-        that = this;
-
+    GameWindow.prototype.lockScreen = function(text, countdown) {
         if (!this.waitScreen) {
-            throw new Error('GameWindow.lockScreen: waitScreen not found.');
+            throw new Error('GameWindow.lockScreen: waitScreen not found');
         }
         if (text && 'string' !== typeof text) {
             throw new TypeError('GameWindow.lockScreen: text must be string ' +
-                                'or undefined');
+                                'or undefined. Found: ' + text);
         }
-        // Feb 16.02.2015
-        // Commented out the time-out part. It causes the browser to get stuck
-        // on a locked screen, because the method is invoked multiple times.
-        // If no further problem is found out, it can be eliminated.
-        // if (!this.isReady()) {
-        //   setTimeout(function() { that.lockScreen(text); }, 100);
-        // }
+        if (countdown && 'number' !== typeof countdown || countdown < 0) {
+            throw new TypeError('GameWindow.lockScreen: countdown must be ' +
+                                'a positive number or undefined. Found: ' +
+                                countdown);
+        }
         this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
-        this.waitScreen.lock(text);
+        this.waitScreen.lock(text, countdown);
         this.setScreenLevel('LOCKED');
     };
 
@@ -2961,10 +2961,10 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a gray layer, disables inputs, and displays a message
+ * Overlays the screen, disables inputs, and displays a message/timer
  *
  * www.nodegame.org
  */
@@ -2977,13 +2977,13 @@
 
     // ## Meta-data
 
-    WaitScreen.version = '0.8.1';
-    WaitScreen.description = 'Show a standard waiting screen';
+    WaitScreen.version = '0.9.0';
+    WaitScreen.description = 'Shows a standard waiting screen';
 
     // ## Helper functions
 
     var inputTags, len;
-    inputTags = ['button', 'select', 'textarea', 'input'];
+    inputTags = [ 'button', 'select', 'textarea', 'input' ];
     len = inputTags.length;
 
     /**
@@ -3027,13 +3027,20 @@
     }
 
     function event_REALLY_DONE(text) {
+        var countdown;
         text = text || W.waitScreen.defaultTexts.waiting;
         if (!node.game.shouldStep()) {
             if (W.isScreenLocked()) {
                 W.waitScreen.updateText(text);
             }
             else {
-                W.lockScreen(text);
+                if (node.game.timer.milliseconds) {
+                    // 2000 to make sure it does reach 0 and stays there.
+                    countdown = node.game.timer.milliseconds -
+                        node.timer.getTimeSince('step', true) + 2000;
+                    if (countdown < 0) countdown = 0;
+                }
+                W.lockScreen(text, countdown);
             }
         }
     }
@@ -3053,7 +3060,7 @@
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML =
-                W.waitScreen.waitingDiv.innerHTML;
+                W.waitScreen.contentDiv.innerHTML;
             W.waitScreen.updateText(text);
         }
         else {
@@ -3127,6 +3134,42 @@
         this.enabled = false;
 
         /**
+         * ### WaitScreen.contentDiv
+         *
+         * Div containing the main content of the wait screen
+         */
+        this.contentDiv = null;
+
+        /**
+         * ### WaitScreen.countdownDiv
+         *
+         * Div containing the countdown span and other text
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownSpan
+         */
+        this.countdownDiv = null;
+
+        /**
+         * ### WaitScreen.countdownSpan
+         *
+         * Span containing a countdown timer for the max waiting
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownDiv
+         */
+        this.countdownSpan = null;
+
+        /**
+         * ### WaitScreen.countdown
+         *
+         * Countdown of max waiting time
+         *
+         * @see WaitScreen.countdown
+         */
+        this.countdown = null;
+
+        /**
          * ### WaitScreen.text
          *
          * Default texts for default events
@@ -3188,18 +3231,22 @@
      *
      * Locks the screen
      *
-     * Overlays a gray div on top of the page and disables all inputs.
+     * Overlays a gray div on top of the page and disables all inputs
      *
      * If called on an already locked screen, the previous text is destroyed.
      * Use `WaitScreen.updateText` to modify an existing text.
      *
      * @param {string} text Optional. If set, displays the text on top of the
      *   gray string
+     * @param {number} countdown Optional. The expected max total time the
+     *   the screen will stay locked (in ms). A countdown will be displayed,
+     *   at the end of which a text replaces the countdown, but the screen
+     *   stays locked until the unlock command is received.
      *
      * @see WaitScreen.unlock
      * @see WaitScren.updateText
      */
-    WaitScreen.prototype.lock = function(text) {
+    WaitScreen.prototype.lock = function(text, countdown) {
         var frameDoc;
         if ('undefined' === typeof document.getElementsByTagName) {
             node.warn('WaitScreen.lock: cannot lock inputs.');
@@ -3208,11 +3255,6 @@
         lockUnlockedInputs(document);
 
         frameDoc = W.getFrameDocument();
-
-        // TODO: cleanup refactor.
-        // Using this for IE8 compatibility.
-        // frameDoc = W.getIFrameDocument(W.getFrame());
-
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
@@ -3220,11 +3262,51 @@
                 this.root = W.getFrameRoot() || document.body;
             }
             this.waitingDiv = W.add('div', this.root, this.id);
+
+            this.contentDiv = W.add('div', this.waitingDiv,
+                                    'ng_waitscreen-content-div');
         }
         if (this.waitingDiv.style.display === 'none') {
             this.waitingDiv.style.display = '';
         }
-        this.waitingDiv.innerHTML = text;
+        this.contentDiv.innerHTML = text;
+
+        if (countdown) {
+            if (!this.countdownDiv) {
+                this.countdownDiv = W.add('span', this.waitingDiv,
+                                          'ng_waitscreen-countdown-div');
+                this.countdownDiv.innerHTML = '<br>Do Not Refresh the Page!' +
+                    '<br>Maximum Waiting Time: ';
+
+                this.countdownSpan = W.add('span', this.countdownDiv,
+                                           'ng_waitscreen-countdown-span');
+            }
+
+            this.countdown = countdown;
+            this.countdownSpan.innerHTML = formatCountdown(countdown);
+            this.countdownDiv.style.display = '';
+
+            this.countdownInterval = setInterval(function() {
+                var w;
+                w = W.waitScreen;
+                if (!W.isScreenLocked()) {
+                    clearInterval(w.countdownInterval);
+                    return;
+                }
+
+                w.countdown -= 1000;
+                if (w.countdown < 0) {
+                    clearInterval(w.countdownInterval);
+                    w.countdownDiv.innerHTML = '<br>Resuming soon...';
+                }
+                else {
+                    w.countdownSpan.innerHTML = formatCountdown(w.countdown);
+                }
+            }, 1000);
+        }
+        else if (this.countdownDiv) {
+            this.countdownDiv.style.display = 'none';
+        }
     };
 
     /**
@@ -3242,6 +3324,8 @@
                 this.waitingDiv.style.display = 'none';
             }
         }
+        if (this.countdownInterval) clearInterval(this.countdownInterval);
+
         // Re-enables all previously locked input forms in the page.
         try {
             len = this.lockedInputs.length;
@@ -3268,10 +3352,11 @@
     WaitScreen.prototype.updateText = function(text, append) {
         append = append || false;
         if ('string' !== typeof text) {
-            throw new TypeError('WaitScreen.updateText: text must be string.');
+            throw new TypeError('WaitScreen.updateText: text must be ' +
+                                'string. Found: ' + text);
         }
-        if (append) this.waitingDiv.innerHTML += text;
-        else this.waitingDiv.innerHTML = text;
+        if (append) this.contentDiv.innerHTML += text;
+        else this.contentDiv.innerHTML = text;
     };
 
     /**
@@ -3296,6 +3381,19 @@
         // Removes previously registered listeners.
         this.disable();
     };
+
+
+    // ## Helper functions.
+
+    function formatCountdown(time) {
+        var out;
+        out = '';
+        time = J.parseMilliseconds(time);
+        if (time[2]) out += time[2] + ' min ';
+        if (time[3]) out += time[3] + ' sec';
+        return out || '--';
+    }
+
 
 })(
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
