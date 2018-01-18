@@ -2770,7 +2770,7 @@
      * Requires the waitScreen widget to be loaded.
      *
      * @param {string} text Optional. The text to be shown in the locked screen
-     * @param {number} countdown Optional. The expected max total time the 
+     * @param {number} countdown Optional. The expected max total time the
      *   the screen will stay locked (in ms). A countdown will be displayed
      *
      * @see WaitScreen.lock
@@ -3253,7 +3253,7 @@
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-
+        
         frameDoc = W.getFrameDocument();
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
@@ -3273,9 +3273,10 @@
 
         if (countdown) {
             if (!this.countdownDiv) {
-                this.countdownDiv = W.add('span', this.waitingDiv,
+                this.countdownDiv = W.add('div', this.waitingDiv,
                                           'ng_waitscreen-countdown-div');
-                this.countdownDiv.innerHTML = '<br>Do Not Refresh the Page!' +
+                
+                this.countdownDiv.innerHTML = '<br>Do not refresh the page!' +
                     '<br>Maximum Waiting Time: ';
 
                 this.countdownSpan = W.add('span', this.countdownDiv,
@@ -3297,7 +3298,8 @@
                 w.countdown -= 1000;
                 if (w.countdown < 0) {
                     clearInterval(w.countdownInterval);
-                    w.countdownDiv.innerHTML = '<br>Resuming soon...';
+                    w.countdownDiv.style.display = 'none';
+                    w.contentDiv.innerHTML = 'Resuming soon...';
                 }
                 else {
                     w.countdownSpan.innerHTML = formatCountdown(w.countdown);
@@ -3391,7 +3393,7 @@
         time = J.parseMilliseconds(time);
         if (time[2]) out += time[2] + ' min ';
         if (time[3]) out += time[3] + ' sec';
-        return out || '--';
+        return out || 0;
     }
 
 
