@@ -3253,7 +3253,7 @@
         }
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
-        
+
         frameDoc = W.getFrameDocument();
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
@@ -3275,7 +3275,7 @@
             if (!this.countdownDiv) {
                 this.countdownDiv = W.add('div', this.waitingDiv,
                                           'ng_waitscreen-countdown-div');
-                
+
                 this.countdownDiv.innerHTML = '<br>Do not refresh the page!' +
                     '<br>Maximum Waiting Time: ';
 
@@ -4303,7 +4303,7 @@
             prefix = arguments[2];
         }
 
-        if ('undefined' !== typeof prefix) {
+        if ('undefined' === typeof prefix) {
             prefix = 'ng_replace_';
         }
         else if (null === prefix) {
