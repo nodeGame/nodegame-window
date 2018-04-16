@@ -3,6 +3,7 @@
 ## 4.0.0
 - Removed W.getScreenInfo(). Just use window.screen!
 - `#W.getEventButton()` and `#W.addEventButton()` changed input parameters (following changes W.get).
+- InfoPanel.
 
 ## 3.5.2
 - Fixed bug overwriting `#W.unprocessedUri`.
