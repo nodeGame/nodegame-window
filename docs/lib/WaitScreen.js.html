@@ -49,6 +49,18 @@
         <a href="#waitscreen.enabled">WaitScreen.enabled</a>
       </div>
       <div class="heading h3">
+        <a href="#waitscreen.contentdiv">WaitScreen.contentDiv</a>
+      </div>
+      <div class="heading h3">
+        <a href="#waitscreen.countdowndiv">WaitScreen.countdownDiv</a>
+      </div>
+      <div class="heading h3">
+        <a href="#waitscreen.countdownspan">WaitScreen.countdownSpan</a>
+      </div>
+      <div class="heading h3">
+        <a href="#waitscreen.countdown">WaitScreen.countdown</a>
+      </div>
+      <div class="heading h3">
         <a href="#waitscreen.text">WaitScreen.text</a>
       </div>
       <div class="heading h2">
@@ -72,6 +84,9 @@
       <div class="heading h3">
         <a href="#waitscreen.destroy">WaitScreen.destroy</a>
       </div>
+      <div class="heading h2">
+        <a href="#helper-functions.">Helper functions.</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -89,16 +104,16 @@
 </div>
 
 
-<p>Copyright(c) 2016 Stefano Balietti
+<p>Copyright(c) 2018 Stefano Balietti
 MIT Licensed</p>
   </div>
-  <div class="body"><p>Covers the screen with a gray layer, disables inputs, and displays a message</p>
+  <div class="body"><p>Overlays the screen, disables inputs, and displays a message/timer</p>
 
 <p>www.nodegame.org</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span></pre></div>
         </td>
@@ -123,8 +138,8 @@ MIT Licensed</p>
 </div>
 
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.8.0&#39;</span><span class="p">;</span>
-    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;Show a standard waiting screen&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="s1">&#39;0.9.0&#39;</span><span class="p">;</span>
+    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">description</span> <span class="o">=</span> <span class="s1">&#39;Shows a standard waiting screen&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -138,7 +153,7 @@ MIT Licensed</p>
 
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">inputTags</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
-    <span class="nx">inputTags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">];</span>
+    <span class="nx">inputTags</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span> <span class="p">];</span>
     <span class="nx">len</span> <span class="o">=</span> <span class="nx">inputTags</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span></pre></div>
         </td>
       </tr>
@@ -207,13 +222,28 @@ be re-activated later.</p>
     <span class="p">}</span>
 
     <span class="kd">function</span> <span class="nx">event_REALLY_DONE</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">countdown</span><span class="p">;</span>
         <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">defaultTexts</span><span class="p">.</span><span class="nx">waiting</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">shouldStep</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
                 <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">updateText</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">W</span><span class="p">.</span><span class="nx">lockScreen</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>2000 to make sure it does reach 0 and stays there.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                    <span class="nx">countdown</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">milliseconds</span> <span class="o">-</span>
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">timer</span><span class="p">.</span><span class="nx">getTimeSince</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2000</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">countdown</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">countdown</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">W</span><span class="p">.</span><span class="nx">lockScreen</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">countdown</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -233,7 +263,7 @@ be re-activated later.</p>
         <span class="nx">text</span> <span class="o">=</span> <span class="nx">text</span> <span class="o">||</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">defaultTexts</span><span class="p">.</span><span class="nx">paused</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">beforePauseInnerHTML</span> <span class="o">=</span>
-                <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
+                <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">contentDiv</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
             <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">.</span><span class="nx">updateText</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
@@ -397,6 +427,107 @@ be re-activated later.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="waitscreen.contentdiv">
+  <h3>
+    <a href="#waitscreen.contentdiv" class="pilcrow">&#182;</a>
+    WaitScreen.contentDiv
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Div containing the main content of the wait screen</p>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">contentDiv</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="waitscreen.countdowndiv">
+  <h3>
+    <a href="#waitscreen.countdowndiv" class="pilcrow">&#182;</a>
+    WaitScreen.countdownDiv
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Div containing the countdown span and other text</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">WaitScreen.countdown</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">WaitScreen.countdownSpan
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="waitscreen.countdownspan">
+  <h3>
+    <a href="#waitscreen.countdownspan" class="pilcrow">&#182;</a>
+    WaitScreen.countdownSpan
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Span containing a countdown timer for the max waiting</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">WaitScreen.countdown</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">WaitScreen.countdownDiv
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">countdownSpan</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="waitscreen.countdown">
+  <h3>
+    <a href="#waitscreen.countdown" class="pilcrow">&#182;</a>
+    WaitScreen.countdown
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Countdown of max waiting time</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">WaitScreen.countdown
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">countdown</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="waitscreen.text">
   <h3>
     <a href="#waitscreen.text" class="pilcrow">&#182;</a>
@@ -447,7 +578,7 @@ be re-activated later.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
 </div>
 <p>Registers the event listeners.</p>
         </td>
@@ -520,7 +651,7 @@ be re-activated later.</p>
   </div>
   <div class="body"><p>Locks the screen</p>
 
-<p>Overlays a gray div on top of the page and disables all inputs.</p>
+<p>Overlays a gray div on top of the page and disables all inputs</p>
 
 <p>If called on an already locked screen, the previous text is destroyed.
 Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
@@ -532,6 +663,14 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
       <span class="dox_type">string</span>
       <span>Optional. If set, displays the text on top of the
   gray string</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">countdown</span>
+      <span class="dox_type">number</span>
+      <span>Optional. The expected max total time the
+  the screen will stay locked (in ms). A countdown will be displayed,
+  at the end of which a text replaces the countdown, but the screen
+  stays locked until the unlock command is received.</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -545,7 +684,7 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">lock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">lock</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">countdown</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">frameDoc</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;WaitScreen.lock: cannot lock inputs.&#39;</span><span class="p">);</span>
@@ -555,36 +694,67 @@ Use <code>WaitScreen.updateText</code> to modify an existing text.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
 </div>
 <p>Disables all input forms in the page.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
 
-        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
-</div>
-<p>TODO: cleanup refactor.
-Using this for IE8 compatibility.
-frameDoc = W.getIFrameDocument(W.getFrame());</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
+        <span class="nx">frameDoc</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">frameDoc</span><span class="p">)</span> <span class="nx">lockUnlockedInputs</span><span class="p">(</span><span class="nx">frameDoc</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">()</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
             <span class="p">}</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">addDiv</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">contentDiv</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">,</span>
+                                    <span class="s1">&#39;ng_waitscreen-content-div&#39;</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">contentDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">countdown</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">,</span>
+                                          <span class="s1">&#39;ng_waitscreen-countdown-div&#39;</span><span class="p">);</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;br&gt;Do not refresh the page!&#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;&lt;br&gt;Maximum Waiting Time: &#39;</span><span class="p">;</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">countdownSpan</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">,</span>
+                                           <span class="s1">&#39;ng_waitscreen-countdown-span&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">countdown</span> <span class="o">=</span> <span class="nx">countdown</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">countdownSpan</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">formatCountdown</span><span class="p">(</span><span class="nx">countdown</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">countdownInterval</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">w</span><span class="p">;</span>
+                <span class="nx">w</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">waitScreen</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">W</span><span class="p">.</span><span class="nx">isScreenLocked</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">countdownInterval</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="nx">w</span><span class="p">.</span><span class="nx">countdown</span> <span class="o">-=</span> <span class="mi">1000</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">countdown</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">countdownInterval</span><span class="p">);</span>
+                    <span class="nx">w</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+                    <span class="nx">w</span><span class="p">.</span><span class="nx">contentDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;Resuming soon...&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">w</span><span class="p">.</span><span class="nx">countdownSpan</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">formatCountdown</span><span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">countdown</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">countdownDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -617,13 +787,14 @@ frameDoc = W.getIFrameDocument(W.getFrame());</p>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
             <span class="p">}</span>
-        <span class="p">}</span></pre></div>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">countdownInterval</span><span class="p">)</span> <span class="nx">clearInterval</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">countdownInterval</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
 </div>
 <p>Re-enables all previously locked input forms in the page.</p>
         </td>
@@ -640,7 +811,7 @@ frameDoc = W.getIFrameDocument(W.getFrame());</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
 </div>
 <p>For IE8.</p>
         </td>
@@ -681,10 +852,11 @@ frameDoc = W.getIFrameDocument(W.getFrame());</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">WaitScreen</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateText</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">append</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">append</span> <span class="o">=</span> <span class="nx">append</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;WaitScreen.updateText: text must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;WaitScreen.updateText: text must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">text</span><span class="p">);</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">append</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="nx">text</span><span class="p">;</span>
-        <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">waitingDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">append</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">contentDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="nx">text</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">this</span><span class="p">.</span><span class="nx">contentDiv</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">text</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -722,7 +894,7 @@ frameDoc = W.getIFrameDocument(W.getFrame());</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+  <a class="pilcrow" href="#section-29" id="section-29">&#182;</a>
 </div>
 <p>It might have gotten destroyed in the meantime.</p>
         </td>
@@ -735,12 +907,33 @@ frameDoc = W.getIFrameDocument(W.getFrame());</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+  <a class="pilcrow" href="#section-30" id="section-30">&#182;</a>
 </div>
 <p>Removes previously registered listeners.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
-    <span class="p">};</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="helper-functions.">
+  <h2>
+    <a href="#helper-functions." class="pilcrow">&#182;</a>
+    Helper functions.
+  </h2>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">formatCountdown</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">out</span><span class="p">;</span>
+        <span class="nx">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="nx">time</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">parseMilliseconds</span><span class="p">(</span><span class="nx">time</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">time</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="nx">out</span> <span class="o">+=</span> <span class="nx">time</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; min &#39;</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">time</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="nx">out</span> <span class="o">+=</span> <span class="nx">time</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; sec&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">out</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
 
 <span class="p">})(</span>
     <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">module</span><span class="p">.</span><span class="nx">parent</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span>

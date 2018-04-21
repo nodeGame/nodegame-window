@@ -67,6 +67,7 @@ program
         }
         var command = dockerDir + 'docker -i ' + rootDir +
             ' index.js lib/ listeners/ -o ' + rootDir + 'docs/ -u';
+
         var child = exec(command, function (error, stdout, stderr) {
             if (stdout) console.log(stdout);
             if (stderr) console.log(stderr);

@@ -50,7 +50,7 @@ MIT Licensed</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
@@ -124,36 +124,36 @@ MIT Licensed</p>
   <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
 </div>
 
-<div class="highlight"><pre><code>    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;HIDE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
-        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.HIDE is deprecated. Use &#39;</span> <span class="o">+</span>
-                    <span class="s">&#39;GameWindow.hide() instead.***&#39;</span><span class="p">);</span>
-        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.HIDE&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span><span class="p">;</span>
-    <span class="p">});</span>
+<div class="highlight"><pre><code><span></span>    node.on(&#39;HIDE&#39;, function(idOrObj) {
+        var el;
+        console.log(&#39;***GameWindow.on.HIDE is deprecated. Use &#39; +
+                    &#39;GameWindow.hide() instead.***&#39;);
+        el = getElement(idOrObj, &#39;GameWindow.on.HIDE&#39;);
+        if (el) el.style.display = &#39;none&#39;;
+    });
 
-    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;SHOW&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
-        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.SHOW is deprecated. Use &#39;</span> <span class="o">+</span>
-                    <span class="s">&#39;GameWindow.show() instead.***&#39;</span><span class="p">);</span>
-        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.SHOW&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
-    <span class="p">});</span>
+    node.on(&#39;SHOW&#39;, function(idOrObj) {
+        var el;
+        console.log(&#39;***GameWindow.on.SHOW is deprecated. Use &#39; +
+                    &#39;GameWindow.show() instead.***&#39;);
+        el = getElement(idOrObj, &#39;GameWindow.on.SHOW&#39;);
+        if (el) el.style.display = &#39;&#39;;
+    });
 
-    <span class="n">node</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s">&#39;TOGGLE&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">var</span> <span class="n">el</span><span class="p">;</span>
-        <span class="n">console</span><span class="o">.</span><span class="nb">log</span><span class="p">(</span><span class="s">&#39;***GameWindow.on.TOGGLE is deprecated. Use &#39;</span> <span class="o">+</span>
-                    <span class="s">&#39;GameWindow.toggle() instead.***&#39;</span><span class="p">);</span>
-        <span class="n">el</span> <span class="o">=</span> <span class="n">getElement</span><span class="p">(</span><span class="n">idOrObj</span><span class="p">,</span> <span class="s">&#39;GameWindow.on.TOGGLE&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">===</span> <span class="s">&#39;none&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="n">el</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
+    node.on(&#39;TOGGLE&#39;, function(idOrObj) {
+        var el;
+        console.log(&#39;***GameWindow.on.TOGGLE is deprecated. Use &#39; +
+                    &#39;GameWindow.toggle() instead.***&#39;);
+        el = getElement(idOrObj, &#39;GameWindow.on.TOGGLE&#39;);
+        if (el) {
+            if (el.style.display === &#39;none&#39;) {
+                el.style.display = &#39;&#39;;
+            }
+            else {
+                el.style.display = &#39;none&#39;;
+            }
+        }
+    });
 </code></pre></div>
 
 
