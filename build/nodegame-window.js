@@ -1,10 +1,9 @@
 /**
  * # GameWindow
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
- * GameWindow provides a handy API to interface nodeGame with the
- * browser window
+ * API to interface nodeGame with the browser window
  *
  * Creates a custom root element inside the HTML page, and insert an
  * iframe element inside it.
@@ -20,28 +19,25 @@
 
     "use strict";
 
-    var J = node.JSUS;
+    var DOM;
 
-    if (!J) {
-        throw new Error('GameWindow: JSUS object not found. Aborting.');
-    }
+    var constants, windowLevels, screenLevels;
+    var CB_EXECUTED, WIN_LOADING, lockedUpdate;
 
-    var DOM = J.get('DOM');
+    if (!J) throw new Error('GameWindow: JSUS not found. Aborting.');
+    DOM = J.require('DOM');
+    if (!DOM) throw new Error('GameWindow: J.require("DOM") failed.');
 
-    if (!DOM) {
-        throw new Error('GameWindow: JSUS DOM object not found. Aborting.');
-    }
+    constants = node.constants;
+    windowLevels = constants.windowLevels;
+    screenLevels = constants.screenLevels;
 
-    var constants = node.constants;
-    var windowLevels = constants.windowLevels;
-    var screenLevels = constants.screenLevels;
+    CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
 
-    var CB_EXECUTED = constants.stageLevels.CALLBACK_EXECUTED;
-
-    var WIN_LOADING = windowLevels.LOADING;
+    WIN_LOADING = windowLevels.LOADING;
 
     // Allows just one update at the time to the counter of loading frames.
-    var lockedUpdate = false;
+    lockedUpdate = false;
 
     GameWindow.prototype = DOM;
     GameWindow.prototype.constructor = GameWindow;
@@ -60,6 +56,7 @@
         storeCacheNow:   false,
         storeCacheLater: false
     };
+    GameWindow.defaults.infoPanel = undefined;
 
     function onLoadStd(iframe, cb) {
         var iframeWin;
@@ -94,7 +91,7 @@
         function completed(event) {
             var iframeDoc;
 
-            // IE < 10 gives 'Permission Denied' if trying to access
+            // IE < 10 (also 11?) gives 'Permission Denied' if trying to access
             // the iframeDoc from the context of the function above.
             // We need to re-get it from the DOM.
             iframeDoc = J.getIFrameDocument(iframe);
@@ -248,9 +245,9 @@
         /**
          * ### GameWindow.defaultHeaderPosition
          *
-         * The default header position. 'left'.
+         * The default header position. 'top'.
          */
-        this.defaultHeaderPosition = 'left';
+        this.defaultHeaderPosition = 'top';
 
         /**
          * ### GameWindow.conf
@@ -288,6 +285,17 @@
         this.cacheSupported = null;
 
         /**
+         * ### GameWindow.cacheSupported
+         *
+         * Flag that direct access to the iframe content is allowed
+         *
+         * Usually false, on IEs
+         *
+         * @see testdirectFrameDocumentAccess
+         */
+        this.directFrameDocumentAccess = null;
+
+        /**
          * ### GameWindow.cache
          *
          * Cache for loaded iframes
@@ -305,11 +313,26 @@
          *
          * Currently loaded URIs in the internal frames
          *
-         * Maps frame names (e.g. 'ng_mainframe') to the URIs they are showing.
+         * Maps frame names (e.g. 'ng_mainframe') to the (processed) URIs
+         * that they are showing.
          *
          * @see GameWindow.preCache
+         * @see GameWindow.processUri
+         *
+         * TODO: check: this is still having the test frame, should it be
+         * removed instead?
          */
         this.currentURIs = {};
+
+        /**
+         * ### GameWindow.unprocessedUri
+         *
+         * The uri parameter passed to `loadFrame`, still unprocessed
+         *
+         * @see GameWindow.currentURIs
+         * @see GameWindow.processUri
+         */
+        this.unprocessedUri = null;
 
         /**
          * ### GameWindow.globalLibs
@@ -391,6 +414,26 @@
          */
         this.isIE = !!document.createElement('span').attachEvent;
 
+        /**
+         * ### GameWindow.headerOffset
+         *
+         * Contains the current offset (widht or height) for the header
+         *
+         * Content below/above/next to it needs to be slided accordingly.
+         *
+         * @see W.adjustHeaderOffset
+         */
+        this.headerOffset = 0;
+
+        /**
+         * ### GameWindow.willResizeFrame
+         *
+         * Boolean flag saying whether a call to resize the frame is in progress
+         *
+         * @see W.adjustFrameHeight
+         */
+        this.willResizeFrame = false;
+
         // Add setup functions.
         this.addDefaultSetups();
 
@@ -438,7 +481,7 @@
             this.restoreOnleave();
         }
 
-        if (this.conf.noEscape) {
+        if ('undefined' === typeof this.conf.noEscape || this.conf.noEscape) {
             this.noEscape();
         }
         else if (this.conf.noEscape === false) {
@@ -482,6 +525,10 @@
         }
         else if (this.conf.disableRightClick === false) {
             this.enableRightClick();
+        }
+
+        if ('undefined' !== typeof this.conf.disableBackButton) {
+            this.disableBackButton(this.conf.disableBackButton);
         }
 
         if ('undefined' !== typeof this.conf.uriPrefix) {
@@ -542,14 +589,13 @@
      */
     GameWindow.prototype.setStateLevel = function(level) {
         if ('string' !== typeof level) {
-            throw new TypeError('GameWindow.setStateLevel: ' +
-                                'level must be string.');
+            throw new TypeError('GameWindow.setStateLevel: level must ' +
+                                'be string. Found: ' + level);
         }
         if ('undefined' === typeof windowLevels[level]) {
             throw new Error('GameWindow.setStateLevel: unrecognized level: ' +
-                            level + '.');
+                            level);
         }
-
         this.stateLevel = windowLevels[level];
     };
 
@@ -591,12 +637,12 @@
      */
     GameWindow.prototype.setScreenLevel = function(level) {
         if ('string' !== typeof level) {
-            throw new TypeError('GameWindow.setScreenLevel: ' +
-                                'level must be string.');
+            throw new TypeError('GameWindow.setScreenLevel: level must ' +
+                                'be string. Found: ' + level);
         }
         if ('undefined' === typeof screenLevels[level]) {
             throw new Error('GameWindow.setScreenLevel: unrecognized level: ' +
-                            level + '.');
+                            level);
         }
 
         this.screenState = screenLevels[level];
@@ -689,16 +735,19 @@
      * @return {Document} The document object of the iframe of the game
      *
      * @see GameWindow.getFrame
+     * @see GameWindow.testDirectFrameDocumentAccess
      */
     GameWindow.prototype.getFrameDocument = function() {
         var iframe;
         if (!this.frameDocument || this.stateLevel === WIN_LOADING) {
             iframe = this.getFrame();
-            this.frameDocument = iframe ? this.getIFrameDocument(iframe) :
-                null;
+            if (!iframe) return null;
+            this.frameDocument = this.getIFrameDocument(iframe);
         }
-        return this.frameDocument;
-
+        // Some IEs give permission denied when accessing the frame document
+        // directly. We need to re-get it from the DOM.
+        if (this.directFrameDocumentAccess) return this.frameDocument;
+        else return J.getIFrameDocument(this.getFrame());
     };
 
     /**
@@ -740,46 +789,127 @@
      * @see GameWindow.setFrame
      * @see GameWindow.clearFrame
      * @see GameWindow.destroyFrame
+     *
+     * @emit FRAME_GENERATED
      */
     GameWindow.prototype.generateFrame = function(root, frameName, force) {
         var iframe;
-        if (!force && this.frameElement) {
-            throw new Error('GameWindow.generateFrame: a frame element is ' +
-                            'already existing. It cannot be duplicated.');
+        if (this.frameElement) {
+            if (!force) {
+                throw new Error('GameWindow.generateFrame: frame is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            this.destroyFrame();
         }
 
         root = root || this.frameRoot || document.body;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateFrame: invalid root element.');
+            throw new Error('GameWindow.generateFrame: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         frameName = frameName || 'ng_mainframe';
 
-        if ('string' !== typeof frameName) {
+        if ('string' !== typeof frameName || frameName.trim() === '') {
             throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'string.');
+                            'undefined or a non-empty string. Found: ' +
+                            frameName);
         }
 
         if (document.getElementById(frameName)) {
-            throw new Error('GameWindow.generateFrame: frameName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateFrame: frameName is not ' +
+                            'unique in DOM: ' + frameName);
         }
 
-        iframe = W.addIFrame(root, frameName);
+        iframe = W.add('iframe', root, frameName);
         // Method .replace does not add the uri to the history.
         iframe.contentWindow.location.replace('about:blank');
 
         // For IE8.
         iframe.frameBorder = 0;
 
+        // Avoid scrolling.
+        iframe.scrolling = "no";
+
         this.setFrame(iframe, frameName, root);
 
-        if (this.frameElement) {
-            adaptFrame2HeaderPosition(this);
-        }
+        if (this.getHeader()) adaptFrame2HeaderPosition();
+
+        // Emit event.
+        node.events.ng.emit('FRAME_GENERATED', iframe);
+
+        // Add listener on resizing the page.
+        document.body.onresize = function() {
+            W.adjustFrameHeight(0, 120);
+        };
 
         return iframe;
+    };
+
+    /**
+     * ### GameWindow.generateInfoPanel
+     *
+     * Appends a configurable div element at to "top" of the page
+     *
+     * @param {Element} root Optional. The HTML element to which the info
+     *   panel will be appended. Default:
+     *
+     *   - above the main frame, or
+     *   - below the header, or
+     *   - inside _documents.body_.
+     *
+     * @param {string} frameName Optional. The name of the iframe. Default:
+     *   'ng_mainframe'
+     * @param {boolean} force Optional. Will create the frame even if an
+     *   existing one is found. Default: FALSE
+     *
+     * @return {InfoPanel} A reference to the InfoPanel object
+     *
+     * @see GameWindow.infoPanel
+     *
+     * @emit INFOPANEL_GENERATED
+     */
+    GameWindow.prototype.generateInfoPanel = function(root, options, force) {
+        var infoPanelDiv;
+
+        if (this.infoPanel) {
+            if (!force) {
+                throw new Error('GameWindow.generateInfoPanel: info panel is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            else {
+                this.infoPanel.destroy();
+                this.infoPanel = null;
+            }
+        }
+        options = options || {};
+
+        this.infoPanel = new node.InfoPanel(options);
+        infoPanelDiv = this.infoPanel.infoPanelDiv;
+
+        root = options.root;
+        if (root) {
+            if (!J.isElement(root)) {
+                throw new Error('GameWindow.generateInfoPanel: root must be ' +
+                                'undefined or HTMLElement. Found: ' + root);
+            }
+            root.appendChild(infoPanelDiv);
+        }
+        else if (this.frameElement) {
+            document.body.insertBefore(infoPanelDiv, this.frameElement);
+        }
+        else if (this.headerElement) {
+           J.insertAfter(this.headerElement, infoPanelDiv);
+        }
+        else {
+            document.body.appendChild(infoPanelDiv);
+        }
+
+        // Emit event.
+        node.events.ng.emit('INFOPANEL_GENERATED', this.infoPanel);
+
+        return this.infoPanel;
     };
 
     /**
@@ -797,13 +927,16 @@
      */
     GameWindow.prototype.setFrame = function(iframe, iframeName, root) {
         if (!J.isElement(iframe)) {
-            throw new Error('GameWindow.setFrame: iframe must be HTMLElement.');
+            throw new TypeError('GameWindow.setFrame: iframe must be ' +
+                                'HTMLElement. Found: ' + iframe);
         }
         if ('string' !== typeof iframeName) {
-            throw new Error('GameWindow.setFrame: iframeName must be string.');
+            throw new TypeError('GameWindow.setFrame: iframeName must be ' +
+                                'string. Found: ' + iframeName);
         }
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.setFrame: invalid root element.');
+            throw new TypeError('GameWindow.setFrame: root must be ' +
+                                'HTMLElement. Found: ' + root);
         }
 
         this.frameRoot = root;
@@ -837,7 +970,7 @@
      * Clears the content of the frame
      */
     GameWindow.prototype.clearFrame = function() {
-        var iframe, frameName;
+        var iframe, frameName, frameDocument;
         iframe = this.getFrame();
         if (!iframe) {
             throw new Error('GameWindow.clearFrame: cannot detect frame.');
@@ -849,18 +982,29 @@
         // Method .replace does not add the uri to the history.
         //iframe.contentWindow.location.replace('about:blank');
 
-        try {
-            this.getFrameDocument().documentElement.innerHTML = '';
+        frameDocument = this.getFrameDocument();
+        frameDocument.documentElement.innerHTML = '';
+
+        if (this.directFrameDocumentAccess) {
+            frameDocument.documentElement.innerHTML = '';
         }
-        catch(e) {
-            // IE < 10 gives 'Permission Denied' if trying to access
-            // the iframeDoc from the context of the function above.
-            // We need to re-get it from the DOM.
-            if (J.getIFrameDocument(iframe).documentElement) {
-                J.removeChildrenFromNode(
-                    J.getIFrameDocument(iframe).documentElement);
-            }
+        else {
+            J.removeChildrenFromNode(frameDocument.documentElement);
         }
+
+// TODO: cleanup refactor.
+//         try {
+//             this.getFrameDocument().documentElement.innerHTML = '';
+//         }
+//         catch(e) {
+//             // IE < 10 gives 'Permission Denied' if trying to access
+//             // the iframeDoc from the context of the function above.
+//             // We need to re-get it from the DOM.
+//             if (J.getIFrameDocument(iframe).documentElement) {
+//                 J.removeChildrenFromNode(
+//                     J.getIFrameDocument(iframe).documentElement);
+//             }
+//         }
 
         this.frameElement = iframe;
         this.frameWindow = window.frames[frameName];
@@ -876,39 +1020,43 @@
      *   will be appended. Default: _document.body_ or
      *   _document.lastElementChild_
      * @param {string} headerName Optional. The name (id) of the header.
-     *   Default: 'gn_header'
-     * @param {boolean} force Optional. Will create the header even if an
-     *   existing one is found. Default: FALSE
+     *   Default: 'ng_header'
+     * @param {boolean} force Optional. Destroys the existing header,
+     *   if found. Default: FALSE
      *
      * @return {Element} The header element
      */
     GameWindow.prototype.generateHeader = function(root, headerName, force) {
         var header;
 
-        if (!force && this.headerElement) {
-            throw new Error('GameWindow.generateHeader: a header element is ' +
-                            'already existing. It cannot be duplicated.');
+        if (this.headerElement) {
+            if (!force) {
+                throw new Error('GameWindow.generateHeader: header is ' +
+                                'already existing. Use force to regenerate.');
+            }
+            this.destroyHeader();
         }
 
         root = root || document.body || document.lastElementChild;
 
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.generateHeader: invalid root element.');
+            throw new Error('GameWindow.generateHeader: root must be ' +
+                            'undefined or HTMLElement. Found: ' + root);
         }
 
         headerName = headerName || 'ng_header';
 
         if ('string' !== typeof headerName) {
             throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'string.');
+                            'string. Found: ' + headerName);
         }
 
         if (document.getElementById(headerName)) {
-            throw new Error('GameWindow.generateHeader: headerName must be ' +
-                            'unique.');
+            throw new Error('GameWindow.generateHeader: headerName is not ' +
+                            'unique in DOM: ' + headerName);
         }
 
-        header = this.addElement('div', root, headerName);
+        header = this.add('div', root, headerName);
 
         // If generateHeader is called after generateFrame, and the default
         // header position is not bottom, we need to move the header in front.
@@ -939,77 +1087,84 @@
      * @see GameWindow.defaultHeaderPosition
      * @see adaptFrame2HeaderPosition
      */
-    GameWindow.prototype.setHeaderPosition = function(position) {
-        var validPositions, pos, oldPos;
-        if ('string' !== typeof position) {
-            throw new TypeError('GameWindow.setHeaderPosition: position ' +
-                                'must be string.');
-        }
-        pos = position.toLowerCase();
-
-        // Do something only if there is a change in the position.
-        if (this.headerPosition === pos) return;
-
+    GameWindow.prototype.setHeaderPosition = (function() {
+        var validPositions;
         // Map: position - css class.
         validPositions = {
-            'top': 'ng_header_position-horizontal-t',
-            'bottom': 'ng_header_position-horizontal-b',
-            'right': 'ng_header_position-vertical-r',
-            'left': 'ng_header_position-vertical-l'
+            top: 'ng_header_position-horizontal-t',
+            bottom: 'ng_header_position-horizontal-b',
+            right: 'ng_header_position-vertical-r',
+            left: 'ng_header_position-vertical-l'
         };
 
-        if ('undefined' === typeof validPositions[pos]) {
-            node.err('GameWindow.setHeaderPosition: invalid header ' +
-                     'position: ' + pos  + '.');
-            return;
-        }
-        if (!this.headerElement) {
-            throw new Error('GameWindow.setHeaderPosition: headerElement ' +
-                            'not found.');
-        }
+        return function(position) {
+            var pos, oldPos;
+            if ('string' !== typeof position) {
+                throw new TypeError('GameWindow.setHeaderPosition: position ' +
+                                    'must be string. Found: ' + position);
+            }
+            pos = position.toLowerCase();
 
-        W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
-        W.addClass(this.headerElement, validPositions[pos]);
+            // Do something only if there is a change in the position.
+            if (this.headerPosition === pos) return;
 
-        oldPos = this.headerPosition;
+            if ('undefined' === typeof validPositions[pos]) {
+                node.err('GameWindow.setHeaderPosition: invalid header ' +
+                         'position: ' + pos);
+                return;
+            }
+            if (!this.headerElement) {
+                throw new Error('GameWindow.setHeaderPosition: headerElement ' +
+                                'not found.');
+            }
 
-        // Store the new position in a reference variable
-        // **before** adaptFrame2HeaderPosition is called
-        this.headerPosition = pos;
+            W.removeClass(this.headerElement, 'ng_header_position-[a-z-]*');
+            W.addClass(this.headerElement, validPositions[pos]);
 
-        if (this.frameElement) {
-            adaptFrame2HeaderPosition(this, oldPos);
-        }
-    };
+            oldPos = this.headerPosition;
+
+            // Store the new position in a reference variable
+            // **before** adaptFrame2HeaderPosition is called
+            this.headerPosition = pos;
+
+            if (this.frameElement) adaptFrame2HeaderPosition(oldPos);
+        };
+    })();
 
     /**
      * ### GameWindow.setHeader
      *
      * Sets the new header element and update related references
      *
-     * @param {Element} header The new header
+     * @param {HTMLElement} header The new header
      * @param {string} headerName The name of the header
-     * @param {Element} root The HTML element to which the header is appended
+     * @param {HTMLElement} root The element to which the header is appended
      *
-     * @return {Element} The new header
+     * @return {HTMLElement} The header
      *
      * @see GameWindow.generateHeader
      */
     GameWindow.prototype.setHeader = function(header, headerName, root) {
         if (!J.isElement(header)) {
             throw new Error(
-                'GameWindow.setHeader: header must be HTMLElement.');
+                'GameWindow.setHeader: header must be HTMLElement. Found: ' +
+                    header);
         }
         if ('string' !== typeof headerName) {
-            throw new Error('GameWindow.setHeader: headerName must be string.');
+            throw new Error('GameWindow.setHeader: headerName must be ' +
+                            'string. Found: ' + headerName);
         }
         if (!J.isElement(root)) {
-            throw new Error('GameWindow.setHeader: invalid root element.');
+            throw new Error('GameWindow.setHeader: root must be ' +
+                            'HTMLElement. Found: ' + root);
         }
 
         this.headerElement = header;
         this.headerName = headerName;
         this.headerRoot = root;
+
+        // Emit event.
+        node.events.ng.emit('HEADER_GENERATED', header);
 
         return this.headerElement;
     };
@@ -1075,6 +1230,8 @@
         this.headerName = null;
         this.headerRoot = null;
         this.headerPosition = null;
+        this.headerOffset = 0;
+        this.adjustHeaderOffset(true);
     };
 
     /**
@@ -1111,11 +1268,11 @@
     GameWindow.prototype.initLibs = function(globalLibs, frameLibs) {
         if (globalLibs && !J.isArray(globalLibs)) {
             throw new TypeError('GameWindow.initLibs: globalLibs must be ' +
-                                'array or undefined.');
+                                'array or undefined. Found: ' + globalLibs);
         }
         if (frameLibs && 'object' !== typeof frameLibs) {
             throw new TypeError('GameWindow.initLibs: frameLibs must be ' +
-                                'object or undefined.');
+                                'object or undefined. Found: ' + frameLibs);
         }
         if (!globalLibs && !frameLibs) {
             throw new Error('GameWindow.initLibs: frameLibs and frameLibs ' +
@@ -1143,8 +1300,8 @@
         var iframe, iframeName;
         uri = uri || '/pages/testpage.htm';
         if ('string' !== typeof uri) {
-            throw new TypeError('GameWindow.precacheTest: uri must string or ' +
-                                'undefined.');
+            throw new TypeError('GameWindow.precacheTest: uri must string ' +
+                                'or undefined. Found: ' + uri);
         }
         iframe = document.createElement('iframe');
         iframe.style.display = 'none';
@@ -1167,6 +1324,7 @@
             catch(e) {
                 W.cacheSupported = false;
             }
+
             document.body.removeChild(iframe);
             if (cb) cb();
         });
@@ -1203,11 +1361,11 @@
 
         if (!J.isArray(uris)) {
             throw new TypeError('GameWindow.preCache: uris must be string ' +
-                                'or array.');
+                                'or array. Found: ' + uris);
         }
         if (callback && 'function' !== typeof callback) {
             throw new TypeError('GameWindow.preCache: callback must be ' +
-                                'function or undefined.');
+                                'function or undefined. Found: ' + callback);
         }
 
         // Don't preload if an empty array is passed.
@@ -1288,7 +1446,7 @@
     };
 
     /**
-     * ### GameWindow.getElementById
+     * ### GameWindow.getElementById | gid
      *
      * Returns the element with the given id
      *
@@ -1300,7 +1458,9 @@
      *
      * @see GameWindow.getElementsByTagName
      */
-    GameWindow.prototype.getElementById = function(id) {
+    GameWindow.prototype.getElementById =
+        GameWindow.prototype.gid = function(id) {
+
         var el, frameDocument;
 
         frameDocument = this.getFrameDocument();
@@ -1392,20 +1552,22 @@
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
+        var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
 
         if ('string' !== typeof uri) {
-            throw new TypeError('GameWindow.loadFrame: uri must be string.');
+            throw new TypeError('GameWindow.loadFrame: uri must be ' +
+                                'string. Found: ' + uri);
         }
         if (func && 'function' !== typeof func) {
             throw new TypeError('GameWindow.loadFrame: func must be function ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + func);
         }
         if (opts && 'object' !== typeof opts) {
             throw new TypeError('GameWindow.loadFrame: opts must be object ' +
-                                'or undefined.');
+                                'or undefined. Found: ' + opts);
         }
         opts = opts || {};
 
@@ -1450,7 +1612,7 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'load mode: ' + opts.cache.loadMode + '.');
+                                    'load mode: ' + opts.cache.loadMode);
                 }
             }
             if (opts.cache.storeMode) {
@@ -1468,14 +1630,40 @@
                 }
                 else {
                     throw new Error('GameWindow.loadFrame: unkown cache ' +
-                                    'store mode: ' + opts.cache.storeMode +
-                                    '.');
+                                    'store mode: ' + opts.cache.storeMode);
                 }
             }
         }
 
-        // Adapt the uri if necessary.
-        uri = this.processUri(uri);
+        if ('undefined' !== typeof opts.autoParse) {
+            if ('object' !== typeof opts.autoParse) {
+                throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
+                                    'must be object or undefined. Found: ' +
+                                    opts.autoParse);
+            }
+            if ('undefined' !== typeof opts.autoParsePrefix) {
+                if ('string' !== typeof opts.autoParsePrefix) {
+                    throw new TypeError('GameWindow.loadFrame: opts.' +
+                                        'autoParsePrefix must be string ' +
+                                        'or undefined. Found: ' +
+                                        opts.autoParsePrefix);
+                }
+                autoParsePrefix = opts.autoParsePrefix;
+            }
+            if ('undefined' !== typeof opts.autoParseMod) {
+                if ('string' !== typeof opts.autoParseMod) {
+                    throw new TypeError('GameWindow.loadFrame: opts.' +
+                                        'autoParseMod must be string ' +
+                                        'or undefined. Found: ' +
+                                        opts.autoParseMod);
+                }
+                autoParseMod = opts.autoParseMod;
+            }
+            autoParse = opts.autoParse;
+        }
+
+        // Store unprocessed uri parameter.
+        this.unprocessedUri = uri;
 
         if (this.cacheSupported === null) {
             this.preCacheTest(function() {
@@ -1483,6 +1671,10 @@
             });
             return;
         }
+
+        // Adapt the uri if necessary. Important! Must follow
+        // the assignment to unprocessedUri AND preCacheTest.
+        uri = this.processUri(uri);
 
         if (this.cacheSupported === false) {
             storeCacheNow = false;
@@ -1522,13 +1714,25 @@
         // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
+
+                // Check if direct access to the content of the frame is
+                // allowed. Usually IEs do not allow this. Notice, this
+                // is different from preCaching, and that a newly
+                // generated frame (about:blank) will always be accessible.
+                if (that.directFrameDocumentAccess === null) {
+                    testDirectFrameDocumentAccess(that);
+                }
+
                 // Handles caching.
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback
+                                    // Executes callback, autoParses,
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func);
+                                    that.updateLoadFrameState(func,
+                                                              autoParse,
+                                                              autoParseMod,
+                                                              autoParsePrefix);
                                 });
             });
         }
@@ -1537,7 +1741,7 @@
         if (loadCache) {
             // Load iframe contents at this point only if the iframe is already
             // "ready" (see definition of frameReady), otherwise the contents
-            // would be cleared once the iframe becomes ready.  In that case,
+            // would be cleared once the iframe becomes ready. In that case,
             // iframe.onload handles the filling of the contents.
             if (frameReady) {
                 // Handles caching.
@@ -1546,7 +1750,10 @@
 
                                     // Executes callback
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func);
+                                    that.updateLoadFrameState(func,
+                                                              autoParse,
+                                                              autoParseMod,
+                                                              autoParsePrefix);
                                 });
             }
         }
@@ -1566,6 +1773,8 @@
      *
      * @param {string} uri The uri to process
      *
+     * @return {string} uri The processed uri
+     *
      * @see GameWindow.uriPrefix
      * @see GameWindow.uriChannel
      */
@@ -1584,22 +1793,35 @@
      *
      * The method performs the following operations:
      *
-     * - executes a given callback function
      * - decrements the counter of loading iframes
+     * - executes a given callback function
+     * - auto parses the elements specified (if any)
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
+     * @param {object} autoParse Optional. An object containing elements
+     *    to replace in the HTML DOM.
+     * @param {string} autoParseMod Optional. Modifier for search and replace
+     * @param {string} autoParsePrefix Optional. Custom prefix to add to the
+     *    keys of the elements in autoParse object
      *
+     * @see GameWindow.searchReplace
      * @see updateAreLoading
      *
      * @emit FRAME_LOADED
      * @emit LOADED
      */
-    GameWindow.prototype.updateLoadFrameState = function(func) {
+    GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
+                                                         autoParseMod,
+                                                         autoParsePrefix) {
+
         var loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
         if (func) func.call(node.game);
+        if (autoParse) {
+            this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
+        }
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -1655,7 +1877,7 @@
     GameWindow.prototype.setUriPrefix = function(uriPrefix) {
         if (uriPrefix !== null && 'string' !== typeof uriPrefix) {
             throw new TypeError('GameWindow.setUriPrefix: uriPrefix must be ' +
-                                'string or null.');
+                                'string or null. Found: ' + uriPrefix);
         }
         this.conf.uriPrefix = this.uriPrefix = uriPrefix;
     };
@@ -1665,15 +1887,196 @@
      *
      * Sets the variable uriChannel
      *
+     * Trailing and preceding slashes are added if missing.
+     *
+     * @param {string|null} uriChannel The current uri of the channel,
+     *   or NULL to delete it
+     *
      * @see GameWindow.uriChannel
      */
     GameWindow.prototype.setUriChannel = function(uriChannel) {
-        if (uriChannel !== null && 'string' !== typeof uriChannel) {
-            throw new TypeError('GameWindow.uriChannel: uriChannel must be ' +
-                                'string or null.');
+        if ('string' === typeof uriChannel) {
+            if (uriChannel.charAt(0) !== '/') uriChannel = '/' + uriChannel;
+            if (uriChannel.charAt(uriChannel.length-1) !== '/') {
+                uriChannel = uriChannel + '/';
+            }
         }
+        else if (uriChannel !== null) {
+            throw new TypeError('GameWindow.uriChannel: uriChannel must be ' +
+                                'string or null. Found: ' + uriChannel);
+        }
+
         this.uriChannel = uriChannel;
     };
+
+    /**
+     * ### GameWindow.adjustFrameHeight
+     *
+     * Resets the min-height style of the iframe to fit its content properly
+     *
+     * Takes into the available height of the page, and the actual
+     * content of the iframe, which is stretched to either:
+     *
+     *  - (almost) till the end of the page,
+     *  - or to fit its content, if larger than page height (with scrollbar).
+     *
+     * @param {number} userMinHeight Optional. If set minHeight cannot be
+     *   less than this value. Default: 0
+     * @param {number} delay. If set, a timeout is created before the
+     *   the frame is actually adjusted. Multiple calls will be
+     *   evaluated only once at the end of a new timeout. Default: undefined
+     *
+     * @see W.willResizeFrame
+     * @see W.adjustHeaderOffset
+     */
+    GameWindow.prototype.adjustFrameHeight = (function() {
+        var nextTimeout, adjustIt;
+
+        adjustIt = function(userMinHeight) {
+            var iframe, minHeight, contentHeight;
+
+            W.adjustHeaderOffset();
+
+            iframe = W.getFrame();
+            // Iframe might have been destroyed already, e.g. in a test.
+            if (!iframe || !iframe.contentWindow) return;
+
+            // Try to find out how tall the frame should be.
+            minHeight = window.innerHeight || window.clientHeight;
+
+            contentHeight = iframe.contentWindow.document.body.offsetHeight;
+            // Rule of thumb.
+            contentHeight += 60;
+
+            if (W.headerPosition === "top") contentHeight += W.headerOffset;
+
+            if (minHeight < contentHeight) minHeight = contentHeight;
+            if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+
+            // Adjust min-height based on content.
+            iframe.style['min-height'] = minHeight + 'px';
+        };
+
+        return function(userMinHeight, delay) {
+            if ('undefined' === typeof delay) {
+                adjustIt(userMinHeight);
+                return;
+            }
+            if (W.willResizeFrame) {
+                nextTimeout = true;
+                return;
+            }
+            W.willResizeFrame = setTimeout(function() {
+                W.willResizeFrame = null;
+                // If another timeout call was requested, do nothing now.
+                if (nextTimeout) {
+                    nextTimeout = false;
+                    W.adjustFrameHeight(userMinHeight, delay);
+                }
+                else {
+                    adjustIt(userMinHeight);
+                }
+            }, delay);
+        };
+
+    })();
+
+    /**
+     * ### GameWindow.adjustHeaderOffset
+     *
+     * Slides frame and/or infoPanel so that the header does not overlap
+     *
+     * Adjusts the CSS padding of the elements depending of the header
+     * position, but only if the size of of the header has changed from
+     * last time.
+     *
+     * @param {boolean} force Optional. If TRUE, padding is adjusted
+     *   regardless of whether the size of the header has changed
+     *   from last time
+     *
+     * @see W.headerOffset
+     */
+    GameWindow.prototype.adjustHeaderOffset = function(force) {
+        var position, frame, header, infoPanel, offset, offsetPx;
+
+        header = W.getHeader();
+        position = W.headerPosition;
+
+        // Do not apply padding if nothing has changed.
+        if (!force &&
+            (!header && W.headerOffset ||
+             (position === "top" &&
+              header.offsetHeight === W.headerOffset))) {
+
+            return;
+        }
+
+        frame = W.getFrame();
+        infoPanel = W.infoPanel;
+        // No frame nor infoPanel, nothing to do.
+        if (!frame && !infoPanel) return;
+
+        switch(position) {
+        case 'top':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-top'] = offsetPx;
+                frame.style['padding-top'] = 0;
+            }
+            else {
+                if (infoPanel && infoPanel.infoPanelDiv) {
+                    infoPanel.infoPanelDiv.style['padding-top'] = 0;
+                }
+                frame.style['padding-top'] = offsetPx;
+            }
+            break;
+        case 'bottom':
+            offset = header ? header.offsetHeight : 0;
+            offsetPx = offset + 'px';
+            frame.style['padding-bottom'] = offsetPx;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.style['padding-top'] = 0;
+            }
+            break;
+        case 'right':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-right'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-right'] = offsetPx;
+            }
+            break;
+        case 'left':
+            offset = header ? header.offsetWidth : 0;
+            offsetPx = offset + 'px';
+            if (frame) frame.style['padding-left'] = offsetPx;
+            if (infoPanel && infoPanel.isVisible) {
+                infoPanel.infoPanelDiv.style['padding-left'] = offsetPx;
+            }
+            break;
+        default:
+            // When header is destroyed, for example.
+            if (position !== null) {
+                throw new Error('GameWindow.adjustHeaderOffset: invalid ' +
+                                'header position. Found: ' + position);
+            }
+            if (header) {
+                throw new Error('GameWindow.adjustHeaderOffset: something ' +
+                                'is wrong. Header found, but position is ' +
+                                'null.');
+            }
+            // Remove all padding.
+            if (frame) frame.style.padding = 0;
+            if (infoPanel && infoPanel.infoPanelDiv) {
+                infoPanel.infoPanelDiv.padding = 0;
+            }
+        }
+
+        // Store the value of current offset.
+        W.headerOffset = offset;
+    };
+
 
     // ## Helper functions
 
@@ -1725,6 +2128,10 @@
             if (that.conf.rightClickDisabled) {
                 J.disableRightClick(that.frameDocument);
             }
+            // Track onkeydown Escape.
+            if (that.conf.noEscape) {
+                that.frameDocument.onkeydown = document.onkeydown;
+            }
         }
 
         // (Re-)Inject libraries and reload scripts:
@@ -1739,13 +2146,14 @@
             }
 
             func();
+
+            // Important. We need a timeout (120), because some changes might
+            // take time to be reflected in the DOM.
+            W.adjustFrameHeight(0, 120);
         };
-        if (loadCache) {
-            reloadScripts(iframe, afterScripts);
-        }
-        else {
-            afterScripts();
-        }
+
+        if (loadCache) reloadScripts(iframe, afterScripts);
+        else afterScripts();
     }
 
     /**
@@ -1898,51 +2306,71 @@
      *
      * The frame element must exists or an error will be thrown.
      *
-     * @param {GameWindow} W The current GameWindow object
      * @param {string} oldHeaderPos Optional. The previous position of the
      *   header
      *
      * @api private
      */
-    function adaptFrame2HeaderPosition(W, oldHeaderPos) {
-        var position;
-        if (!W.frameElement) {
-            throw new Error('adaptFrame2HeaderPosition: frame not found.');
-        }
+    function adaptFrame2HeaderPosition(oldHeaderPos) {
+        var position, frame, header;
 
-        // If no header is found, simulate the 'top' position to better
-        // fit the whole screen.
+        frame = W.getFrame();
+        if (!frame) return;
+
+        header = W.getHeader();
+
+        // If no header is found, simulate the 'top' position
+        // to better fit the whole screen.
         position = W.headerPosition || 'top';
 
-        // When we move from bottom to any other configuration, we need
-        // to move the header before the frame.
+        // When we move from bottom to any other configuration,
+        // we need to move the header before the frame.
         if (oldHeaderPos === 'bottom' && position !== 'bottom') {
-            W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
+            W.getFrameRoot().insertBefore(W.headerElement, frame);
         }
 
-        W.removeClass(W.frameElement, 'ng_mainframe-header-[a-z-]*');
+        W.removeClass(frame, 'ng_mainframe-header-[a-z-]*');
         switch(position) {
         case 'right':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-r');
+            W.addClass(frame, 'ng_mainframe-header-vertical-r');
             break;
         case 'left':
-            W.addClass(W.frameElement, 'ng_mainframe-header-vertical-l');
+            W.addClass(frame, 'ng_mainframe-header-vertical-l');
             break;
         case 'top':
-            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
-            // There might be no header yet.
-            if (W.headerElement) {
-                W.getFrameRoot().insertBefore(W.headerElement, W.frameElement);
-            }
+            W.addClass(frame, 'ng_mainframe-header-horizontal-t');
+            if (header) W.getFrameRoot().insertBefore(header, frame);
             break;
         case 'bottom':
-            W.addClass(W.frameElement, 'ng_mainframe-header-horizontal');
-            // There might be no header yet.
-            if (W.headerElement) {
-                W.getFrameRoot().insertBefore(W.headerElement,
-                                              W.frameElement.nextSibling);
+            W.addClass(frame, 'ng_mainframe-header-horizontal-b');
+            if (header) {
+                W.getFrameRoot().insertBefore(header, frame.nextSibling);
             }
             break;
+        }
+    }
+
+    /**
+     * ### testDirectFrameDocumentAccess
+     *
+     * Tests whether the content of the frameDocument can be accessed directly
+     *
+     * The value of the test is stored under `directFrameDocumentAccess`.
+     *
+     * Some IEs give 'Permission denied' when accessing the frame document
+     * directly. In such a case, we need to re-get it from the DOM.
+     *
+     * @param {GameWindow} that This instance
+     *
+     * @see GameWindow.directFrameDocumentAccess
+     */
+    function testDirectFrameDocumentAccess(that) {
+        try {
+            that.frameDocument.getElementById('test');
+            that.directFrameDocumentAccess = true;
+        }
+        catch(e) {
+            that.directFrameDocumentAccess = false;
         }
     }
 
@@ -1958,7 +2386,7 @@
 
 /**
  * # setup.window
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow setup functions
@@ -1968,7 +2396,6 @@
 (function(window, node) {
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
 
     /**
      * ### GameWindow.addDefaultSetups
@@ -2064,6 +2491,11 @@
                 this.window.generateFrame(root, frameName, force);
             }
 
+            // Uri prefix.
+            if ('undefined' !== typeof conf.uriPrefix) {
+                this.window.setUriPrefix(conf.uriPrefix);
+            }
+
             // Load.
             if (conf.load) {
                 if ('object' === typeof conf.load) {
@@ -2082,11 +2514,6 @@
                 this.window.loadFrame(url, cb, options);
             }
 
-            // Uri prefix.
-            if ('undefined' !== typeof conf.uriPrefix) {
-                this.window.setUriPrefix(conf.uriPrefix);
-            }
-
             // Clear and destroy.
             if (conf.clear) this.window.clearFrame();
             if (conf.destroy) this.window.destroyFrame();
@@ -2102,7 +2529,7 @@
          * @see node.setup
          */
         node.registerSetup('header', function(conf) {
-            var frameName, force, root, rootName;
+            var headerName, force, root, rootName;
             if (!conf) return;
 
             // Generate.
@@ -2116,7 +2543,7 @@
                         }
                         rootName = conf.generate.root;
                         force = conf.generate.force;
-                        frameName = conf.generate.name;
+                        headerName = conf.generate.name;
                     }
                 }
                 else {
@@ -2128,12 +2555,12 @@
                 root = this.window.getElementById(rootName);
                 if (!root) root = this.window.getScreen();
                 if (!root) {
-                    node.warn('node.setup.frame: could not find valid ' +
-                              'root element to generate new frame.');
+                    node.warn('node.setup.header: could not find valid ' +
+                              'root element to generate new header.');
                     return;
                 }
 
-                this.window.generateFrame(root, frameName, force);
+                this.window.generateHeader(root, headerName, force);
             }
 
             // Position.
@@ -2185,18 +2612,17 @@
      * Binds the ESC key to a function that always returns FALSE
      *
      * This prevents socket.io to break the connection with the server.
-     *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
      */
-    GameWindow.prototype.noEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = function(e) {
+    GameWindow.prototype.noEscape = function() {
+        var frameDocument;
+        // AddEventListener seems not to work
+        // as it does not stop other listeners.
+        window.document.onkeydown = function(e) {
             var keyCode = (window.event) ? event.keyCode : e.keyCode;
-            if (keyCode === 27) {
-                return false;
-            }
+            if (keyCode === 27) return false;
         };
+        frameDocument = this.getFrameDocument();
+        if (frameDocument) frameDocument.onkeydown = window.document.onkeydown;
         this.conf.noEscape = true;
     };
 
@@ -2205,14 +2631,13 @@
      *
      * Removes the the listener on the ESC key
      *
-     * @param {object} windowObj Optional. The window container in which
-     *   to bind the ESC key
-     *
-     * @see GameWindow.noEscape()
+     * @see GameWindow.noEscape
      */
-    GameWindow.prototype.restoreEscape = function(windowObj) {
-        windowObj = windowObj || window;
-        windowObj.document.onkeydown = null;
+    GameWindow.prototype.restoreEscape = function() {
+        var frameDocument;
+        window.document.onkeydown = null;
+        frameDocument = this.getFrameDocument();
+        if (frameDocument) frameDocument.onkeydown = null;
         this.conf.noEscape = false;
     };
 
@@ -2295,6 +2720,22 @@
         this.conf.rightClickDisabled = false;
     };
 
+    /**
+     * ### GameWindow.disableBackButton
+     *
+     * Disables/re-enables backward navigation in history of browsed pages
+     *
+     * When disabling, it inserts twice the current url.
+     *
+     * @param {boolean} disable Optional. If TRUE disables back button,
+     *   if FALSE, re-enables it. Default: TRUE.
+     *
+     * @see JSUS.disableBackButton
+     */
+    GameWindow.prototype.disableBackButton = function(disable) {
+        this.conf.backButtonDisabled = J.disableBackButton(disable);
+    };
+
 })(
     // GameWindow works only in the browser environment. The reference
     // to the node.js module object is for testing purpose only
@@ -2329,30 +2770,28 @@
      * Requires the waitScreen widget to be loaded.
      *
      * @param {string} text Optional. The text to be shown in the locked screen
+     * @param {number} countdown Optional. The expected max total time the
+     *   the screen will stay locked (in ms). A countdown will be displayed
      *
+     * @see WaitScreen.lock
      * TODO: check if this can be called in any stage.
      */
-    GameWindow.prototype.lockScreen = function(text) {
-        var that;
-        that = this;
-
+    GameWindow.prototype.lockScreen = function(text, countdown) {
         if (!this.waitScreen) {
-            throw new Error('GameWindow.lockScreen: waitScreen not found.');
+            throw new Error('GameWindow.lockScreen: waitScreen not found');
         }
         if (text && 'string' !== typeof text) {
             throw new TypeError('GameWindow.lockScreen: text must be string ' +
-                                'or undefined');
+                                'or undefined. Found: ' + text);
         }
-        // Feb 16.02.2015
-        // Commented out the time-out part. It causes the browser to get stuck
-        // on a locked screen, because the method is invoked multiple times.
-        // If no further problem is found out, it can be eliminated.
-        // if (!this.isReady()) {
-        //   setTimeout(function() { that.lockScreen(text); }, 100);
-        // }
+        if (countdown && 'number' !== typeof countdown || countdown < 0) {
+            throw new TypeError('GameWindow.lockScreen: countdown must be ' +
+                                'a positive number or undefined. Found: ' +
+                                countdown);
+        }
         this.setScreenLevel('LOCKING');
         text = text || 'Screen locked. Please wait...';
-        this.waitScreen.lock(text);
+        this.waitScreen.lock(text, countdown);
         this.setScreenLevel('LOCKED');
     };
 
@@ -2448,30 +2887,36 @@
             W.init(node.conf.window);
         });
 
-        node.on('HIDE', function(idOrObj) {
-            var el;
-            el = getElement(idOrObj, 'GameWindow.on.HIDE');
-            if (el) el.style.display = 'none';
-        });
-
-        node.on('SHOW', function(idOrObj) {
-            var el;
-            el = getElement(idOrObj, 'GameWindow.on.SHOW');
-            if (el) el.style.display = '';
-        });
-
-        node.on('TOGGLE', function(idOrObj) {
-            var el;
-            el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-            if (el) {
-                if (el.style.display === 'none') {
-                    el.style.display = '';
-                }
-                else {
-                    el.style.display = 'none';
-                }
-            }
-        });
+//         node.on('HIDE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.HIDE is deprecated. Use ' +
+//                         'GameWindow.hide() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.HIDE');
+//             if (el) el.style.display = 'none';
+//         });
+//
+//         node.on('SHOW', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
+//                         'GameWindow.show() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.SHOW');
+//             if (el) el.style.display = '';
+//         });
+//
+//         node.on('TOGGLE', function(idOrObj) {
+//             var el;
+//             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
+//                         'GameWindow.toggle() instead.***');
+//             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
+//             if (el) {
+//                 if (el.style.display === 'none') {
+//                     el.style.display = '';
+//                 }
+//                 else {
+//                     el.style.display = 'none';
+//                 }
+//             }
+//         });
 
         // Disable all the input forms found within a given id element.
         node.on('INPUT_DISABLE', function(id) {
@@ -2516,10 +2961,10 @@
 
 /**
  * # WaitScreen
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2018 Stefano Balietti
  * MIT Licensed
  *
- * Covers the screen with a gray layer, disables inputs, and displays a message
+ * Overlays the screen, disables inputs, and displays a message/timer
  *
  * www.nodegame.org
  */
@@ -2532,13 +2977,13 @@
 
     // ## Meta-data
 
-    WaitScreen.version = '0.7.0';
-    WaitScreen.description = 'Show a standard waiting screen';
+    WaitScreen.version = '0.9.0';
+    WaitScreen.description = 'Shows a standard waiting screen';
 
     // ## Helper functions
 
     var inputTags, len;
-    inputTags = ['button', 'select', 'textarea', 'input'];
+    inputTags = [ 'button', 'select', 'textarea', 'input' ];
     len = inputTags.length;
 
     /**
@@ -2582,38 +3027,40 @@
     }
 
     function event_REALLY_DONE(text) {
+        var countdown;
         text = text || W.waitScreen.defaultTexts.waiting;
         if (!node.game.shouldStep()) {
             if (W.isScreenLocked()) {
                 W.waitScreen.updateText(text);
             }
             else {
-                W.lockScreen(text);
+                if (node.game.timer.milliseconds) {
+                    // 2000 to make sure it does reach 0 and stays there.
+                    countdown = node.game.timer.milliseconds -
+                        node.timer.getTimeSince('step', true) + 2000;
+                    if (countdown < 0) countdown = 0;
+                }
+                W.lockScreen(text, countdown);
             }
         }
     }
 
-    function event_STEPPING(text) {
-        text = text || W.waitScreen.defaultTexts.stepping;
-        if (W.isScreenLocked()) {
-            W.waitScreen.updateText(text);
-        }
-        else {
-            W.lockScreen(text);
-        }
+    function event_STEPPING() {
+        var text;
+        text = W.waitScreen.defaultTexts.stepping;
+        if (W.isScreenLocked()) W.waitScreen.updateText(text);
+        else W.lockScreen(text);
     }
 
     function event_PLAYING() {
-        if (W.isScreenLocked()) {
-            W.unlockScreen();
-        }
+        if (W.isScreenLocked()) W.unlockScreen();
     }
 
     function event_PAUSED(text) {
         text = text || W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML =
-                W.waitScreen.waitingDiv.innerHTML;
+                W.waitScreen.contentDiv.innerHTML;
             W.waitScreen.updateText(text);
         }
         else {
@@ -2687,6 +3134,42 @@
         this.enabled = false;
 
         /**
+         * ### WaitScreen.contentDiv
+         *
+         * Div containing the main content of the wait screen
+         */
+        this.contentDiv = null;
+
+        /**
+         * ### WaitScreen.countdownDiv
+         *
+         * Div containing the countdown span and other text
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownSpan
+         */
+        this.countdownDiv = null;
+
+        /**
+         * ### WaitScreen.countdownSpan
+         *
+         * Span containing a countdown timer for the max waiting
+         *
+         * @see WaitScreen.countdown
+         * @see WaitScreen.countdownDiv
+         */
+        this.countdownSpan = null;
+
+        /**
+         * ### WaitScreen.countdown
+         *
+         * Countdown of max waiting time
+         *
+         * @see WaitScreen.countdown
+         */
+        this.countdown = null;
+
+        /**
          * ### WaitScreen.text
          *
          * Default texts for default events
@@ -2748,18 +3231,22 @@
      *
      * Locks the screen
      *
-     * Overlays a gray div on top of the page and disables all inputs.
+     * Overlays a gray div on top of the page and disables all inputs
      *
      * If called on an already locked screen, the previous text is destroyed.
      * Use `WaitScreen.updateText` to modify an existing text.
      *
      * @param {string} text Optional. If set, displays the text on top of the
      *   gray string
+     * @param {number} countdown Optional. The expected max total time the
+     *   the screen will stay locked (in ms). A countdown will be displayed,
+     *   at the end of which a text replaces the countdown, but the screen
+     *   stays locked until the unlock command is received.
      *
      * @see WaitScreen.unlock
      * @see WaitScren.updateText
      */
-    WaitScreen.prototype.lock = function(text) {
+    WaitScreen.prototype.lock = function(text, countdown) {
         var frameDoc;
         if ('undefined' === typeof document.getElementsByTagName) {
             node.warn('WaitScreen.lock: cannot lock inputs.');
@@ -2767,22 +3254,61 @@
         // Disables all input forms in the page.
         lockUnlockedInputs(document);
 
-        //frameDoc = W.getFrameDocument();
-        // Using this for IE8 compatibility.
-        frameDoc = W.getIFrameDocument(W.getFrame());
-
+        frameDoc = W.getFrameDocument();
         if (frameDoc) lockUnlockedInputs(frameDoc);
 
         if (!this.waitingDiv) {
             if (!this.root) {
                 this.root = W.getFrameRoot() || document.body;
             }
-            this.waitingDiv = W.addDiv(this.root, this.id);
+            this.waitingDiv = W.add('div', this.root, this.id);
+
+            this.contentDiv = W.add('div', this.waitingDiv,
+                                    'ng_waitscreen-content-div');
         }
         if (this.waitingDiv.style.display === 'none') {
             this.waitingDiv.style.display = '';
         }
-        this.waitingDiv.innerHTML = text;
+        this.contentDiv.innerHTML = text;
+
+        if (countdown) {
+            if (!this.countdownDiv) {
+                this.countdownDiv = W.add('div', this.waitingDiv,
+                                          'ng_waitscreen-countdown-div');
+
+                this.countdownDiv.innerHTML = '<br>Do not refresh the page!' +
+                    '<br>Maximum Waiting Time: ';
+
+                this.countdownSpan = W.add('span', this.countdownDiv,
+                                           'ng_waitscreen-countdown-span');
+            }
+
+            this.countdown = countdown;
+            this.countdownSpan.innerHTML = formatCountdown(countdown);
+            this.countdownDiv.style.display = '';
+
+            this.countdownInterval = setInterval(function() {
+                var w;
+                w = W.waitScreen;
+                if (!W.isScreenLocked()) {
+                    clearInterval(w.countdownInterval);
+                    return;
+                }
+
+                w.countdown -= 1000;
+                if (w.countdown < 0) {
+                    clearInterval(w.countdownInterval);
+                    w.countdownDiv.style.display = 'none';
+                    w.contentDiv.innerHTML = 'Resuming soon...';
+                }
+                else {
+                    w.countdownSpan.innerHTML = formatCountdown(w.countdown);
+                }
+            }, 1000);
+        }
+        else if (this.countdownDiv) {
+            this.countdownDiv.style.display = 'none';
+        }
     };
 
     /**
@@ -2800,6 +3326,8 @@
                 this.waitingDiv.style.display = 'none';
             }
         }
+        if (this.countdownInterval) clearInterval(this.countdownInterval);
+
         // Re-enables all previously locked input forms in the page.
         try {
             len = this.lockedInputs.length;
@@ -2826,14 +3354,11 @@
     WaitScreen.prototype.updateText = function(text, append) {
         append = append || false;
         if ('string' !== typeof text) {
-            throw new TypeError('WaitScreen.updateText: text must be string.');
+            throw new TypeError('WaitScreen.updateText: text must be ' +
+                                'string. Found: ' + text);
         }
-        if (append) {
-            this.waitingDiv.appendChild(document.createTextNode(text));
-        }
-        else {
-            this.waitingDiv.innerHTML = text;
-        }
+        if (append) this.contentDiv.innerHTML += text;
+        else this.contentDiv.innerHTML = text;
     };
 
     /**
@@ -2850,11 +3375,27 @@
             W.setScreenLevel('ACTIVE');
         }
         if (this.waitingDiv) {
-            this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+            // It might have gotten destroyed in the meantime.
+            if (this.waitingDiv.parentNode) {
+                this.waitingDiv.parentNode.removeChild(this.waitingDiv);
+            }
         }
         // Removes previously registered listeners.
         this.disable();
     };
+
+
+    // ## Helper functions.
+
+    function formatCountdown(time) {
+        var out;
+        out = '';
+        time = J.parseMilliseconds(time);
+        if (time[2]) out += time[2] + ' min ';
+        if (time[3]) out += time[3] + ' sec';
+        return out || 0;
+    }
+
 
 })(
     ('undefined' !== typeof node) ? node : module.parent.exports.node,
@@ -2862,12 +3403,334 @@
 );
 
 /**
- * # selector
- * Copyright(c) 2015 Stefano Balietti
+ * # InfoPanel
+ * Copyright(c) 2017 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
- * Utility functions to create and manipulate meaninful HTML select lists for
- * nodeGame
+ * Adds a configurable extra panel at the top of the screen
+ *
+ * InfoPanel is normally placed between header and main frame.
+ *
+ * www.nodegame.org
+ */
+(function(exports, window) {
+
+    "use strict";
+
+    exports.InfoPanel = InfoPanel;
+
+    function InfoPanel(options) {
+        this.init(options || {});
+    }
+
+    /**
+     * ### InfoPanel.init
+     *
+     * Inits the Info panel
+     *
+     * @param {object} options Optional. Configuration options.
+     *   Available options (defaults):
+     *
+     *    - 'className': a class name for the info panel div (''),
+     *    - 'isVisible': if TRUE, the info panel is open immediately (false),
+     *    - 'onStep:' an action to perform every new step (null),
+     *    - 'onStage:' an action to perform every new stage (null).
+     */
+    InfoPanel.prototype.init = function(options) {
+        var that;
+        options = options || {};
+
+        this.infoPanelDiv = document.createElement('div');
+        this.infoPanelDiv.id = 'ng_info-panel';
+
+        /**
+         * ### InfoPanel.actionsLog
+         *
+         * Array containing the list of open/close events and a timestamp
+         *
+         * Entries in the actions log are objects: with keys 'create',
+         * 'open', 'close', 'clear', 'destroy' and a timestamp.
+         *
+         * @see InfoPanel.open
+         * @see InfoPanel.close
+         */
+        this.actionsLog = [];
+
+        /**
+         * ### InfoPanel._buttons
+         *
+         * Collection of buttons created via `createToggleButton` method
+         *
+         * @see InfoPanel.createToggleButton
+         */
+        this._buttons = [];
+
+        /**
+         * ### InfoPanel.className
+         *
+         * Class name of info panel
+         *
+         * Default: ''
+         */
+        if ('undefined' === typeof options.className) {
+            this.infoPanelDiv.className = '';
+        }
+        else if ('string' === typeof options.className) {
+            this.infoPanelDiv.className = options.className;
+        }
+        else {
+            throw new TypeError('InfoPanel constructor: options.className ' +
+                                'must be a string or undefined. ' +
+                                'Found: ' + options.className);
+        }
+
+        /**
+         * ### InfoPanel.isVisible
+         *
+         * Boolean indicating visibility of info panel div
+         *
+         * Default: FALSE
+         */
+        if ('undefined' === typeof options.isVisible) {
+            this.isVisible = false;
+        }
+        else if ('boolean' === typeof options.isVisible) {
+            this.isVisible = options.isVisible;
+        }
+        else {
+            throw new TypeError('InfoPanel constructor: options.isVisible ' +
+                                'must be a boolean or undefined. ' +
+                                'Found: ' + options.isVisible);
+        }
+
+        this.infoPanelDiv.style.display = this.isVisible ? 'block' : 'none';
+        this.actionsLog.push({ created: J.now() });
+
+        /**
+         * ### InfoPanel.onStep
+         *
+         * Performs an action ('clear', 'open', 'close') at every new step
+         *
+         * Default: null
+         */
+        if ('undefined' !== typeof options.onStep) {
+            if ('open' === options.onStep ||
+                'close' === options.onStep ||
+                'clear' ===  options.onStep) {
+
+                this.onStep = options.onStep;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStep ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStep);
+            }
+        }
+        else {
+            options.onStep = null;
+        }
+
+        /**
+         * ### InfoPanel.onStage
+         *
+         * Performs an action ('clear', 'open', 'close') at every new stage
+         *
+         * Default: null
+         */
+        if ('undefined' !== typeof options.onStage) {
+            if ('open' === options.onStage ||
+                'close' === options.onStage ||
+                'clear' ===  options.onStage) {
+
+                this.onStage = options.onStage;
+            }
+            else {
+                throw new TypeError('InfoPanel constructor: options.onStage ' +
+                                    'must be string "open", "close", "clear" ' +
+                                    'or undefined. Found: ' + options.onStage);
+            }
+        }
+        else {
+            options.onStage = null;
+        }
+
+        if (this.onStep || this.onStage) {
+            that = this;
+            node.events.game.on('STEPPING', function(curStep, newStep) {
+                var newStage;
+                newStage = curStep.stage !== newStep.stage;
+
+                if ((that.onStep === 'close' && that.isVisible) ||
+                    (newStage && that.onStage === 'close')) {
+
+                    that.close();
+                }
+                else if (that.onStep === 'open' ||
+                         (newStage && that.onStage === 'open')) {
+
+                    that.open();
+                }
+                else if (that.onStep === 'clear' ||
+                         (newStage && that.onStage === 'clear')) {
+
+                    that.clear();
+                }
+            });
+        }
+    };
+
+    /**
+     * ### InfoPanel.clear
+     *
+     * Clears the content of the Info Panel
+     */
+    InfoPanel.prototype.clear = function() {
+        this.infoPanelDiv.innerHTML = '';
+        this.actionsLog.push({ clear: J.now() });
+        W.adjustHeaderOffset(true);
+    };
+
+    /**
+     * ### InfoPanel.getPanel
+     *
+     * Returns the HTML element of the panel (div)
+     *
+     * @return {HTMLElement} The Info Panel
+     *
+     * @see InfoPanel.infoPanelDiv
+     */
+    InfoPanel.prototype.getPanel = function() {
+        return this.infoPanelDiv;
+    };
+
+    /**
+     * ### InfoPanel.destroy
+     *
+     * Removes the Info Panel from the DOM and the internal references to it
+     *
+     * @param {actionsLog} If TRUE, also the actions log is deleted, otherwise
+     *   the destroy action is added. Default: false.
+     *
+     * @see InfoPanel.infoPanelDiv
+     * @see InfoPanel._buttons
+     */
+    InfoPanel.prototype.destroy = function(actionsLog) {
+        var i, len;
+        if (actionsLog) this.actionsLog = [];
+        else this.actionsLog.push({ destroy: J.now() });
+
+        if (this.infoPanelDiv.parentNode) {
+            this.infoPanelDiv.parentNode.removeChild(this.infoPanelDiv);
+        }
+        this.isVisible = false;
+        this.infoPanelDiv = null;
+        i = -1, len = this._buttons.length;
+        for ( ; ++i < len ; ) {
+            if (this._buttons[i].parentNode) {
+                this._buttons[i].parentNode.removeChild(this._buttons[i]);
+            }
+        }
+        W.adjustHeaderOffset(true);
+    };
+
+    /**
+     * ### InfoPanel.toggle
+     *
+     * Toggles the visibility of the Info Panel
+     *
+     * @see InfoPanel.open
+     * @see InfoPanel.close
+     */
+    InfoPanel.prototype.toggle = function() {
+        if (this.isVisible) this.close();
+        else this.open();
+    };
+
+    /**
+     * ### InfoPanel.open
+     *
+     * Opens the Info Panel (if not already open)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.close
+     * @see InfoPanel.isVisible
+     */
+    InfoPanel.prototype.open = function() {
+        if (this.isVisible) return;
+        this.actionsLog.push({ open: J.now() });
+        this.infoPanelDiv.style.display = 'block';
+        this.isVisible = true;
+        // Must be at the end.
+        W.adjustHeaderOffset(true);
+    };
+
+    /**
+     * ### InfoPanel.close
+     *
+     * Closes the Info Panel (if not already closed)
+     *
+     * @see InfoPanel.toggle
+     * @see InfoPanel.open
+     * @see InfoPanel.isVisible
+     */
+    InfoPanel.prototype.close = function() {
+        if (!this.isVisible) return;
+        this.actionsLog.push({ close: J.now() });
+        this.infoPanelDiv.style.display = 'none';
+        this.isVisible = false;
+        // Must be at the end.
+        W.adjustHeaderOffset(true);
+    };
+
+    /**
+     * ### InfoPanel.createToggleButton
+     *
+     * Creates an HTML button with a listener to toggle the InfoPanel
+     *
+     * Adds the button to the internal collection `_buttons`. All buttons
+     * are destroyed if the Info Panel is destroyed.
+     *
+     * @return {HTMLElement} button A button that toggles info panel
+     *
+     * @see InfoPanel._buttons
+     * @see InfoPanel.toggle
+     */
+    InfoPanel.prototype.createToggleButton = function(buttonLabel) {
+        var that, button;
+
+        buttonLabel = buttonLabel || 'Toggle Info Panel';
+        if ('string' !== typeof buttonLabel || buttonLabel.trim() === '') {
+            throw new Error('InfoPanel.createToggleButton: buttonLabel ' +
+                            'must be undefined or a non-empty string. Found: ' +
+                            buttonLabel);
+        }
+        button = document.createElement('button');
+        button.className = 'btn btn-lg btn-warning';
+        button.innerHTML = buttonLabel ;
+
+        that = this;
+        button.onclick = function() {
+            that.toggle();
+        };
+
+        this._buttons.push(button);
+
+        return button;
+    };
+
+})(
+    ('undefined' !== typeof node) ? node : module.parent.exports.node,
+    ('undefined' !== typeof window) ? window : module.parent.exports.window
+);;
+
+/**
+ * # selector
+ * Copyright(c) 2017 Stefano Balietti
+ * MIT Licensed
+ *
+ * Utility functions to create and manipulate HTML select lists
+ *
+ * Extra methods relevant for nodeGame variables are added.
  *
  * http://www.nodegame.org
  */
@@ -2875,7 +3738,6 @@
 
     "use strict";
 
-    var J = node.JSUS;
     var constants = node.constants;
     var GameWindow = node.GameWindow;
 
@@ -3087,7 +3949,7 @@
 
 /**
  * # extra
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -3099,14 +3961,14 @@
     "use strict";
 
     var GameWindow = node.GameWindow;
-    var J = node.JSUS;
-    var DOM = J.get('DOM');
+    var DOM = J.require('DOM');
 
     /**
      * ### GameWindow.getScreen
      *
-     * Returns the screen of the game, i.e. the innermost element
-     * inside which to display content
+     * Returns the "screen" of the game
+     *
+     * i.e. the innermost element inside which to display content
      *
      * In the following order the screen can be:
      *
@@ -3118,13 +3980,10 @@
      * @return {Element} The screen
      */
     GameWindow.prototype.getScreen = function() {
-        var el = this.getFrameDocument();
-        if (el) {
-            el = el.body || el;
-        }
-        else {
-            el = document.body || document.lastElementChild;
-        }
+        var el;
+        el = this.getFrameDocument();
+        if (el) el = el.body || el;
+        else el = document.body || document.lastElementChild;
         return el;
     };
 
@@ -3144,12 +4003,9 @@
      * @see GameWindow.writeln
      */
     GameWindow.prototype.write = function(text, root) {
-        if ('string' === typeof root) {
-            root = this.getElementById(root);
-        }
-        else if (!root) {
-            root = this.getScreen();
-        }
+        if ('string' === typeof root) root = this.getElementById(root);
+        else if (!root) root = this.getScreen();
+
         if (!root) {
             throw new
                 Error('GameWindow.write: could not determine where to write.');
@@ -3173,12 +4029,9 @@
      * @see GameWindow.write
      */
     GameWindow.prototype.writeln = function(text, root, br) {
-        if ('string' === typeof root) {
-            root = this.getElementById(root);
-        }
-        else if (!root) {
-            root = this.getScreen();
-        }
+        if ('string' === typeof root) root = this.getElementById(root);
+        else if (!root) root = this.getScreen();
+
         if (!root) {
             throw new Error('GameWindow.writeln: ' +
                             'could not determine where to write.');
@@ -3259,32 +4112,11 @@
         else {
             // The whole page.
             toggleInputs(disabled);
-            // If there is Frame apply it there too.
             container = this.getFrameDocument();
-            if (container) {
-                toggleInputs(disabled, container);
-            }
+            // If there is a frame, apply it there too.
+            if (container) toggleInputs(disabled, container);
         }
         return true;
-    };
-
-    /**
-     * ### GameWindow.getScreenInfo
-     *
-     * Returns information about the screen in which nodeGame is running
-     *
-     * @return {object} A object containing the scren info
-     */
-    GameWindow.prototype.getScreenInfo = function() {
-        var screen = window.screen;
-        return {
-            height: screen.height,
-            widht: screen.width,
-            availHeight: screen.availHeight,
-            availWidth: screen.availWidht,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixedDepth
-        };
     };
 
     /**
@@ -3305,34 +4137,35 @@
      *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
-        var span_dots, i, limit, intervalId;
+        var spanDots, i, limit, intervalId;
         if (len & len < 0) {
-            throw new Error('GameWindow.getLoadingDots: len < 0.');
+            throw new Error('GameWindow.getLoadingDots: len cannot be < 0. ' +
+                            'Found: ' + len);
         }
         len = len || 5;
-        span_dots = document.createElement('span');
-        span_dots.id = id || 'span_dots';
+        spanDots = document.createElement('span');
+        spanDots.id = id || 'span_dots';
         limit = '';
         for (i = 0; i < len; i++) {
             limit = limit + '.';
         }
         // Refreshing the dots...
         intervalId = setInterval(function() {
-            if (span_dots.innerHTML !== limit) {
-                span_dots.innerHTML = span_dots.innerHTML + '.';
+            if (spanDots.innerHTML !== limit) {
+                spanDots.innerHTML = spanDots.innerHTML + '.';
             }
             else {
-                span_dots.innerHTML = '.';
+                spanDots.innerHTML = '.';
             }
         }, 1000);
 
         function stop() {
-            span_dots.innerHTML = '.';
+            spanDots.innerHTML = '.';
             clearInterval(intervalId);
         }
 
         return {
-            span: span_dots,
+            span: spanDots,
             stop: stop
         };
     };
@@ -3351,12 +4184,16 @@
      *   Default: 5
      * @param {string} id Optional The id of the span
      *
-     * @return {object} The span with the loading dots
+     * @return {object} An object containing two properties: the span element
+     *   and a method stop, that clears the interval
      *
      * @see GameWindow.getLoadingDots
      */
     GameWindow.prototype.addLoadingDots = function(root, len, id) {
-        return root.appendChild(this.getLoadingDots(len, id).span);
+        var ld;
+        ld = this.getLoadingDots(len, id);
+        root.appendChild(ld.span);
+        return ld;
     };
 
      /**
@@ -3365,24 +4202,28 @@
      * Creates an HTML button element that will emit an event when clicked
      *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {string|object} attributes Optional. The attributes of the
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
+     *
+     * @see GameWindow.get
      */
-    GameWindow.prototype.getEventButton =
-    function(event, text, id, attributes) {
-
+    GameWindow.prototype.getEventButton = function(event, attributes) {
         var b;
         if ('string' !== typeof event) {
             throw new TypeError('GameWindow.getEventButton: event must ' +
-                                'be string.');
+                                'be string. Found: ' + event);
         }
-        b = this.getButton(id, text, attributes);
-        b.onclick = function() {
-            node.emit(event);
-        };
+        if ('string' === typeof attributes) {
+            attributes = { innerHTML: attributes };
+        }
+        else if (!attributes) {
+            attributes = {};
+        }
+        if (!attributes.innerHTML) attributes.innerHTML = event;
+        b = this.get('button', attributes);
+        b.onclick = function() { node.emit(event); };
         return b;
     };
 
@@ -3391,31 +4232,254 @@
      *
      * Adds an EventButton to the specified root element
      *
-     * If no valid root element is provided, it is append as last element
-     * in the current screen.
-     *
      * @param {string} event The event to emit when clicked
-     * @param {string} text Optional. The text on the button
-     * @param {Element} root Optional. The root element
-     * @param {string} id The id of the button
-     * @param {object} attributes Optional. The attributes of the button
+     * @param {Element} root Optional. The root element. Default: last element
+     * on the page
+     * @param {string|object} attributes Optional. The attributes of the
+     *   button, or if string the text to display inside the button.
      *
      * @return {Element} The newly created button
      *
+     * @see GameWindow.get
      * @see GameWindow.getEventButton
      */
-    GameWindow.prototype.addEventButton =
-    function(event, text, root, id, attributes) {
+    GameWindow.prototype.addEventButton = function(event, root, attributes) {
         var eb;
+        eb = this.getEventButton(event, attributes);
+        if (!root) root = this.getScreen();
+        return root.appendChild(eb);
+    };
 
-        if (!event) return;
-        if (!root) {
-            root = this.getScreen();
+    /**
+     * ### GameWindow.searchReplace
+     *
+     * Replaces the innerHTML of the element/s with matching id or class name
+     *
+     * It iterates through each element and passes it to
+     * `GameWindow.setInnerHTML`.
+     *
+     * If elements is array, each item in the array must be of the type:
+     *
+     * ```javascript
+     *
+     *   { search: 'key', replace: 'value' }
+     *
+     *   // or
+     *
+     *   { search: 'key', replace: 'value', mod: 'id' }
+     * ```
+     *
+     * If elements is object, it must be of the type:
+     *
+     * ```javascript
+     *
+     *    {
+     *      search1: value1, search2: value 2 // etc.
+     *    }
+     * ```
+     *
+     * It accepts a variable number of input parameters. The first is always
+     * _elements_. If there are 2 input parameters, the second is _prefix_,
+     * while if there are 3 input parameters, the second is _mod_ and the third
+     * is _prefix_.
+     *
+     * @param {object|array} Elements to search and replace
+     * @param {string} mod Optional. Modifier passed to GameWindow.setInnerHTML
+     * @param {string} prefix Optional. Prefix added to the search string.
+     *    Default: 'ng_replace_', null or '' equals no prefix.
+     *
+     * @see GameWindow.setInnerHTML
+     */
+    GameWindow.prototype.searchReplace = function() {
+        var elements, mod, prefix;
+        var name, len, i;
+
+        if (arguments.length === 2) {
+            mod = 'g';
+            prefix = arguments[1];
+        }
+        else if (arguments.length > 2) {
+            mod = arguments[1];
+            prefix = arguments[2];
         }
 
-        eb = this.getEventButton(event, text, id, attributes);
+        if ('undefined' === typeof prefix) {
+            prefix = 'ng_replace_';
+        }
+        else if (null === prefix) {
+            prefix = '';
+        }
+        else if ('string' !== typeof prefix) {
+            throw new TypeError('GameWindow.searchReplace: prefix ' +
+                                'must be string, null or undefined. Found: ' +
+                                prefix);
+        }
 
-        return root.appendChild(eb);
+        elements = arguments[0];
+        if (J.isArray(elements)) {
+            i = -1, len = elements.length;
+            for ( ; ++i < len ; ) {
+                this.setInnerHTML(prefix + elements[i].search,
+                                  elements[i].replace,
+                                  elements[i].mod || mod);
+            }
+
+        }
+        else if ('object' !== typeof elements) {
+            for (name in elements) {
+                if (elements.hasOwnProperty(name)) {
+                    this.setInnerHTML(prefix + name, elements[name], mod);
+                }
+            }
+        }
+        else {
+            throw new TypeError('GameWindow.setInnerHTML: elements must be ' +
+                                'object or arrray. Found: ' + elements);
+        }
+
+    };
+
+    /**
+     * ### GameWindow.setInnerHTML
+     *
+     * Replaces the innerHTML of the element with matching id or class name
+     *
+     * @param {string|number} search Element id or className
+     * @param {string|number} replace The new value of the property innerHTML
+     * @param {string} mod Optional. A modifier defining how to use the
+     *    search parameter. Values:
+     *
+     *    - 'id': replaces at most one element with the same id (default)
+     *    - 'className': replaces all elements with same class name
+     *    - 'g': replaces globally, both by id and className
+     */
+    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+        var el, i, len;
+
+        // Only process strings or numbers.
+        if ('string' !== typeof search && 'number' !== typeof search) {
+            throw new TypeError('GameWindow.setInnerHTML: search must be ' +
+                                'string or number. Found: ' + search);
+        }
+
+        // Only process strings or numbers.
+        if ('string' !== typeof replace && 'number' !== typeof replace) {
+            throw new TypeError('GameWindow.setInnerHTML: replace must be ' +
+                                'string or number. Found: ' + replace);
+        }
+
+        if ('undefined' === typeof mod) {
+            mod = 'id';
+        }
+        else if ('string' === typeof mod) {
+            if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
+                throw new Error('GameWindow.setInnerHTML: invalid ' +
+                                'mod value: ' + mod);
+            }
+        }
+        else {
+            throw new TypeError('GameWindow.setInnerHTML: mod must be ' +
+                                'string or undefined. Found: ' + mod);
+        }
+
+        if (mod === 'id' || mod === 'g') {
+            // Look by id.
+            el = W.getElementById(search);
+            if (el && el.className !== search) el.innerHTML = replace;
+        }
+
+        if (mod === 'className' || mod === 'g') {
+            // Look by class name.
+            el = W.getElementsByClassName(search);
+            len = el.length;
+            if (len) {
+                i = -1;
+                for ( ; ++i < len ; ) {
+                    el[i].innerHTML = replace;
+                }
+            }
+        }
+    };
+
+    /**
+     * ## GameWindow.hide
+     *
+     * Gets and hides an HTML element
+     *
+     * Sets the style of the display to 'none'
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     *
+     * @return {HTMLElement} The hidden element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.hide = function(idOrObj) {
+        var el;
+        el = getElement(idOrObj, 'GameWindow.hide');
+        if (el) el.style.display = 'none';
+        return el;
+    };
+
+    /**
+     * ## GameWindow.show
+     *
+     * Gets and shows (makes visible) an HTML element
+     *
+     * Sets the style of the display to ''.
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     * @param {string} display Optional. The value of the display attribute.
+     *    Default: '' (empty string).
+     *
+     * @return {HTMLElement} The shown element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.show = function(idOrObj, display) {
+        var el;
+        display = display || '';
+        if ('string' !== typeof display) {
+            throw new TypeError('GameWindow.show: display must be ' +
+                                'string or undefined');
+        }
+        el = getElement(idOrObj, 'GameWindow.show');
+        if (el) el.style.display = display;
+        return el;
+    };
+
+   /**
+     * ## GameWindow.toggle
+     *
+     * Gets and toggles the visibility of an HTML element
+     *
+     * Sets the style of the display to ''.
+     *
+     * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
+     * @param {string} display Optional. The value of the display attribute
+     *    in case it will be set visible. Default: '' (empty string).
+     *
+     * @return {HTMLElement} The toggled element, if found
+     *
+     * @see getElement
+     */
+    GameWindow.prototype.toggle = function(idOrObj, display) {
+        var el;
+        el = getElement(idOrObj, 'GameWindow.toggle');
+        if (el) {
+            if (el.style.display === 'none') {
+                display = display || '';
+                if ('string' !== typeof display) {
+                    throw new TypeError('GameWindow.toggle: display must ' +
+                                        'be string or undefined');
+                }
+                el.style.display = display;
+            }
+            else {
+                el.style.display = 'none';
+            }
+        }
+        return el;
     };
 
     // ## Helper Functions
@@ -3448,6 +4512,33 @@
         }
     }
 
+    /**
+     * ### getElement
+     *
+     * Gets the element or returns it
+     *
+     * @param {string|HTMLElement} The id or the HTML element itself
+     *
+     * @return {HTMLElement} The HTML Element
+     *
+     * @see GameWindow.getElementById
+     * @api private
+     */
+    function getElement(idOrObj, prefix) {
+        var el;
+        if ('string' === typeof idOrObj) {
+            el = W.getElementById(idOrObj);
+        }
+        else if (J.isElement(idOrObj)) {
+            el = idOrObj;
+        }
+        else {
+            throw new TypeError(prefix + ': idOrObj must be string ' +
+                                ' or HTML Element. Found: ' + idOrObj);
+        }
+        return el;
+    }
+
 })(
     // GameWindow works only in the browser environment. The reference
     // to the node.js module object is for testing purpose only
@@ -3464,7 +4555,7 @@
 
 /**
  * # Canvas
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML canvas that can be manipulated by an api
@@ -3480,7 +4571,7 @@
     function Canvas(canvas) {
 
         this.canvas = canvas;
-        // 2D Canvas Context
+        // 2D Canvas Context.
         this.ctx = canvas.getContext('2d');
 
         this.centerX = canvas.width / 2;
@@ -3494,16 +4585,13 @@
 
         constructor: Canvas,
 
-        drawOval: function (settings) {
+        drawOval: function(settings) {
 
-            // We keep the center fixed
+            // We keep the center fixed.
             var x = settings.x / settings.scale_x;
             var y = settings.y / settings.scale_y;
 
             var radius = settings.radius || 100;
-            //console.log(settings);
-            //console.log('X,Y(' + x + ', ' + y + '); Radius: ' + radius +
-            //    ', Scale: ' + settings.scale_x + ',' + settings.scale_y);
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -3517,7 +4605,7 @@
             this.ctx.restore();
         },
 
-        drawLine: function (settings) {
+        drawLine: function(settings) {
 
             var from_x = settings.x;
             var from_y = settings.y;
@@ -3525,14 +4613,9 @@
             var length = settings.length;
             var angle = settings.angle;
 
-            // Rotation
+            // Rotation.
             var to_x = - Math.cos(angle) * length + settings.x;
             var to_y =  Math.sin(angle) * length + settings.y;
-            //console.log('aa ' + to_x + ' ' + to_y);
-
-            //console.log('From (' + from_x + ', ' + from_y + ') To (' + to_x +
-            //            ', ' + to_y + ')');
-            //console.log('Length: ' + length + ', Angle: ' + angle );
 
             this.ctx.lineWidth = settings.lineWidth || 1;
             this.ctx.strokeStyle = settings.color || '#000000';
@@ -3546,7 +4629,7 @@
             this.ctx.restore();
         },
 
-        scale: function (x,y) {
+        scale: function(x, y) {
             this.ctx.scale(x,y);
             this.centerX = this.canvas.width / 2 / x;
             this.centerY = this.canvas.height / 2 / y;
@@ -3554,7 +4637,7 @@
 
         clear: function() {
             this.ctx.clearRect(0, 0, this.width, this.height);
-            // For IE
+            // For IE.
             var w = this.canvas.width;
             this.canvas.width = 1;
             this.canvas.width = w;
@@ -3565,7 +4648,7 @@
 
 /**
  * # HTMLRenderer
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2016 Stefano Balietti
  * MIT Licensed
  *
  * Renders javascript objects into HTML following a pipeline
@@ -3589,8 +4672,7 @@
 
     // ## Global scope
 
-    var document = window.document,
-    JSUS = node.JSUS;
+    var document = window.document;
 
     var TriggerManager = node.TriggerManager;
 
@@ -3679,12 +4761,13 @@
         });
 
         this.tm.addTrigger(function(el) {
+            var div, key, str;
             if (!el) return;
             if (el.content && 'object' === typeof el.content) {
-                var div = document.createElement('div');
-                for (var key in el.content) {
+                div = document.createElement('div');
+                for (key in el.content) {
                     if (el.content.hasOwnProperty(key)) {
-                        var str = key + ':\t' + el.content[key];
+                        str = key + ':\t' + el.content[key];
                         div.appendChild(document.createTextNode(str));
                         div.appendChild(document.createElement('br'));
                     }
@@ -3700,7 +4783,7 @@
                 'function' === typeof el.content.parse) {
 
                 html = el.content.parse();
-                if (JSUS.isElement(html) || JSUS.isNode(html)) {
+                if (J.isElement(html) || J.isNode(html)) {
                     return html;
                 }
             }
@@ -3708,7 +4791,7 @@
 
         this.tm.addTrigger(function(el) {
             if (!el) return;
-            if (JSUS.isElement(el.content) || JSUS.isNode(el.content)) {
+            if (J.isElement(el.content) || J.isNode(el.content)) {
                 return el.content;
             }
         });
@@ -3793,12 +4876,38 @@
      *
      * Creates a new instace of Entity
      *
+     * An `Entity` is an abstract representation of an HTML element.
+     *
+     * May contains the following properties:
+     *
+     *   - `content` (that will be processed upon rendering),
+     *   - `id` (if specified)
+     *   - 'className` (if specified)
+     *
      * @param {object} e The object to transform in entity
      */
-    function Entity(e) {
-        e = e || {};
-        this.content = ('undefined' !== typeof e.content) ? e.content : '';
-        this.className = ('undefined' !== typeof e.style) ? e.style : null;
+    function Entity(o) {
+        o = o || {};
+
+        this.content = 'undefined' !== typeof o.content ? o.content : '';
+
+        if ('string' === typeof o.id) {
+            this.id = o.id;
+        }
+        else if ('undefined' !== typeof o.id) {
+            throw new TypeError('Entity: id must ' +
+                                'be string or undefined.');
+        }
+        if ('string' === typeof o.className) {
+            this.className = o.className;
+        }
+        else if (J.isArray(o.className)) {
+            this.className = o.join(' ');
+        }
+        else if ('undefined' !== typeof o.className) {
+            throw new TypeError('Entity: className must ' +
+                                'be string, array, or undefined.');
+        }
     }
 
 })(
@@ -4009,10 +5118,33 @@
 
 /**
  * # Table
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2017 Stefano Balietti
  * MIT Licensed
  *
  * Creates an HTML table that can be manipulated by an api.
+ *
+ * Elements can be added individually, as a row, or as column.
+ * They are tranformed into `Cell` objects containining the original
+ * element and a reference to the HTMLElement (e.g. td, th, etc.)
+ *
+ * Internally, data is organized as a `NDDB` database.
+ *
+ * When `.parse()` method is called the current databaase structure is
+ * processed to create the real HTML table. Each cell is passed to the
+ * `HTMLRenderer` instance which tranforms it the correspondent HTML
+ * element based on a user-defined render function.
+ *
+ * The HTML-renderer object renders cells into HTML following a pipeline
+ * of decorator functions. By default, the following rendering operations
+ * are applied to a cell in order:
+ *
+ * - if it is already an HTML element, returns it;
+ * - if it contains a  #parse() method, tries to invoke it to generate HTML;
+ * - if it is an object, tries to render it as a table of key:value pairs;
+ * - if it is a string or number, creates an HTML text node and returns it
+ *
+ * @see NDDB
+ * @see HTMLRendered
  *
  * www.nodegame.org
  */
@@ -4025,7 +5157,6 @@
     exports.Table = Table;
     exports.Table.Cell = Cell;
 
-    var J = node.JSUS;
     var NDDB = node.NDDB;
     var HTMLRenderer = node.window.HTMLRenderer;
     var Entity = node.window.HTMLRenderer.Entity;
@@ -4033,123 +5164,15 @@
     Table.prototype = new NDDB();
     Table.prototype.constructor = Table;
 
-    // ## Helper functions
-
     /**
-     * ### validateInput
+     * ## Tan;e.
      *
-     * Validates user input and throws an error if input is not correct
+     * Returns a new cell
      *
-     * @param {string} method The name of the method validating the input
-     * @param {mixed} data The data that will be inserted in the database
-     * @param {number} x Optional. The row index
-     * @param {number} y Optional. The column index
-     * @param {boolean} dataArray TRUE, if data should be an array
-     *
-     * @return {boolean} TRUE, if input passes validation
      */
-    function validateInput(method, data, x, y, dataArray) {
-
-        if (x && 'number' !== typeof x) {
-            throw new TypeError('Table.' + method + ': x must be number or ' +
-                                'undefined.');
-        }
-        if (y && 'number' !== typeof y) {
-            throw new TypeError('Table.' + method + ': y must be number or ' +
-                                'undefined.');
-        }
-
-        if (dataArray && !J.isArray(data)) {
-            throw new TypeError('Table.' + method + ': data must be array.');
-        }
-
-        return true;
-    }
-
-    /**
-     * ### Table.addClass
-     *
-     * Adds a CSS class to each element cell in the table
-     *
-     * @param {string|array} className The name of the class/classes
-     *
-     * @return {Table} This instance for chaining
-     */
-    Table.prototype.addClass = function(className) {
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.addClass: className must be string or ' +
-                                'array.');
-        }
-        if (J.isArray(className)) {
-            className = className.join(' ');
-        }
-
-        this.each(function(el) {
-            W.addClass(el, className);
-            if (el.HTMLElement) {
-                el.HTMLElement.className = el.className;
-            }
-        });
-
-        return this;
+    Table.cell = function(o) {
+        return new Cell(o);
     };
-
-    /**
-     * ### Table.removeClass
-     *
-     * Removes a CSS class from each element cell in the table
-     *
-     * @param {string|array} className The name of the class/classes
-     *
-     * @return {Table} This instance for chaining
-     */
-    Table.prototype.removeClass = function(className) {
-        var func;
-        if ('string' !== typeof className && !J.isArray(className)) {
-            throw new TypeError('Table.removeClass: className must be string ' +
-                                'or array.');
-        }
-
-        if (J.isArray(className)) {
-            func = function(el, className) {
-                for (var i = 0; i < className.length; i++) {
-                    W.removeClass(el, className[i]);
-                }
-            };
-        }
-        else {
-            func = W.removeClass;
-        }
-
-        this.each(function(el) {
-            func.call(this, el, className);
-            if (el.HTMLElement) {
-                el.HTMLElement.className = el.className;
-            }
-        });
-
-        return this;
-    };
-
-    /**
-     * ### addSpecialCells
-     *
-     * Parses an array of data and returns an array of cells
-     *
-     * @param {array} data Array containing data to transform into cells
-     *
-     * @return {array} The array of cells
-     */
-    function addSpecialCells(data) {
-        var out, i, len;
-        out = [];
-        i = -1;
-        len = data.length;
-        for ( ; ++i < len ; ) {
-            out.push({content: data[i]});
-        }
-        return out;
-    }
 
     /**
      * ## Table constructor
@@ -4171,19 +5194,30 @@
 
         NDDB.call(this, options, data);
 
-        //if (!this.row) {
-        //    this.view('row', function(c) {
-        //        return c.x;
-        //    });
-        //}
-        //if (!this.col) {
-        //    this.view('col', function(c) {
-        //        return c.y;
-        //    });
-        //}
+//         // ### Table.row
+//         // NDDB hash containing elements grouped by row index
+//         // @see NDDB.hash
+//         if (!this.row) {
+//             this.hash('row', function(c) {
+//                 return c.x;
+//             });
+//         }
+//
+//         // ### Table.col
+//         // NDDB hash containing elements grouped by column index
+//         // @see NDDB.hash
+//         if (!this.col) {
+//             this.hash('col', function(c) {
+//                 return c.y;
+//             });
+//         }
+
+        // ### Table.rowcol
+        // NDDB index to access elements with row.col notation
+        // @see NDDB.hash
         if (!this.rowcol) {
             this.index('rowcol', function(c) {
-                return c.x + '_' + c.y;
+                return c.x + '.' + c.y;
             });
         }
 
@@ -4225,12 +5259,23 @@
          */
         this.table = options.table || document.createElement('table');
 
-        if ('undefined' !== typeof options.id) {
+        if ('string' === typeof options.id) {
             this.table.id = options.id;
         }
+        else if (options.id) {
+            throw new TypeError('Table constructor: options.id must be ' +
+                                'string or undefined.');
+        }
 
-        if ('undefined' !== typeof options.className) {
+        if ('string' === typeof options.className) {
             this.table.className = options.className;
+        }
+        else if (J.isArray(options.className)) {
+            this.table.className = options.className.join(' ');
+        }
+        else if (options.className) {
+            throw new TypeError('Table constructor: options.className must ' +
+                                'be string, array, or undefined.');
         }
 
         /**
@@ -4242,7 +5287,18 @@
          * the table because one or more cells have been added with higher
          * row and column indexes.
          */
-        this.missingClassName = options.missingClassName || 'missing';
+        this.missingClassName = 'missing';
+
+        if ('string' === typeof options.missingClassName) {
+            this.missingClassName = options.missingClassName;
+        }
+        else if (J.isArray(options.missingClassName)) {
+            this.missingClassName = options.missingClassName.join(' ');
+        }
+        else if (options.missingClassName) {
+            throw new TypeError('Table constructor: options.className must ' +
+                                'be string, array, or undefined.');
+        }
 
         /**
          * ### Table.autoParse
@@ -4252,6 +5308,32 @@
          */
         this.autoParse = 'undefined' !== typeof options.autoParse ?
             options.autoParse : false;
+
+        /**
+         * ### Table.trs
+         *
+         * List of TR elements indexed by their order in the parsed table
+         */
+        this.trs = {};
+
+        /**
+         * ### Table.trCb
+         *
+         * Callback function applied to each TR HTML element
+         *
+         * Callback receives the HTML element, and the row index, or
+         * 'thead' and 'tfoot' for header and footer.
+         */
+        if ('function' === typeof options.tr) {
+            this.trCb = options.tr;
+        }
+        else if ('undefined' === typeof options.tr) {
+            this.trCb = null;
+        }
+        else {
+            throw new TypeError('Table constructor: options.tr must be ' +
+                                'function or undefined.');
+        }
 
         // Init renderer.
         this.initRenderer(options.render);
@@ -4277,7 +5359,7 @@
         this.htmlRenderer = new HTMLRenderer(options);
         this.htmlRenderer.addRenderer(function(el) {
             var tbl, key;
-            if ('object' === typeof el.content) {
+            if (el.content && 'object' === typeof el.content) {
                 tbl = new Table();
                 for (key in el.content) {
                     if (el.content.hasOwnProperty(key)) {
@@ -4294,7 +5376,11 @@
      *
      * Create a cell element (td, th, etc.) and renders its content
      *
-     * It also adds an internal reference to the newly created TD/TH element
+     * It also adds an internal reference to the newly created TD/TH element,
+     * stored under a `.HTMLElement` key.
+     *
+     * If the cell contains a `.className` attribute, this is added to
+     * the HTML element.
      *
      * @param {Cell} cell The cell to transform in element
      * @param {string} tagName The name of the tag. Default: 'td'
@@ -4312,7 +5398,7 @@
         content = this.htmlRenderer.render(cell);
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
-        // Adds a reference inside the cell.
+        if (cell.id) TD.id = cell.id;
         cell.HTMLElement = TD;
         return TD;
     };
@@ -4325,17 +5411,12 @@
      * @param {number} row The row number
      * @param {number} col The column number
      *
-     * @see HTMLRenderer
-     * @see HTMLRenderer.addRenderer
+     * @return {Cell|array} The Cell or array of cells specified by indexes
      */
     Table.prototype.get = function(row, col) {
-        if ('undefined' !== typeof row && 'number' !== typeof row) {
-            throw new TypeError('Table.get: row must be number.');
-        }
-        if ('undefined' !== typeof col && 'number' !== typeof col) {
-            throw new TypeError('Table.get: col must be number.');
-        }
+        validateXY('get', row, col, 'any');
 
+        // TODO: check if we can use hashes.
         if ('undefined' === typeof row) {
             return this.select('y', '=', col);
         }
@@ -4343,7 +5424,7 @@
             return this.select('x', '=', row);
         }
 
-        return this.rowcol.get(row + '_' + col);
+        return this.rowcol.get(row + '.' + col);
     };
 
     /**
@@ -4351,20 +5432,21 @@
      *
      * Returns a reference to the TR element at row (row)
      *
+     * TR elements are generated only after the table is parsed.
+     *
+     * Notice! If the table structure is manipulated externally,
+     * the return value of this method might be inaccurate.
+     *
      * @param {number} row The row number
      *
      * @return {HTMLElement|boolean} The requested TR object, or FALSE if it
      *   cannot be found
      */
     Table.prototype.getTR = function(row) {
-        var cell;
-        if ('number' !== typeof row) {
-            throw new TypeError('Table.getTr: row must be number.');
+        if (row !== 'thead' && row !== 'tfoot') {
+            validateXY('getTR', row, undefined, 'x');
         }
-        cell = this.get(row, 0);
-        if (!cell) return false;
-        if (!cell.HTMLElement) return false;
-        return cell.HTMLElement.parentNode;
+        return this.trs[row] || false;
     };
 
     /**
@@ -4376,7 +5458,7 @@
      *   of the header elements
      */
     Table.prototype.setHeader = function(header) {
-        if (!validateInput('setHeader', header, null, null, true)) return;
+        validateInput('setHeader', header, undefined, undefined, true);
         this.header = addSpecialCells(header);
     };
 
@@ -4389,7 +5471,7 @@
      *   of the left elements
      */
     Table.prototype.setLeft = function(left) {
-        if (!validateInput('setLeft', left, null, null, true)) return;
+        validateInput('setLeft', left, undefined, undefined, true);
         this.left = addSpecialCells(left);
     };
 
@@ -4402,7 +5484,7 @@
      *   of the footer elements
      */
     Table.prototype.setFooter = function(footer) {
-        if (!validateInput('setFooter', footer, null, null, true)) return;
+        validateInput('setFooter', footer, undefined, undefined, true);
         this.footer = addSpecialCells(footer);
     };
 
@@ -4424,8 +5506,7 @@
      */
     Table.prototype.updatePointer = function(pointer, value) {
         if ('undefined' === typeof this.pointers[pointer]) {
-            node.err('Table.updatePointer: invalid pointer: ' + pointer);
-            return false;
+            throw new Error('Table.updatePointer: invalid pointer: ' + pointer);
         }
         if (this.pointers[pointer] === null || value > this.pointers[pointer]) {
             this.pointers[pointer] = value;
@@ -4448,11 +5529,11 @@
      */
     Table.prototype.addMultiple = function(data, dim, x, y) {
         var i, lenI, j, lenJ;
-        if (!validateInput('addMultiple', data, x, y)) return;
+        validateInput('addMultiple', data, x, y);
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.addMultiple: dim must be a valid ' +
-                                'string (x, y) or undefined.');
+                                'dimension (x or y) or undefined.');
         }
         dim = dim || 'x';
 
@@ -4487,10 +5568,8 @@
                 }
             }
         }
-
-        if (this.autoParse) {
-            this.parse();
-        }
+        // Auto-parse.
+        if (this.autoParse) this.parse();
     };
 
     /**
@@ -4502,7 +5581,7 @@
      */
     Table.prototype.add = function(content, x, y, dim) {
         var cell;
-        if (!validateInput('addData', content, x, y)) return;
+        validateInput('add', content, x, y);
         if ((dim && 'string' !== typeof dim) ||
             (dim && 'undefined' === typeof this.pointers[dim])) {
             throw new TypeError('Table.add: dim must be a valid string ' +
@@ -4516,11 +5595,21 @@
         y = dim === 'y' ?
             this.getNextPointer('y', y) : this.getCurrPointer('y', y);
 
-        cell = new Cell({
-            x: x,
-            y: y,
-            content: content
-        });
+        if (content && 'object' === typeof content &&
+            'undefined' !== typeof content.content) {
+
+            if ('undefined' === typeof content.x) content.x = x;
+            if ('undefined' === typeof content.y) content.y = y;
+
+            cell = new Cell(content);
+        }
+        else {
+            cell = new Cell({
+                x: x,
+                y: y,
+                content: content
+            });
+        }
 
         this.insert(cell);
 
@@ -4540,7 +5629,7 @@
      *   will be added. Default: the last column in the table
      */
     Table.prototype.addColumn = function(data, x, y) {
-        if (!validateInput('addColumn', data, x, y)) return;
+        validateInput('addColumn', data, x, y);
         return this.addMultiple(data, 'y', x || 0, this.getNextPointer('y', y));
     };
 
@@ -4556,7 +5645,7 @@
      *   will be added. Default: column 0
      */
     Table.prototype.addRow = function(data, x, y) {
-        if (!validateInput('addRow', data, x, y)) return;
+        validateInput('addRow', data, x, y);
         return this.addMultiple(data, 'x', this.getNextPointer('x', x), y || 0);
     };
 
@@ -4622,7 +5711,10 @@
         // HEADER
         if (this.header && this.header.length) {
             THEAD = document.createElement('thead');
+
             TR = document.createElement('tr');
+            if (this.trCb) this.trCb(TR, 'thead');
+            this.trs.thead = TR;
 
             // Add an empty cell to balance the left header column.
             if (this.left && this.left.length) {
@@ -4658,6 +5750,9 @@
 
                 if (trid !== this.db[i].x) {
                     TR = document.createElement('tr');
+                    if (this.trCb) this.trCb(TR, (trid+1));
+                    this.trs[(trid+1)] = TR;
+
                     TBODY.appendChild(TR);
 
                     // Keep a reference to current TR idx.
@@ -4683,7 +5778,7 @@
                         TR.appendChild(TD);
                     }
                 }
-                // Normal Insert.
+                // Normal insert.
                 TR.appendChild(this.renderCell(this.db[i]));
 
                 // Update old refs.
@@ -4696,8 +5791,10 @@
         // FOOTER.
         if (this.footer && this.footer.length) {
             TFOOT = document.createElement('tfoot');
-            TR = document.createElement('tr');
 
+            TR = document.createElement('tr');
+            if (this.trCb) this.trCb(TR, 'tfoot');
+            this.trs.tfoot = TR;
 
             if (this.header && this.header.length) {
                 TD = document.createElement('td');
@@ -4736,19 +5833,195 @@
     };
 
     /**
+     * ### Table.addClass
+     *
+     * Adds a CSS class to each HTML element in the table
+     *
+     * Cells not containing an HTML elements are skipped.
+     *
+     * @param {string|array} className The name of the class/classes.
+     * @param {number} x Optional. Subsets only on dimension x
+     * @param {number} y Optional. Subsets only on dimension y
+     *
+     * @return {Table} This instance for chaining
+     */
+    Table.prototype.addClass = function(className, x, y) {
+        var db;
+        if (J.isArray(className)) {
+            className = className.join(' ');
+        }
+        else if ('string' !== typeof className) {
+            throw new TypeError('Table.addClass: className must be string ' +
+                                'or array.');
+        }
+        validateXY('addClass', x, y);
+
+        db = this;
+        if (!('undefined' === typeof x && 'undefined' === typeof y)) {
+            if ('undefined' !== typeof x) db = db.select('x', '=', x);
+            if ('undefined' !== typeof y) db = db.and('y', '=', y);
+        }
+
+        db.each(function(el) {
+            W.addClass(el, className);
+            if (el.HTMLElement) el.HTMLElement.className = el.className;
+        });
+
+        return this;
+    };
+
+    /**
+     * ### Table.removeClass
+     *
+     * Removes a CSS class from each element cell in the table
+     *
+     * @param {string|array|null} className Optional. The name of the
+     *   class/classes, or  null to remove all classes. Default: null.
+     * @param {number} x Optional. Subsets only on dimension x
+     * @param {number} y Optional. Subsets only on dimension y
+     *
+     * @return {Table} This instance for chaining
+     */
+    Table.prototype.removeClass = function(className, x, y) {
+        var func, db;
+        if (J.isArray(className)) {
+            func = function(el, className) {
+                for (var i = 0; i < className.length; i++) {
+                    W.removeClass(el, className[i]);
+                }
+            };
+        }
+        else if ('string' === typeof className) {
+            func = W.removeClass;
+        }
+        else if (null === className) {
+            func = function(el) { el.className = ''; };
+        }
+        else {
+            throw new TypeError('Table.removeClass: className must be ' +
+                                'string, array, or null.');
+        }
+
+        validateXY('removeClass', x, y);
+
+        db = this;
+        if (!('undefined' === typeof x && 'undefined' === typeof y)) {
+            if ('undefined' !== typeof x) db = db.select('x', '=', x);
+            if ('undefined' !== typeof y) db = db.and('y', '=', y);
+        }
+
+        db.each(function(el) {
+            func.call(this, el, className);
+            if (el.HTMLElement) el.HTMLElement.className = el.className;
+        });
+
+        return this;
+    };
+
+    /**
      * ### Table.clear
      *
      * Removes all entries and indexes, and resets the pointers
      *
-     * @param {boolean} confirm TRUE, to confirm the operation.
-     *
      * @see NDDB.clear
      */
-    Table.prototype.clear = function(confirm) {
-        if (NDDB.prototype.clear.call(this, confirm)) {
-            this.resetPointers();
-        }
+    Table.prototype.clear = function() {
+        NDDB.prototype.clear.call(this, true);
+        this.resetPointers();
     };
+
+    // ## Helper functions
+
+
+    /**
+     * ### validateXY
+     *
+     * Validates if x and y are correctly specified or throws an error
+     *
+     * @param {string} method The name of the method validating the input
+     * @param {number} x Optional. The row index
+     * @param {number} y Optional. The column index
+     * @param {string} mode Optional. Additionally check for: 'both',
+     *   'either', 'any', 'x', or 'y' parameter to be defined.
+     */
+    function validateXY(method, x, y, mode) {
+        var xOk, yOk;
+        if ('undefined' !== typeof x) {
+            if ('number' !== typeof x || x < 0) {
+                throw new TypeError('Table.' + method + ': x must be ' +
+                                    'a non-negative number or undefined.');
+            }
+            xOk = true;
+        }
+        if ('undefined' !== typeof y) {
+            if ('number' !== typeof y || y < 0) {
+                throw new TypeError('Table.' + method + ': y must be ' +
+                                    'a non-negative number or undefined.');
+            }
+            yOk = true;
+        }
+        if (mode === 'either' && xOk && yOk) {
+            throw new Error('Table.' + method + ': either x OR y can ' +
+                            'be defined.');
+        }
+        else if (mode === 'both' && (!xOk || !yOk)) {
+            throw new Error('Table.' + method + ': both x AND y must ' +
+                            'be defined.');
+        }
+        else if (mode === 'any' && (!xOk && !yOk)) {
+            throw new Error('Table.' + method + ': either x or y must ' +
+                            'be defined.');
+        }
+        else if (mode === 'x' && !xOk) {
+            throw new Error('Table.' + method + ': x must be defined.');
+        }
+        else if (mode === 'y' && !yOk) {
+            throw new Error('Table.' + method + ': y be defined.');
+        }
+    }
+
+    /**
+     * ### validateInput
+     *
+     * Validates user input and throws an error if input is not correct
+     *
+     * @param {string} method The name of the method validating the input
+     * @param {mixed} data The data that will be inserted in the database
+     * @param {number} x Optional. The row index
+     * @param {number} y Optional. The column index
+     * @param {boolean} dataArray TRUE, if data should be an array
+     *
+     * @return {boolean} TRUE, if input passes validation
+     *
+     * @see validateXY
+     */
+    function validateInput(method, data, x, y, dataArray) {
+        validateXY(method, x, y);
+        if (dataArray && !J.isArray(data)) {
+            throw new TypeError('Table.' + method + ': data must be array.');
+        }
+    }
+
+    /**
+     * ### addSpecialCells
+     *
+     * Parses an array of data and returns an array of cells
+     *
+     * @param {array} data Array containing data to transform into cells
+     *
+     * @return {array} The array of cells
+     */
+    function addSpecialCells(data) {
+        var out, i, len;
+        out = [];
+        i = -1;
+        len = data.length;
+        for ( ; ++i < len ; ) {
+            out.push({content: data[i]});
+        }
+        return out;
+    }
+
 
     // # Cell
 
@@ -4789,7 +6062,6 @@
          * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
-
     }
 
 })(

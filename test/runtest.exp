@@ -3,7 +3,7 @@
 # Expect script for starting the server and then running the npm tests.
 
 # Start server, wait until it's ready.
-cd nodegame
+cd node_modules/nodegame
 set server_pid [spawn node launcher.js]
 set server_id $spawn_id
 # set timeout 30

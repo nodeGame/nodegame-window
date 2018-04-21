@@ -67,10 +67,16 @@
         <a href="#gamewindow.cachesupported">GameWindow.cacheSupported</a>
       </div>
       <div class="heading h3">
+        <a href="#gamewindow.cachesupported">GameWindow.cacheSupported</a>
+      </div>
+      <div class="heading h3">
         <a href="#gamewindow.cache">GameWindow.cache</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.currenturis">GameWindow.currentURIs</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.unprocesseduri">GameWindow.unprocessedUri</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.globallibs">GameWindow.globalLibs</a>
@@ -95,6 +101,12 @@
       </div>
       <div class="heading h3">
         <a href="#gamewindow.isie">GameWindow.isIE</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.headeroffset">GameWindow.headerOffset</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.willresizeframe">GameWindow.willResizeFrame</a>
       </div>
       <div class="heading h2">
         <a href="#gamewindow-methods">GameWindow methods</a>
@@ -137,6 +149,9 @@
       </div>
       <div class="heading h3">
         <a href="#gamewindow.generateframe">GameWindow.generateFrame</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.generateinfopanel">GameWindow.generateInfoPanel</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.setframe">GameWindow.setFrame</a>
@@ -184,7 +199,7 @@
         <a href="#gamewindow.clearcache">GameWindow.clearCache</a>
       </div>
       <div class="heading h3">
-        <a href="#gamewindow.getelementbyid">GameWindow.getElementById</a>
+        <a href="#gamewindow.getelementbyid---gid">GameWindow.getElementById | gid</a>
       </div>
       <div class="heading h3">
         <a href="#gamewindow.getelementsbytagname">GameWindow.getElementsByTagName</a>
@@ -213,6 +228,12 @@
       <div class="heading h3">
         <a href="#gamewindow.seturichannel">GameWindow.setUriChannel</a>
       </div>
+      <div class="heading h3">
+        <a href="#gamewindow.adjustframeheight">GameWindow.adjustFrameHeight</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gamewindow.adjustheaderoffset">GameWindow.adjustHeaderOffset</a>
+      </div>
       <div class="heading h2">
         <a href="#helper-functions">Helper functions</a>
       </div>
@@ -234,6 +255,9 @@
       <div class="heading h3">
         <a href="#adaptframe2headerposition">adaptFrame2HeaderPosition</a>
       </div>
+      <div class="heading h3">
+        <a href="#testdirectframedocumentaccess">testDirectFrameDocumentAccess</a>
+      </div>
     </div>
   </div>
   <div id="sidebar-toggle"></div>
@@ -251,11 +275,10 @@
 </div>
 
 
-<p>Copyright(c) 2015 Stefano Balietti
+<p>Copyright(c) 2017 Stefano Balietti <a href="&#x6D;&#97;&#105;l&#x74;&#111;:&#115;&#x74;&#x65;&#64;&#x6E;&#111;&#100;e&#103;&#97;&#109;&#101;&#x2E;&#111;&#x72;&#x67;">&#115;&#x74;&#x65;&#64;&#x6E;&#111;&#100;e&#103;&#97;&#109;&#101;&#x2E;&#111;&#x72;&#x67;</a>
 MIT Licensed</p>
   </div>
-  <div class="body"><p>GameWindow provides a handy API to interface nodeGame with the
-browser window</p>
+  <div class="body"><p>API to interface nodeGame with the browser window</p>
 
 <p>Creates a custom root element inside the HTML page, and insert an
 iframe element inside it.</p>
@@ -269,29 +292,26 @@ javascript state inside the page.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre><span></span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">J</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">JSUS</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">DOM</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow: JSUS object not found. Aborting.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">constants</span><span class="p">,</span> <span class="nx">windowLevels</span><span class="p">,</span> <span class="nx">screenLevels</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">CB_EXECUTED</span><span class="p">,</span> <span class="nx">WIN_LOADING</span><span class="p">,</span> <span class="nx">lockedUpdate</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">DOM</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow: JSUS not found. Aborting.&#39;</span><span class="p">);</span>
+    <span class="nx">DOM</span> <span class="o">=</span> <span class="nx">J</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOM</span><span class="p">)</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow: J.require(&quot;DOM&quot;) failed.&#39;</span><span class="p">);</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOM</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow: JSUS DOM object not found. Aborting.&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="nx">constants</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
+    <span class="nx">windowLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">windowLevels</span><span class="p">;</span>
+    <span class="nx">screenLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">screenLevels</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">constants</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">constants</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">windowLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">windowLevels</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">screenLevels</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">screenLevels</span><span class="p">;</span>
+    <span class="nx">CB_EXECUTED</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">CALLBACK_EXECUTED</span><span class="p">;</span>
 
-    <span class="kd">var</span> <span class="nx">CB_EXECUTED</span> <span class="o">=</span> <span class="nx">constants</span><span class="p">.</span><span class="nx">stageLevels</span><span class="p">.</span><span class="nx">CALLBACK_EXECUTED</span><span class="p">;</span>
-
-    <span class="kd">var</span> <span class="nx">WIN_LOADING</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">;</span></pre></div>
+    <span class="nx">WIN_LOADING</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">.</span><span class="nx">LOADING</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -301,7 +321,7 @@ javascript state inside the page.</p>
 </div>
 <p>Allows just one update at the time to the counter of loading frames.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">lockedUpdate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">lockedUpdate</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">DOM</span><span class="p">;</span>
     <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">GameWindow</span><span class="p">;</span></pre></div>
@@ -334,6 +354,7 @@ javascript state inside the page.</p>
         <span class="nx">storeCacheNow</span><span class="o">:</span>   <span class="kc">false</span><span class="p">,</span>
         <span class="nx">storeCacheLater</span><span class="o">:</span> <span class="kc">false</span>
     <span class="p">};</span>
+    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">infoPanel</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
 
     <span class="kd">function</span> <span class="nx">onLoadStd</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframeWin</span><span class="p">;</span>
@@ -410,7 +431,7 @@ A small timeout is enough.</p>
 <div class="pilwrap">
   <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
 </div>
-<p>IE &lt; 10 gives 'Permission Denied' if trying to access
+<p>IE &lt; 10 (also 11?) gives 'Permission Denied' if trying to access
 the iframeDoc from the context of the function above.
 We need to re-get it from the DOM.</p>
         </td>
@@ -771,11 +792,11 @@ A small timeout is enough.</p>
 </div>
 
   </div>
-  <div class="body"><p>The default header position. 'left'.</p>
+  <div class="body"><p>The default header position. 'top'.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">defaultHeaderPosition</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span><span class="p">;</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">defaultHeaderPosition</span> <span class="o">=</span> <span class="s1">&#39;top&#39;</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -865,6 +886,33 @@ of the iframe document, which is read-only in IE &lt; 9.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
+<div class="pilwrap" id="gamewindow.cachesupported">
+  <h3>
+    <a href="#gamewindow.cachesupported" class="pilcrow">&#182;</a>
+    GameWindow.cacheSupported
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Flag that direct access to the iframe content is allowed</p>
+
+<p>Usually false, on IEs</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">testdirectFrameDocumentAccess
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
 <div class="pilwrap" id="gamewindow.cache">
   <h3>
     <a href="#gamewindow.cache" class="pilcrow">&#182;</a>
@@ -901,18 +949,55 @@ the frame when it is replaced by a new one)</li>
   </div>
   <div class="body"><p>Currently loaded URIs in the internal frames</p>
 
-<p>Maps frame names (e.g. 'ng_mainframe') to the URIs they are showing.</p>
+<p>Maps frame names (e.g. 'ng_mainframe') to the (processed) URIs
+that they are showing.</p>
   </div>
   <div class="details">
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameWindow.preCache
+      <span class="dox_type">GameWindow.preCache</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.processUri
+
+TODO: check: this is still having the test frame, should it be
+removed instead?
   </span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">currentURIs</span> <span class="o">=</span> <span class="p">{};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.unprocesseduri">
+  <h3>
+    <a href="#gamewindow.unprocesseduri" class="pilcrow">&#182;</a>
+    GameWindow.unprocessedUri
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>The uri parameter passed to <code>loadFrame</code>, still unprocessed</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.currentURIs</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.processUri
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">unprocessedUri</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -1120,9 +1205,61 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.headeroffset">
+  <h3>
+    <a href="#gamewindow.headeroffset" class="pilcrow">&#182;</a>
+    GameWindow.headerOffset
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Contains the current offset (widht or height) for the header</p>
+
+<p>Content below/above/next to it needs to be slided accordingly.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">W.adjustHeaderOffset
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">headerOffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.willresizeframe">
+  <h3>
+    <a href="#gamewindow.willresizeframe" class="pilcrow">&#182;</a>
+    GameWindow.willResizeFrame
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Boolean flag saying whether a call to resize the frame is in progress</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">W.adjustFrameHeight
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">willResizeFrame</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-43" id="section-43">&#182;</a>
+  <a class="pilcrow" href="#section-47" id="section-47">&#182;</a>
 </div>
 <p>Add setup functions.</p>
         </td>
@@ -1132,7 +1269,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-44" id="section-44">&#182;</a>
+  <a class="pilcrow" href="#section-48" id="section-48">&#182;</a>
 </div>
 <p>Adding listeners.</p>
         </td>
@@ -1142,7 +1279,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-45" id="section-45">&#182;</a>
+  <a class="pilcrow" href="#section-49" id="section-49">&#182;</a>
 </div>
 <p>Hide noscript tag (necessary for IE8).</p>
         </td>
@@ -1156,7 +1293,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-46" id="section-46">&#182;</a>
+  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
 </div>
 <p>Init.</p>
         </td>
@@ -1221,7 +1358,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">restoreOnleave</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">();</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
@@ -1267,6 +1404,10 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
             <span class="k">this</span><span class="p">.</span><span class="nx">enableRightClick</span><span class="p">();</span>
         <span class="p">}</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">disableBackButton</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setUriPrefix</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span><span class="p">);</span>
         <span class="p">}</span>
@@ -1307,7 +1448,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-50" id="section-50">&#182;</a>
+  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
 </div>
 <p>Unlock screen, if currently locked.</p>
         </td>
@@ -1319,7 +1460,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-51" id="section-51">&#182;</a>
+  <a class="pilcrow" href="#section-55" id="section-55">&#182;</a>
 </div>
 <p>Remove widgets, if Widgets exists.</p>
         </td>
@@ -1331,7 +1472,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-52" id="section-52">&#182;</a>
+  <a class="pilcrow" href="#section-56" id="section-56">&#182;</a>
 </div>
 <p>Remove loaded frame, if one is found.</p>
         </td>
@@ -1343,7 +1484,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-53" id="section-53">&#182;</a>
+  <a class="pilcrow" href="#section-57" id="section-57">&#182;</a>
 </div>
 <p>Remove header, if one is found.</p>
         </td>
@@ -1357,7 +1498,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-54" id="section-54">&#182;</a>
+  <a class="pilcrow" href="#section-58" id="section-58">&#182;</a>
 </div>
 <p>Clear all caches.</p>
         </td>
@@ -1397,14 +1538,13 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setStateLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;level must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: level must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setStateLevel: unrecognized level: &#39;</span> <span class="o">+</span>
-                            <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                            <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">=</span> <span class="nx">windowLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
     <span class="p">};</span></pre></div>
         </td>
@@ -1503,12 +1643,12 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setScreenLevel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;level must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: level must &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">screenLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setScreenLevel: unrecognized level: &#39;</span> <span class="o">+</span>
-                            <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                            <span class="nx">level</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">screenState</span> <span class="o">=</span> <span class="nx">screenLevels</span><span class="p">[</span><span class="nx">level</span><span class="p">];</span>
@@ -1696,7 +1836,11 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
-      <span class="dox_type">GameWindow.getFrame
+      <span class="dox_type">GameWindow.getFrame</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.testDirectFrameDocumentAccess
   </span>
     </div>
   </div>
@@ -1706,11 +1850,21 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">stateLevel</span> <span class="o">===</span> <span class="nx">WIN_LOADING</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">=</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">)</span> <span class="o">:</span>
-                <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">;</span>
-
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span><span class="p">)</span> <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-68" id="section-68">&#182;</a>
+</div>
+<p>Some IEs give permission denied when accessing the frame document
+directly. We need to re-get it from the DOM.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span><span class="p">)</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">return</span> <span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">());</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1812,43 +1966,48 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.destroyFrame
-  </span>
+</span>
     </div>
   </div>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: a frame element is &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already existing. It cannot be duplicated.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: frame is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroyFrame</span><span class="p">();</span>
         <span class="p">}</span>
 
         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameRoot</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: root must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined or HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">frameName</span> <span class="o">=</span> <span class="nx">frameName</span> <span class="o">||</span> <span class="s1">&#39;ng_mainframe&#39;</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frameName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frameName</span> <span class="o">||</span> <span class="nx">frameName</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: frameName must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
+                            <span class="s1">&#39;undefined or a non-empty string. Found: &#39;</span> <span class="o">+</span>
+                            <span class="nx">frameName</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">frameName</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: frameName must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;unique.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateFrame: frameName is not &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;unique in DOM: &#39;</span> <span class="o">+</span> <span class="nx">frameName</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">addIFrame</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">);</span></pre></div>
+        <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;iframe&#39;</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-66" id="section-66">&#182;</a>
+  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
 </div>
 <p>Method .replace does not add the uri to the history.</p>
         </td>
@@ -1858,19 +2017,152 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-67" id="section-67">&#182;</a>
+  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
 </div>
 <p>For IE8.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">iframe</span><span class="p">.</span><span class="nx">frameBorder</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">iframe</span><span class="p">.</span><span class="nx">frameBorder</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-73" id="section-73">&#182;</a>
+</div>
+<p>Avoid scrolling.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">iframe</span><span class="p">.</span><span class="nx">scrolling</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span><span class="p">;</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">setFrame</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">root</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">adaptFrame2HeaderPosition</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getHeader</span><span class="p">())</span> <span class="nx">adaptFrame2HeaderPosition</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+</div>
+<p>Emit event.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;FRAME_GENERATED&#39;</span><span class="p">,</span> <span class="nx">iframe</span><span class="p">);</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-75" id="section-75">&#182;</a>
+</div>
+<p>Add listener on resizing the page.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">onresize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">adjustFrameHeight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">);</span>
+        <span class="p">};</span>
 
         <span class="k">return</span> <span class="nx">iframe</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.generateinfopanel">
+  <h3>
+    <a href="#gamewindow.generateinfopanel" class="pilcrow">&#182;</a>
+    GameWindow.generateInfoPanel
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Appends a configurable div element at to "top" of the page</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">root</span>
+      <span class="dox_type">Element</span>
+      <span>Optional. The HTML element to which the info
+  panel will be appended. Default:
+
+<ul>
+<li>above the main frame, or</li>
+<li>below the header, or</li>
+<li>inside <em>documents.body</em>.</li>
+</ul></span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">frameName</span>
+      <span class="dox_type">string</span>
+      <span>Optional. The name of the iframe. Default:
+  'ng_mainframe'</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">force</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. Will create the frame even if an
+  existing one is found. Default: FALSE</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">InfoPanel</span>
+      <span>A reference to the InfoPanel object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.infoPanel
+</span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateInfoPanel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">infoPanelDiv</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateInfoPanel: info panel is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">node</span><span class="p">.</span><span class="nx">InfoPanel</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+        <span class="nx">infoPanelDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">;</span>
+
+        <span class="nx">root</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateInfoPanel: root must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;undefined or HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">root</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">infoPanelDiv</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">infoPanelDiv</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
+           <span class="nx">J</span><span class="p">.</span><span class="nx">insertAfter</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">infoPanelDiv</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">infoPanelDiv</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+</div>
+<p>Emit event.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;INFOPANEL_GENERATED&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -1920,13 +2212,16 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">iframe</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframe must be HTMLElement.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframe must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">iframe</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">iframeName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframeName must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: iframeName must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">iframeName</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setFrame: root must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">frameRoot</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
@@ -1987,7 +2282,7 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">clearFrame</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">frameName</span><span class="p">,</span> <span class="nx">frameDocument</span><span class="p">;</span>
         <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.clearFrame: cannot detect frame.&#39;</span><span class="p">);</span>
@@ -2000,33 +2295,42 @@ It includes the <em>frame</em> area, but also the <em>header</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-71" id="section-71">&#182;</a>
+  <a class="pilcrow" href="#section-81" id="section-81">&#182;</a>
 </div>
 <p>Method .replace does not add the uri to the history.
 iframe.contentWindow.location.replace('about:blank');</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">try</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">().</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">frameDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
+        <span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">J</span><span class="p">.</span><span class="nx">removeChildrenFromNode</span><span class="p">(</span><span class="nx">frameDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-72" id="section-72">&#182;</a>
+  <a class="pilcrow" href="#section-82" id="section-82">&#182;</a>
 </div>
-<p>IE &lt; 10 gives 'Permission Denied' if trying to access
-the iframeDoc from the context of the function above.
-We need to re-get it from the DOM.</p>
+<p>TODO: cleanup refactor.
+        try {
+            this.getFrameDocument().documentElement.innerHTML = '';
+        }
+        catch(e) {
+            // IE &lt; 10 gives 'Permission Denied' if trying to access
+            // the iframeDoc from the context of the function above.
+            // We need to re-get it from the DOM.
+            if (J.getIFrameDocument(iframe).documentElement) {
+                J.removeChildrenFromNode(
+                    J.getIFrameDocument(iframe).documentElement);
+            }
+        }</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">).</span><span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">J</span><span class="p">.</span><span class="nx">removeChildrenFromNode</span><span class="p">(</span>
-                    <span class="nx">J</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">).</span><span class="nx">documentElement</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">frameWindow</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">frameName</span><span class="p">];</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">frameDocument</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getIFrameDocument</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
@@ -2058,13 +2362,13 @@ We need to re-get it from the DOM.</p>
       <span class="dox_tag_name">headerName</span>
       <span class="dox_type">string</span>
       <span>Optional. The name (id) of the header.
-  Default: 'gn_header'</span>
+  Default: 'ng_header'</span>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">force</span>
       <span class="dox_type">boolean</span>
-      <span>Optional. Will create the header even if an
-  existing one is found. Default: FALSE</span>
+      <span>Optional. Destroys the existing header,
+  if found. Default: FALSE</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
@@ -2078,36 +2382,40 @@ We need to re-get it from the DOM.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">header</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: a header element is &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;already existing. It cannot be duplicated.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: header is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;already existing. Use force to regenerate.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroyHeader</span><span class="p">();</span>
         <span class="p">}</span>
 
         <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: root must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;undefined or HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="nx">headerName</span> <span class="o">=</span> <span class="nx">headerName</span> <span class="o">||</span> <span class="s1">&#39;ng_header&#39;</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">headerName</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: headerName must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;string.&#39;</span><span class="p">);</span>
+                            <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">headerName</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">headerName</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: headerName must be &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;unique.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.generateHeader: headerName is not &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;unique in DOM: &#39;</span> <span class="o">+</span> <span class="nx">headerName</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">header</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">);</span></pre></div>
+        <span class="nx">header</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">);</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-74" id="section-74">&#182;</a>
+  <a class="pilcrow" href="#section-84" id="section-84">&#182;</a>
 </div>
 <p>If generateHeader is called after generateFrame, and the default
 header position is not bottom, we need to move the header in front.</p>
@@ -2167,69 +2475,71 @@ added later.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeaderPosition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">validPositions</span><span class="p">,</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">oldPos</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: position &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;must be string.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">pos</span> <span class="o">=</span> <span class="nx">position</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeaderPosition</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">validPositions</span><span class="p">;</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-76" id="section-76">&#182;</a>
-</div>
-<p>Do something only if there is a change in the position.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">===</span> <span class="nx">pos</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-77" id="section-77">&#182;</a>
+  <a class="pilcrow" href="#section-86" id="section-86">&#182;</a>
 </div>
 <p>Map: position - css class.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">validPositions</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;top&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-t&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;bottom&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-b&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;right&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-r&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-l&#39;</span>
+            <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-t&#39;</span><span class="p">,</span>
+            <span class="nx">bottom</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-horizontal-b&#39;</span><span class="p">,</span>
+            <span class="nx">right</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-r&#39;</span><span class="p">,</span>
+            <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;ng_header_position-vertical-l&#39;</span>
         <span class="p">};</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validPositions</span><span class="p">[</span><span class="nx">pos</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: invalid header &#39;</span> <span class="o">+</span>
-                     <span class="s1">&#39;position: &#39;</span> <span class="o">+</span> <span class="nx">pos</span>  <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
-            <span class="k">return</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: headerElement &#39;</span> <span class="o">+</span>
-                            <span class="s1">&#39;not found.&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="s1">&#39;ng_header_position-[a-z-]*&#39;</span><span class="p">);</span>
-        <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">validPositions</span><span class="p">[</span><span class="nx">pos</span><span class="p">]);</span>
-
-        <span class="nx">oldPos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span><span class="p">;</span></pre></div>
+        <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">pos</span><span class="p">,</span> <span class="nx">oldPos</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: position &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be string. Found: &#39;</span> <span class="o">+</span> <span class="nx">position</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">pos</span> <span class="o">=</span> <span class="nx">position</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-78" id="section-78">&#182;</a>
+  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+</div>
+<p>Do something only if there is a change in the position.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">===</span> <span class="nx">pos</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">validPositions</span><span class="p">[</span><span class="nx">pos</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: invalid header &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;position: &#39;</span> <span class="o">+</span> <span class="nx">pos</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeaderPosition: headerElement &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;not found.&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="s1">&#39;ng_header_position-[a-z-]*&#39;</span><span class="p">);</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">validPositions</span><span class="p">[</span><span class="nx">pos</span><span class="p">]);</span>
+
+            <span class="nx">oldPos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
 </div>
 <p>Store the new position in a reference variable
 <strong>before</strong> adaptFrame2HeaderPosition is called</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">=</span> <span class="nx">pos</span><span class="p">;</span>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">=</span> <span class="nx">pos</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">adaptFrame2HeaderPosition</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">oldPos</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">};</span></pre></div>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="nx">adaptFrame2HeaderPosition</span><span class="p">(</span><span class="nx">oldPos</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">})();</span></pre></div>
         </td>
       </tr>
       <tr>
@@ -2249,7 +2559,7 @@ added later.</p>
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">header</span>
-      <span class="dox_type">Element</span>
+      <span class="dox_type">HTMLElement</span>
       <span>The new header</span>
     </div>
     <div class="dox_tag_detail">
@@ -2259,14 +2569,14 @@ added later.</p>
     </div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name">root</span>
-      <span class="dox_type">Element</span>
-      <span>The HTML element to which the header is appended</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The element to which the header is appended</span>
     </div>
     <div class="dox_tag_title">Returns</div>
     <div class="dox_tag_detail">
       <span class="dox_tag_name"></span>
-      <span class="dox_type">Element</span>
-      <span>The new header</span>
+      <span class="dox_type">HTMLElement</span>
+      <span>The header</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -2279,18 +2589,31 @@ added later.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">header</span><span class="p">,</span> <span class="nx">headerName</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">header</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span>
-                <span class="s1">&#39;GameWindow.setHeader: header must be HTMLElement.&#39;</span><span class="p">);</span>
+                <span class="s1">&#39;GameWindow.setHeader: header must be HTMLElement. Found: &#39;</span> <span class="o">+</span>
+                    <span class="nx">header</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">headerName</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: headerName must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: headerName must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">headerName</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isElement</span><span class="p">(</span><span class="nx">root</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: invalid root element.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.setHeader: root must be &#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;HTMLElement. Found: &#39;</span> <span class="o">+</span> <span class="nx">root</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span> <span class="o">=</span> <span class="nx">header</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">headerName</span> <span class="o">=</span> <span class="nx">headerName</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">headerRoot</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">headerRoot</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+</div>
+<p>Emit event.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">node</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">ng</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;HEADER_GENERATED&#39;</span><span class="p">,</span> <span class="nx">header</span><span class="p">);</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -2423,6 +2746,8 @@ added later.</p>
         <span class="k">this</span><span class="p">.</span><span class="nx">headerName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">headerRoot</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">headerOffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">adjustHeaderOffset</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -2491,11 +2816,11 @@ Deletion must be done manually.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initLibs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">globalLibs</span><span class="p">,</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">globalLibs</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">globalLibs</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: globalLibs must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;array or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;array or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">globalLibs</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">frameLibs</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: frameLibs must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;object or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;object or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">frameLibs</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">globalLibs</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">frameLibs</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.initLibs: frameLibs and frameLibs &#39;</span> <span class="o">+</span>
@@ -2547,8 +2872,8 @@ Deletion must be done manually.</p>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">;</span>
         <span class="nx">uri</span> <span class="o">=</span> <span class="nx">uri</span> <span class="o">||</span> <span class="s1">&#39;/pages/testpage.htm&#39;</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.precacheTest: uri must string or &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;undefined.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.precacheTest: uri must string &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;iframe&#39;</span><span class="p">);</span>
         <span class="nx">iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
@@ -2563,7 +2888,7 @@ Deletion must be done manually.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-87" id="section-87">&#182;</a>
+  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
 </div>
 <p>var iframe, docElem;</p>
         </td>
@@ -2574,7 +2899,7 @@ Deletion must be done manually.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-88" id="section-88">&#182;</a>
+  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
 </div>
 <p>This passes in IE8, but the rest of the caching doesn't.
 We want this test to fail in IE8.
@@ -2587,6 +2912,7 @@ docElem.innerHTML = 'a';</p>
             <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">W</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
+
             <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">cb</span><span class="p">)</span> <span class="nx">cb</span><span class="p">();</span>
         <span class="p">});</span>
@@ -2654,18 +2980,18 @@ being loaded.</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">J</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">uris</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.preCache: uris must be string &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or array.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or array. Found: &#39;</span> <span class="o">+</span> <span class="nx">uris</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.preCache: callback must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;function or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;function or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">callback</span><span class="p">);</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-90" id="section-90">&#182;</a>
+  <a class="pilcrow" href="#section-101" id="section-101">&#182;</a>
 </div>
 <p>Don't preload if an empty array is passed.</p>
         </td>
@@ -2680,7 +3006,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-91" id="section-91">&#182;</a>
+  <a class="pilcrow" href="#section-102" id="section-102">&#182;</a>
 </div>
 <p>Before proceeding with caching, check if caching is supported.</p>
         </td>
@@ -2701,7 +3027,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-92" id="section-92">&#182;</a>
+  <a class="pilcrow" href="#section-103" id="section-103">&#182;</a>
 </div>
 <p>Keep count of loaded URIs:</p>
         </td>
@@ -2714,7 +3040,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-93" id="section-93">&#182;</a>
+  <a class="pilcrow" href="#section-104" id="section-104">&#182;</a>
 </div>
 <p>Create an invisible internal frame for the current URI:</p>
         </td>
@@ -2731,7 +3057,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-94" id="section-94">&#182;</a>
+  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
 </div>
 <p>Register the onLoad handler:</p>
         </td>
@@ -2745,7 +3071,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-95" id="section-95">&#182;</a>
+  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
 </div>
 <p>Store the contents in the cache:</p>
         </td>
@@ -2758,7 +3084,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-96" id="section-96">&#182;</a>
+  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
 </div>
 <p>Remove the internal frame:</p>
         </td>
@@ -2768,7 +3094,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-97" id="section-97">&#182;</a>
+  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
 </div>
 <p>Increment loaded URIs counter:</p>
         </td>
@@ -2779,7 +3105,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-98" id="section-98">&#182;</a>
+  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
 </div>
 <p>All requested URIs have been loaded at this point.</p>
         </td>
@@ -2792,7 +3118,7 @@ being loaded.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-99" id="section-99">&#182;</a>
+  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
 </div>
 <p>Start loading the page:
 Method .replace does not add the uri to the history.</p>
@@ -2825,10 +3151,10 @@ Method .replace does not add the uri to the history.</p>
       <tr>
         <td class="docs"><div class="dox">
   <div class="summary">
-<div class="pilwrap" id="gamewindow.getelementbyid">
+<div class="pilwrap" id="gamewindow.getelementbyid---gid">
   <h3>
-    <a href="#gamewindow.getelementbyid" class="pilcrow">&#182;</a>
-    GameWindow.getElementById
+    <a href="#gamewindow.getelementbyid---gid" class="pilcrow">&#182;</a>
+    GameWindow.getElementById | gid
   </h3>
 </div>
 
@@ -2859,7 +3185,9 @@ Method .replace does not add the uri to the history.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getElementById</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getElementById</span> <span class="o">=</span>
+        <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">gid</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">frameDocument</span><span class="p">;</span>
 
         <span class="nx">frameDocument</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFrameDocument</span><span class="p">();</span>
@@ -3043,20 +3371,22 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
         <span class="kd">var</span> <span class="nx">that</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">loadCache</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">storeCacheNow</span><span class="p">,</span> <span class="nx">storeCacheLater</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">autoParse</span><span class="p">,</span> <span class="nx">autoParsePrefix</span><span class="p">,</span> <span class="nx">autoParseMod</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">iframeName</span><span class="p">,</span> <span class="nx">iframeDocument</span><span class="p">,</span> <span class="nx">iframeWindow</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">frameDocumentElement</span><span class="p">,</span> <span class="nx">frameReady</span><span class="p">;</span>
         <span class="kd">var</span> <span class="nx">lastURI</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uri</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: uri must be string.&#39;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: uri must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string. Found: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;function&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: func must be function &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">func</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts must be object &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;or undefined.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="nx">opts</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="p">{};</span>
 
@@ -3078,7 +3408,7 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-105" id="section-105">&#182;</a>
+  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
 </div>
 <p>Save ref to iframe window for later.</p>
         </td>
@@ -3088,7 +3418,7 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-106" id="section-106">&#182;</a>
+  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
 </div>
 <p>Query readiness (so we know whether onload is going to be called):</p>
         </td>
@@ -3099,7 +3429,7 @@ cause the <code>VisualTimer</code> widget to reload the timer.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-107" id="section-107">&#182;</a>
+  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
 </div>
 <p>...reduce it to a boolean:
 frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
@@ -3110,7 +3440,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-108" id="section-108">&#182;</a>
+  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
 </div>
 <p>Begin loadFrame caching section.</p>
         </td>
@@ -3120,7 +3450,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-109" id="section-109">&#182;</a>
+  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
 </div>
 <p>Default options.</p>
         </td>
@@ -3132,7 +3462,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-110" id="section-110">&#182;</a>
+  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
 </div>
 <p>Caching options.</p>
         </td>
@@ -3146,7 +3476,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: unkown cache &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;load mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">loadMode</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                                    <span class="s1">&#39;load mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">loadMode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">)</span> <span class="p">{</span>
@@ -3164,28 +3494,65 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: unkown cache &#39;</span> <span class="o">+</span>
-                                    <span class="s1">&#39;store mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span> <span class="o">+</span>
-                                    <span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                                    <span class="s1">&#39;store mode: &#39;</span> <span class="o">+</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">storeMode</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.autoParse &#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;must be object or undefined. Found: &#39;</span> <span class="o">+</span>
+                                    <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.&#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;autoParsePrefix must be string &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">autoParsePrefix</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParsePrefix</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.loadFrame: opts.&#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;autoParseMod must be string &#39;</span> <span class="o">+</span>
+                                        <span class="s1">&#39;or undefined. Found: &#39;</span> <span class="o">+</span>
+                                        <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">autoParseMod</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParseMod</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">autoParse</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">autoParse</span><span class="p">;</span>
         <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-111" id="section-111">&#182;</a>
+  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
 </div>
-<p>Adapt the uri if necessary.</p>
+<p>Store unprocessed uri parameter.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processUri</span><span class="p">(</span><span class="nx">uri</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">unprocessedUri</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">preCacheTest</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">that</span><span class="p">.</span><span class="nx">loadFrame</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span>
             <span class="p">});</span>
             <span class="k">return</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+</div>
+<p>Adapt the uri if necessary. Important! Must follow
+the assignment to unprocessedUri AND preCacheTest.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">uri</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processUri</span><span class="p">(</span><span class="nx">uri</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cacheSupported</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">storeCacheNow</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -3198,7 +3565,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-112" id="section-112">&#182;</a>
+  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
 </div>
 <p>If the last frame requested to be cached on closing, do that:</p>
         </td>
@@ -3215,7 +3582,7 @@ frameReady = frameReady === 'interactive'||frameReady === 'complete';</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-113" id="section-113">&#182;</a>
+  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
 </div>
 <p>Create entry for this URI in cache object
 and store cacheOnClose flag:</p>
@@ -3229,7 +3596,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-114" id="section-114">&#182;</a>
+  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
 </div>
 <p>Disable loadCache if contents aren't cached:</p>
         </td>
@@ -3240,7 +3607,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-115" id="section-115">&#182;</a>
+  <a class="pilcrow" href="#section-127" id="section-127">&#182;</a>
 </div>
 <p>End loadFrame caching section.</p>
         </td>
@@ -3250,7 +3617,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-116" id="section-116">&#182;</a>
+  <a class="pilcrow" href="#section-128" id="section-128">&#182;</a>
 </div>
 <p>Update frame's currently showing URI:</p>
         </td>
@@ -3260,7 +3627,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-117" id="section-117">&#182;</a>
+  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
 </div>
 <p>Keep track of nested call to loadFrame.</p>
         </td>
@@ -3270,7 +3637,7 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-118" id="section-118">&#182;</a>
+  <a class="pilcrow" href="#section-130" id="section-130">&#182;</a>
 </div>
 <p>Add the onLoad event listener:</p>
         </td>
@@ -3281,7 +3648,22 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-119" id="section-119">&#182;</a>
+  <a class="pilcrow" href="#section-131" id="section-131">&#182;</a>
+</div>
+<p>Check if direct access to the content of the frame is
+allowed. Usually IEs do not allow this. Notice, this
+is different from preCaching, and that a newly
+generated frame (about:blank) will always be accessible.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">testDirectFrameDocumentAccess</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+                <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-132" id="section-132">&#182;</a>
 </div>
 <p>Handles caching.</p>
         </td>
@@ -3292,12 +3674,15 @@ and store cacheOnClose flag:</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-120" id="section-120">&#182;</a>
+  <a class="pilcrow" href="#section-133" id="section-133">&#182;</a>
 </div>
-<p>Executes callback
+<p>Executes callback, autoParses,
 and updates GameWindow state.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span>
+                                                              <span class="nx">autoParse</span><span class="p">,</span>
+                                                              <span class="nx">autoParseMod</span><span class="p">,</span>
+                                                              <span class="nx">autoParsePrefix</span><span class="p">);</span>
                                 <span class="p">});</span>
             <span class="p">});</span>
         <span class="p">}</span></pre></div>
@@ -3306,7 +3691,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-121" id="section-121">&#182;</a>
+  <a class="pilcrow" href="#section-134" id="section-134">&#182;</a>
 </div>
 <p>Cache lookup:</p>
         </td>
@@ -3316,11 +3701,11 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-122" id="section-122">&#182;</a>
+  <a class="pilcrow" href="#section-135" id="section-135">&#182;</a>
 </div>
 <p>Load iframe contents at this point only if the iframe is already
 "ready" (see definition of frameReady), otherwise the contents
-would be cleared once the iframe becomes ready.  In that case,
+would be cleared once the iframe becomes ready. In that case,
 iframe.onload handles the filling of the contents.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">frameReady</span><span class="p">)</span> <span class="p">{</span></pre></div>
@@ -3329,7 +3714,7 @@ iframe.onload handles the filling of the contents.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-123" id="section-123">&#182;</a>
+  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
 </div>
 <p>Handles caching.</p>
         </td>
@@ -3340,12 +3725,15 @@ iframe.onload handles the filling of the contents.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-124" id="section-124">&#182;</a>
+  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
 </div>
 <p>Executes callback
 and updates GameWindow state.</p>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+        <td class="code highlight"><div class="highlight"><pre>                                    <span class="nx">that</span><span class="p">.</span><span class="nx">updateLoadFrameState</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span>
+                                                              <span class="nx">autoParse</span><span class="p">,</span>
+                                                              <span class="nx">autoParseMod</span><span class="p">,</span>
+                                                              <span class="nx">autoParsePrefix</span><span class="p">);</span>
                                 <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -3355,7 +3743,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-125" id="section-125">&#182;</a>
+  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
 </div>
 <p>Update the frame location:</p>
         </td>
@@ -3366,7 +3754,7 @@ and updates GameWindow state.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-126" id="section-126">&#182;</a>
+  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
 </div>
 <p>Adding a reference to nodeGame also in the iframe.</p>
         </td>
@@ -3393,6 +3781,12 @@ and updates GameWindow state.</p>
       <span class="dox_tag_name">uri</span>
       <span class="dox_type">string</span>
       <span>The uri to process</span>
+    </div>
+    <div class="dox_tag_title">Returns</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name"></span>
+      <span class="dox_type">string</span>
+      <span>uri The processed uri</span>
     </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
@@ -3431,8 +3825,9 @@ and updates GameWindow state.</p>
 <p>The method performs the following operations:</p>
 
 <ul>
-<li>executes a given callback function</li>
 <li>decrements the counter of loading iframes</li>
+<li>executes a given callback function</li>
+<li>auto parses the elements specified (if any)</li>
 <li>set the window state as loaded (eventually)</li>
 </ul>
   </div>
@@ -3443,6 +3838,27 @@ and updates GameWindow state.</p>
       <span class="dox_type">function</span>
       <span>Optional. A callback function</span>
     </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">autoParse</span>
+      <span class="dox_type">object</span>
+      <span>Optional. An object containing elements
+   to replace in the HTML DOM.</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">autoParseMod</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Modifier for search and replace</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">autoParsePrefix</span>
+      <span class="dox_type">string</span>
+      <span>Optional. Custom prefix to add to the
+   keys of the elements in autoParse object</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.searchReplace</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">updateAreLoading
@@ -3451,17 +3867,23 @@ and updates GameWindow state.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateLoadFrameState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateLoadFrameState</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">autoParse</span><span class="p">,</span>
+                                                         <span class="nx">autoParseMod</span><span class="p">,</span>
+                                                         <span class="nx">autoParsePrefix</span><span class="p">)</span> <span class="p">{</span>
+
         <span class="kd">var</span> <span class="nx">loaded</span><span class="p">,</span> <span class="nx">stageLevel</span><span class="p">;</span>
         <span class="nx">loaded</span> <span class="o">=</span> <span class="nx">updateAreLoading</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">setStateLevel</span><span class="p">(</span><span class="s1">&#39;LOADED&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span></pre></div>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">)</span> <span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">game</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">autoParse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">searchReplace</span><span class="p">(</span><span class="nx">autoParse</span><span class="p">,</span> <span class="nx">autoParseMod</span><span class="p">,</span> <span class="nx">autoParsePrefix</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-129" id="section-129">&#182;</a>
+  <a class="pilcrow" href="#section-142" id="section-142">&#182;</a>
 </div>
 <p>ng event emitter is not used.</p>
         </td>
@@ -3566,7 +3988,7 @@ and updates GameWindow state.</p>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setUriPrefix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">uriPrefix</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uriPrefix</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.setUriPrefix: uriPrefix must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string or null.&#39;</span><span class="p">);</span>
+                                <span class="s1">&#39;string or null. Found: &#39;</span> <span class="o">+</span> <span class="nx">uriPrefix</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uriPrefix</span> <span class="o">=</span> <span class="nx">uriPrefix</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
@@ -3584,8 +4006,18 @@ and updates GameWindow state.</p>
 
   </div>
   <div class="body"><p>Sets the variable uriChannel</p>
+
+<p>Trailing and preceding slashes are added if missing.</p>
   </div>
   <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">uriChannel</span>
+      <span class="dox_type">string</span>
+      <span class="dox_type">null</span>
+      <span>The current uri of the channel,
+  or NULL to delete it</span>
+    </div>
     <div class="dox_tag_title">See</div>
     <div class="dox_tag_detail">
       <span class="dox_type">GameWindow.uriChannel
@@ -3595,11 +4027,311 @@ and updates GameWindow state.</p>
 </div>
         </td>
         <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setUriChannel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;string&#39;</span> <span class="o">!==</span> <span class="k">typeof</span> <span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.uriChannel: uriChannel must be &#39;</span> <span class="o">+</span>
-                                <span class="s1">&#39;string or null.&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">uriChannel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="nx">uriChannel</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">uriChannel</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">uriChannel</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">uriChannel</span> <span class="o">=</span> <span class="nx">uriChannel</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">uriChannel</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s1">&#39;GameWindow.uriChannel: uriChannel must be &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;string or null. Found: &#39;</span> <span class="o">+</span> <span class="nx">uriChannel</span><span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">uriChannel</span> <span class="o">=</span> <span class="nx">uriChannel</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.adjustframeheight">
+  <h3>
+    <a href="#gamewindow.adjustframeheight" class="pilcrow">&#182;</a>
+    GameWindow.adjustFrameHeight
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Resets the min-height style of the iframe to fit its content properly</p>
+
+<p>Takes into the available height of the page, and the actual
+content of the iframe, which is stretched to either:</p>
+
+<ul>
+<li>(almost) till the end of the page,</li>
+<li>or to fit its content, if larger than page height (with scrollbar).</li>
+</ul>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">userMinHeight</span>
+      <span class="dox_type">number</span>
+      <span>Optional. If set minHeight cannot be
+  less than this value. Default: 0</span>
+    </div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">delay.</span>
+      <span class="dox_type">number</span>
+      <span>If set, a timeout is created before the
+  the frame is actually adjusted. Multiple calls will be
+  evaluated only once at the end of a new timeout. Default: undefined</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">W.willResizeFrame</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">W.adjustHeaderOffset
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">adjustFrameHeight</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">nextTimeout</span><span class="p">,</span> <span class="nx">adjustIt</span><span class="p">;</span>
+
+        <span class="nx">adjustIt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">userMinHeight</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">iframe</span><span class="p">,</span> <span class="nx">minHeight</span><span class="p">,</span> <span class="nx">contentHeight</span><span class="p">;</span>
+
+            <span class="nx">W</span><span class="p">.</span><span class="nx">adjustHeaderOffset</span><span class="p">();</span>
+
+            <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+</div>
+<p>Iframe might have been destroyed already, e.g. in a test.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span> <span class="o">||</span> <span class="o">!</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+</div>
+<p>Try to find out how tall the frame should be.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">minHeight</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">clientHeight</span><span class="p">;</span>
+
+            <span class="nx">contentHeight</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-150" id="section-150">&#182;</a>
+</div>
+<p>Rule of thumb.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">contentHeight</span> <span class="o">+=</span> <span class="mi">60</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">===</span> <span class="s2">&quot;top&quot;</span><span class="p">)</span> <span class="nx">contentHeight</span> <span class="o">+=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">headerOffset</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">minHeight</span> <span class="o">&lt;</span> <span class="nx">contentHeight</span><span class="p">)</span> <span class="nx">minHeight</span> <span class="o">=</span> <span class="nx">contentHeight</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">minHeight</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">userMinHeight</span> <span class="o">||</span> <span class="mi">0</span><span class="p">))</span> <span class="nx">minHeight</span> <span class="o">=</span> <span class="nx">userMinHeight</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-151" id="section-151">&#182;</a>
+</div>
+<p>Adjust min-height based on content.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;min-height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">minHeight</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">userMinHeight</span><span class="p">,</span> <span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;undefined&#39;</span> <span class="o">===</span> <span class="k">typeof</span> <span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">adjustIt</span><span class="p">(</span><span class="nx">userMinHeight</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">willResizeFrame</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">nextTimeout</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">willResizeFrame</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">W</span><span class="p">.</span><span class="nx">willResizeFrame</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-152" id="section-152">&#182;</a>
+</div>
+<p>If another timeout call was requested, do nothing now.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>                <span class="k">if</span> <span class="p">(</span><span class="nx">nextTimeout</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">nextTimeout</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="nx">W</span><span class="p">.</span><span class="nx">adjustFrameHeight</span><span class="p">(</span><span class="nx">userMinHeight</span><span class="p">,</span> <span class="nx">delay</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">adjustIt</span><span class="p">(</span><span class="nx">userMinHeight</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="nx">delay</span><span class="p">);</span>
+        <span class="p">};</span>
+
+    <span class="p">})();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="gamewindow.adjustheaderoffset">
+  <h3>
+    <a href="#gamewindow.adjustheaderoffset" class="pilcrow">&#182;</a>
+    GameWindow.adjustHeaderOffset
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Slides frame and/or infoPanel so that the header does not overlap</p>
+
+<p>Adjusts the CSS padding of the elements depending of the header
+position, but only if the size of of the header has changed from
+last time.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">force</span>
+      <span class="dox_type">boolean</span>
+      <span>Optional. If TRUE, padding is adjusted
+  regardless of whether the size of the header has changed
+  from last time</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">W.headerOffset
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="nx">GameWindow</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">adjustHeaderOffset</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">position</span><span class="p">,</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">header</span><span class="p">,</span> <span class="nx">infoPanel</span><span class="p">,</span> <span class="nx">offset</span><span class="p">,</span> <span class="nx">offsetPx</span><span class="p">;</span>
+
+        <span class="nx">header</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getHeader</span><span class="p">();</span>
+        <span class="nx">position</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">headerPosition</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+</div>
+<p>Do not apply padding if nothing has changed.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span>
+            <span class="p">(</span><span class="o">!</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="nx">W</span><span class="p">.</span><span class="nx">headerOffset</span> <span class="o">||</span>
+             <span class="p">(</span><span class="nx">position</span> <span class="o">===</span> <span class="s2">&quot;top&quot;</span> <span class="o">&amp;&amp;</span>
+              <span class="nx">header</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">===</span> <span class="nx">W</span><span class="p">.</span><span class="nx">headerOffset</span><span class="p">)))</span> <span class="p">{</span>
+
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">frame</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
+        <span class="nx">infoPanel</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">infoPanel</span><span class="p">;</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
+</div>
+<p>No frame nor infoPanel, nothing to do.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">frame</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">infoPanel</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="k">switch</span><span class="p">(</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;top&#39;</span><span class="o">:</span>
+            <span class="nx">offset</span> <span class="o">=</span> <span class="nx">header</span> <span class="o">?</span> <span class="nx">header</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">offsetPx</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">isVisible</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+                <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;bottom&#39;</span><span class="o">:</span>
+            <span class="nx">offset</span> <span class="o">=</span> <span class="nx">header</span> <span class="o">?</span> <span class="nx">header</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">offsetPx</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+            <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-bottom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;right&#39;</span><span class="o">:</span>
+            <span class="nx">offset</span> <span class="o">=</span> <span class="nx">header</span> <span class="o">?</span> <span class="nx">header</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">offsetPx</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">isVisible</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s1">&#39;left&#39;</span><span class="o">:</span>
+            <span class="nx">offset</span> <span class="o">=</span> <span class="nx">header</span> <span class="o">?</span> <span class="nx">header</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="nx">offsetPx</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">isVisible</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="s1">&#39;padding-left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">offsetPx</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
+</div>
+<p>When header is destroyed, for example.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">position</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.adjustHeaderOffset: invalid &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;header position. Found: &#39;</span> <span class="o">+</span> <span class="nx">position</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">header</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;GameWindow.adjustHeaderOffset: something &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;is wrong. Header found, but position is &#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;null.&#39;</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
+</div>
+<p>Remove all padding.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">padding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">infoPanel</span> <span class="o">&amp;&amp;</span> <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">infoPanel</span><span class="p">.</span><span class="nx">infoPanelDiv</span><span class="p">.</span><span class="nx">padding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+</div>
+<p>Store the value of current offset.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>        <span class="nx">W</span><span class="p">.</span><span class="nx">headerOffset</span> <span class="o">=</span> <span class="nx">offset</span><span class="p">;</span>
     <span class="p">};</span></pre></div>
         </td>
       </tr>
@@ -3696,7 +4428,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-136" id="section-136">&#182;</a>
+  <a class="pilcrow" href="#section-161" id="section-161">&#182;</a>
 </div>
 <p>Needed for IE8.</p>
         </td>
@@ -3709,7 +4441,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-137" id="section-137">&#182;</a>
+  <a class="pilcrow" href="#section-162" id="section-162">&#182;</a>
 </div>
 <p>Load frame from cache:</p>
         </td>
@@ -3720,7 +4452,7 @@ iframe name is equal to <em>frameName</em>.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-138" id="section-138">&#182;</a>
+  <a class="pilcrow" href="#section-163" id="section-163">&#182;</a>
 </div>
 <p>Update references to frameWindow and frameDocument
 if this was the frame of the game.</p>
@@ -3733,12 +4465,24 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-139" id="section-139">&#182;</a>
+  <a class="pilcrow" href="#section-164" id="section-164">&#182;</a>
 </div>
 <p>Disable right click in loaded iframe document, if necessary.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">rightClickDisabled</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">J</span><span class="p">.</span><span class="nx">disableRightClick</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">);</span>
+            <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-165" id="section-165">&#182;</a>
+</div>
+<p>Track onkeydown Escape.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">conf</span><span class="p">.</span><span class="nx">noEscape</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">.</span><span class="nx">onkeydown</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">onkeydown</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span></pre></div>
         </td>
@@ -3746,7 +4490,7 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-140" id="section-140">&#182;</a>
+  <a class="pilcrow" href="#section-166" id="section-166">&#182;</a>
 </div>
 <p>(Re-)Inject libraries and reload scripts:</p>
         </td>
@@ -3761,21 +4505,29 @@ if this was the frame of the game.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-141" id="section-141">&#182;</a>
+  <a class="pilcrow" href="#section-167" id="section-167">&#182;</a>
 </div>
 <p>Store frame in cache:</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>                <span class="nx">that</span><span class="p">.</span><span class="nx">cache</span><span class="p">[</span><span class="nx">uri</span><span class="p">].</span><span class="nx">contents</span> <span class="o">=</span> <span class="nx">iframeDocumentElement</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="nx">func</span><span class="p">();</span>
+            <span class="nx">func</span><span class="p">();</span></pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-168" id="section-168">&#182;</a>
+</div>
+<p>Important. We need a timeout (120), because some changes might
+take time to be reflected in the DOM.</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>            <span class="nx">W</span><span class="p">.</span><span class="nx">adjustFrameHeight</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">);</span>
         <span class="p">};</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">loadCache</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">reloadScripts</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">afterScripts</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">afterScripts</span><span class="p">();</span>
-        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">loadCache</span><span class="p">)</span> <span class="nx">reloadScripts</span><span class="p">(</span><span class="nx">iframe</span><span class="p">,</span> <span class="nx">afterScripts</span><span class="p">);</span>
+        <span class="k">else</span> <span class="nx">afterScripts</span><span class="p">();</span>
     <span class="p">}</span></pre></div>
         </td>
       </tr>
@@ -3826,7 +4578,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-143" id="section-143">&#182;</a>
+  <a class="pilcrow" href="#section-170" id="section-170">&#182;</a>
 </div>
 <p>Old IEs do not have getElementsByClassName.</p>
         </td>
@@ -3837,7 +4589,7 @@ that were inserted by injectLibraries.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-144" id="section-144">&#182;</a>
+  <a class="pilcrow" href="#section-171" id="section-171">&#182;</a>
 </div>
 <p>It was. To check.
 scriptNodes = contentDocument.getElementsByClassName('injectedlib');</p>
@@ -3900,7 +4652,7 @@ scripts. The placement of the tags can change, but the order is kept.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-146" id="section-146">&#182;</a>
+  <a class="pilcrow" href="#section-173" id="section-173">&#182;</a>
 </div>
 <p>Start counting loading tags at 1 instead of 0 and decrement the
 count after the loop.
@@ -3916,7 +4668,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-147" id="section-147">&#182;</a>
+  <a class="pilcrow" href="#section-174" id="section-174">&#182;</a>
 </div>
 <p>Remove tag:</p>
         </td>
@@ -3927,7 +4679,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-148" id="section-148">&#182;</a>
+  <a class="pilcrow" href="#section-175" id="section-175">&#182;</a>
 </div>
 <p>Reinsert tag for reloading:</p>
         </td>
@@ -3945,7 +4697,7 @@ This way the callback cannot be called before the loop finishes.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-149" id="section-149">&#182;</a>
+  <a class="pilcrow" href="#section-176" id="section-176">&#182;</a>
 </div>
 <p>scriptNode.async = true;</p>
         </td>
@@ -4081,11 +4833,6 @@ iframe object, one for every given library.</p>
   <div class="details">
     <div class="dox_tag_title">Params</div>
     <div class="dox_tag_detail">
-      <span class="dox_tag_name">W</span>
-      <span class="dox_type">GameWindow</span>
-      <span>The current GameWindow object</span>
-    </div>
-    <div class="dox_tag_detail">
       <span class="dox_tag_name">oldHeaderPos</span>
       <span class="dox_type">string</span>
       <span>Optional. The previous position of the
@@ -4099,20 +4846,22 @@ iframe object, one for every given library.</p>
   </div>
 </div>
         </td>
-        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">adaptFrame2HeaderPosition</span><span class="p">(</span><span class="nx">W</span><span class="p">,</span> <span class="nx">oldHeaderPos</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">position</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;adaptFrame2HeaderPosition: frame not found.&#39;</span><span class="p">);</span>
-        <span class="p">}</span></pre></div>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">adaptFrame2HeaderPosition</span><span class="p">(</span><span class="nx">oldHeaderPos</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">position</span><span class="p">,</span> <span class="nx">frame</span><span class="p">,</span> <span class="nx">header</span><span class="p">;</span>
+
+        <span class="nx">frame</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrame</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">frame</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+        <span class="nx">header</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getHeader</span><span class="p">();</span></pre></div>
         </td>
       </tr>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-153" id="section-153">&#182;</a>
+  <a class="pilcrow" href="#section-180" id="section-180">&#182;</a>
 </div>
-<p>If no header is found, simulate the 'top' position to better
-fit the whole screen.</p>
+<p>If no header is found, simulate the 'top' position
+to better fit the whole screen.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="nx">position</span> <span class="o">=</span> <span class="nx">W</span><span class="p">.</span><span class="nx">headerPosition</span> <span class="o">||</span> <span class="s1">&#39;top&#39;</span><span class="p">;</span></pre></div>
         </td>
@@ -4120,52 +4869,31 @@ fit the whole screen.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-154" id="section-154">&#182;</a>
+  <a class="pilcrow" href="#section-181" id="section-181">&#182;</a>
 </div>
-<p>When we move from bottom to any other configuration, we need
-to move the header before the frame.</p>
+<p>When we move from bottom to any other configuration,
+we need to move the header before the frame.</p>
         </td>
         <td class="code highlight"><div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">oldHeaderPos</span> <span class="o">===</span> <span class="s1">&#39;bottom&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">position</span> <span class="o">!==</span> <span class="s1">&#39;bottom&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">);</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">frame</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-[a-z-]*&#39;</span><span class="p">);</span>
+        <span class="nx">W</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-[a-z-]*&#39;</span><span class="p">);</span>
         <span class="k">switch</span><span class="p">(</span><span class="nx">position</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="s1">&#39;right&#39;</span><span class="o">:</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-vertical-r&#39;</span><span class="p">);</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-vertical-r&#39;</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="s1">&#39;left&#39;</span><span class="o">:</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-vertical-l&#39;</span><span class="p">);</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-vertical-l&#39;</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="s1">&#39;top&#39;</span><span class="o">:</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-horizontal&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-155" id="section-155">&#182;</a>
-</div>
-<p>There might be no header yet.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span> <span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">);</span>
-            <span class="p">}</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-horizontal-t&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">header</span><span class="p">)</span> <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">header</span><span class="p">,</span> <span class="nx">frame</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="s1">&#39;bottom&#39;</span><span class="o">:</span>
-            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-horizontal&#39;</span><span class="p">);</span></pre></div>
-        </td>
-      </tr>
-      <tr>
-        <td class="docs">
-<div class="pilwrap">
-  <a class="pilcrow" href="#section-156" id="section-156">&#182;</a>
-</div>
-<p>There might be no header yet.</p>
-        </td>
-        <td class="code highlight"><div class="highlight"><pre>            <span class="k">if</span> <span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">W</span><span class="p">.</span><span class="nx">headerElement</span><span class="p">,</span>
-                                              <span class="nx">W</span><span class="p">.</span><span class="nx">frameElement</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">);</span>
+            <span class="nx">W</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">frame</span><span class="p">,</span> <span class="s1">&#39;ng_mainframe-header-horizontal-b&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">header</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">W</span><span class="p">.</span><span class="nx">getFrameRoot</span><span class="p">().</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">header</span><span class="p">,</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="p">}</span>
@@ -4173,9 +4901,53 @@ to move the header before the frame.</p>
         </td>
       </tr>
       <tr>
+        <td class="docs"><div class="dox">
+  <div class="summary">
+<div class="pilwrap" id="testdirectframedocumentaccess">
+  <h3>
+    <a href="#testdirectframedocumentaccess" class="pilcrow">&#182;</a>
+    testDirectFrameDocumentAccess
+  </h3>
+</div>
+
+  </div>
+  <div class="body"><p>Tests whether the content of the frameDocument can be accessed directly</p>
+
+<p>The value of the test is stored under <code>directFrameDocumentAccess</code>.</p>
+
+<p>Some IEs give 'Permission denied' when accessing the frame document
+directly. In such a case, we need to re-get it from the DOM.</p>
+  </div>
+  <div class="details">
+    <div class="dox_tag_title">Params</div>
+    <div class="dox_tag_detail">
+      <span class="dox_tag_name">that</span>
+      <span class="dox_type">GameWindow</span>
+      <span>This instance</span>
+    </div>
+    <div class="dox_tag_title">See</div>
+    <div class="dox_tag_detail">
+      <span class="dox_type">GameWindow.directFrameDocumentAccess
+  </span>
+    </div>
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">testDirectFrameDocumentAccess</span><span class="p">(</span><span class="nx">that</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">frameDocument</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">directFrameDocumentAccess</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span></pre></div>
+        </td>
+      </tr>
+      <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-157" id="section-157">&#182;</a>
+  <a class="pilcrow" href="#section-183" id="section-183">&#182;</a>
 </div>
 <p>Expose GameWindow prototype to the global object.</p>
         </td>
@@ -4187,7 +4959,7 @@ to move the header before the frame.</p>
       <tr>
         <td class="docs">
 <div class="pilwrap">
-  <a class="pilcrow" href="#section-158" id="section-158">&#182;</a>
+  <a class="pilcrow" href="#section-184" id="section-184">&#182;</a>
 </div>
 <p>GameWindow works only in the browser environment. The reference
 to the node.js module object is for testing purpose only</p>

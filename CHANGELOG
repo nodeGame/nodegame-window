@@ -1,5 +1,50 @@
 # nodegame-window change log
 
+## 4.0.0
+- Removed W.getScreenInfo(). Just use window.screen!
+- `#W.getEventButton()` and `#W.addEventButton()` changed input parameters (following changes W.get).
+- InfoPanel.
+
+## 3.5.2
+- Fixed bug overwriting `#W.unprocessedUri`.
+
+## 3.5.1
+- `#W.unprocessedUri keeps reference of the last uri parameter passed to `#W.loadFrame()`.
+
+## 3.5.0
+- `#W.addLoadingDots()` returns an object containing the stop method and the span.
+
+## 3.0.1
+- Fixed `#W.generateHeader()`.
+
+## 3.0.0
+- 02/10/2016 NodeGame Version Upgrade.
+
+## 2.1.0
+- Table class checks for null values as input.
+
+## 2.0.1
+- Minor cleanup.
+
+## 2.0.0
+
+- 'HEADER_GENERATED' and 'FRAME_GENERATED' events emitted on `ng` event emitter.
+
+## 1.2.0
+- `GameWindow.setInnerHTML(search, replace, mod) (break v.1.1.0).
+- `GameWindow.searchReplace(elements, mod, prefix) (compatible with setInnerHTML v.1.1.0)
+
+## 1.1.1
+- Disable back button method is imported from JSUS.
+
+## 1.1.0
+
+- Fixed bug with Explorer and accessing iframe content
+- `#disableBackButton()` method added to disable the back button.
+- `#setInnerHTML()` method to set the .innerHTML property of a list of HTML elements identified by id or classname.
+- Updated Table class (easier to handle TR).
+
+
 ## 1.0.1
  - GameWindow.getElementsByClassName changed syntax. By default looks up in iframe now.
 
