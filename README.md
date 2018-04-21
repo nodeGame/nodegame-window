@@ -8,8 +8,7 @@ Can do things like: create header, info panel, main frame, disable right click, 
 
 ## Resources
 
-- See [documentation](https://github.com/nodeGame/nodegame/wiki).
-- Browse [inline doc](http://nodegame.github.io/nodegame-window/).
+- [nodeGame Documentation](https://github.com/nodeGame/nodegame/wiki).
 
 
 ## License
