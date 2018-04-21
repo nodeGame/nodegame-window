@@ -6,7 +6,7 @@
   "author": "Stefano Balietti <futur.dorko@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "JSUS": ">= 0.17.0",
+    "JSUS": ">= 1.0.0",
     "NDDB": ">= 1.2.1",
     "commander": ">= 2.8.1",
     "smoosh": "0.4.0"
