@@ -9,7 +9,7 @@ Can do things like: create header, info panel, main frame, disable right click, 
 ## Resources
 
 - See [documentation](https://github.com/nodeGame/nodegame/wiki).
-- Browse [source code](http://nodegame.github.io/nodegame-window/docs/index.js.html).
+- Browse [inline doc](http://nodegame.github.io/nodegame-window/).
 
 
 ## License
