@@ -1,1 +1,0 @@
-var tree={"files":["index.js"],"dirs":{"lib":{"files":["Canvas.js","GameWindow.js","HTMLRenderer.js","List.js","Table.js","WaitScreen.js","InfoPanel.js"],"dirs":{"modules":{"files":["extra.js","lockScreen.js","selector.js","setup.js","ui-behavior.js"]}}},"listeners":{"files":["listeners.js"]}}};
