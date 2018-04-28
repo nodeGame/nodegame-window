@@ -28,7 +28,7 @@ describe('Caching:', function() {
 
         for (i = 0; i < cachedURIs.length; ++i) {
             expect(W.cache).to.have.property(cachedURIs[i])
-                .with.property('contents').String;
+                .with.property('contents').string;
         }
     });
 
