@@ -32,7 +32,8 @@ install:
   - cd node_modules/nodegame/games/testergame/public
   - ln -s ../../../../../test test
   - ls -la test/
-  - ln -s ../../../../../node_modules node_modules 
+  - ln -s ../../../../../node_modules node_modules
+  - ls -la node_modules
   - cd ../../../../../
 # Add servernode conf file (to increase verbosity)
   - ln -sf test/servernode.conf.js node_modules/nodegame/conf/servernode.js
