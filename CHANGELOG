@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 5.0.0
+- HTMLRendered updated to display functions
+
 ## 4.0.0
 - Removed W.getScreenInfo(). Just use window.screen!
 - `#W.getEventButton()` and `#W.addEventButton()` changed input parameters (following changes W.get).
