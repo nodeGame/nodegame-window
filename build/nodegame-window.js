@@ -2147,8 +2147,8 @@
 
             func();
 
-            // Important. We need a timeout (120), because some changes might
-            // take time to be reflected in the DOM.
+            // Important. We need a timeout (2nd param), because some changes
+            // might take time to be reflected in the DOM.
             W.adjustFrameHeight(0, 120);
         };
 
@@ -4771,7 +4771,7 @@
                 spanType = W.add('span', div);
                 spanType.innerHTML = typeof el.content;
                 spanType.className = 'ng_clickable bold';
-                
+
                 spanContent = W.add('span', div);
                 spanContent.style.display = 'none';
                 spanContent.className = 'ng_clickable';
@@ -4780,8 +4780,10 @@
                     for (key in el.content) {
                         if (el.content.hasOwnProperty(key)) {
                             str = key + ':\t' + el.content[key];
-                            spanContent.appendChild(document.createTextNode(str));
-                            spanContent.appendChild(document.createElement('br'));
+                            spanContent.appendChild(
+                                    document.createTextNode(str));
+                            spanContent.appendChild(
+                                    document.createElement('br'));
                         }
                     }
                 }
@@ -4797,7 +4799,7 @@
                     spanContent.style.display = 'none';
                     spanType.style.display = '';
                 };
-                
+
                 return div;
             }
         });
