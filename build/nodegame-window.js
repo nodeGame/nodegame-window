@@ -3950,7 +3950,7 @@
 
 /**
  * # extra
- * Copyright(c) 2017 Stefano Balietti
+ * Copyright(c) 2019 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -4009,7 +4009,7 @@
 
         if (!root) {
             throw new
-                Error('GameWindow.write: could not determine where to write.');
+                Error('GameWindow.write: could not determine where to write');
         }
         return DOM.write(root, text);
     };
@@ -4035,7 +4035,7 @@
 
         if (!root) {
             throw new Error('GameWindow.writeln: ' +
-                            'could not determine where to write.');
+                            'could not determine where to write');
         }
         return DOM.writeln(root, text, br);
     };
@@ -4095,18 +4095,18 @@
         var container;
         if (!document.getElementsByTagName) {
             node.err(
-                'GameWindow.toggleInputs: getElementsByTagName not found.');
+                'GameWindow.toggleInputs: getElementsByTagName not found');
             return false;
         }
         if (id && 'string' === typeof id) {
             throw new Error('GameWindow.toggleInputs: id must be string or ' +
-                            'undefined.');
+                            'undefined. Found: ' + id);
         }
         if (id) {
             container = this.getElementById(id);
             if (!container) {
                 throw new Error('GameWindow.toggleInputs: no elements found ' +
-                                'with id ' + id + '.');
+                                'with id ' + id);
             }
             toggleInputs(disabled, container);
         }
@@ -4407,7 +4407,8 @@
      *
      * Gets and hides an HTML element
      *
-     * Sets the style of the display to 'none'
+     * Sets the style of the display to 'none' and adjust the frame
+     * height as necessary.
      *
      * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
      *
@@ -4418,7 +4419,10 @@
     GameWindow.prototype.hide = function(idOrObj) {
         var el;
         el = getElement(idOrObj, 'GameWindow.hide');
-        if (el) el.style.display = 'none';
+        if (el) {
+            el.style.display = 'none';
+            W.adjustFrameHeight(0, 0);
+        }
         return el;
     };
 
@@ -4427,7 +4431,8 @@
      *
      * Gets and shows (makes visible) an HTML element
      *
-     * Sets the style of the display to ''.
+     * Sets the style of the display to '' and adjust the frame height
+     * as necessary.
      *
      * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
      * @param {string} display Optional. The value of the display attribute.
@@ -4442,10 +4447,13 @@
         display = display || '';
         if ('string' !== typeof display) {
             throw new TypeError('GameWindow.show: display must be ' +
-                                'string or undefined');
+                                'string or undefined. Found: ' + display);
         }
         el = getElement(idOrObj, 'GameWindow.show');
-        if (el) el.style.display = display;
+        if (el) {
+            el.style.display = display;
+            W.adjustFrameHeight(0, 0);
+        }
         return el;
     };
 
@@ -4454,7 +4462,8 @@
      *
      * Gets and toggles the visibility of an HTML element
      *
-     * Sets the style of the display to ''.
+     * Sets the style of the display to '' or 'none'  and adjust 
+     * the frame height as necessary.
      *
      * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
      * @param {string} display Optional. The value of the display attribute
@@ -4466,19 +4475,16 @@
      */
     GameWindow.prototype.toggle = function(idOrObj, display) {
         var el;
+        display = display || '';
+        if ('string' !== typeof display) {
+            throw new TypeError('GameWindow.toggle: display must ' +
+                                'be string or undefined. Found: ' + display);
+        }
         el = getElement(idOrObj, 'GameWindow.toggle');
         if (el) {
-            if (el.style.display === 'none') {
-                display = display || '';
-                if ('string' !== typeof display) {
-                    throw new TypeError('GameWindow.toggle: display must ' +
-                                        'be string or undefined');
-                }
-                el.style.display = display;
-            }
-            else {
-                el.style.display = 'none';
-            }
+            if (el.style.display === 'none') el.style.display = display;
+            else el.style.display = 'none';
+            W.adjustFrameHeight(0, 0);
         }
         return el;
     };
