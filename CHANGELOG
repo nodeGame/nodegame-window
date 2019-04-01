@@ -1,5 +1,9 @@
 # nodegame-window change log
 
+## 5.1.0
+- W.show, W.hide, W.toggle call W.adjustFrameHeight.
+- Widgets garbage collection is called after destroying page, frame, or header.
+
 ## 5.0.0
 - HTMLRendered updated to display functions
 
