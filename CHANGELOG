@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## current
+- `W.cssRule` adds a quick css rule to the page (a style tag is added, and referenced at W.styleElement).
+
 ## 5.1.0
 - W.show, W.hide, W.toggle call W.adjustFrameHeight.
 - Widgets garbage collection is called after destroying page, frame, or header.
