@@ -408,6 +408,15 @@
         this.screenState = node.constants.screenLevels.ACTIVE;
 
         /**
+         * ### GameWindow.styleElement
+         *
+         * A style element for on-the-fly styling
+         *
+         * @see GameWindow.cssRule
+         */
+        this.styleElement = null;
+ 
+        /**
          * ### GameWindow.isIE
          *
          * Boolean flag saying whether we are in IE or not
@@ -1576,11 +1585,11 @@
         iframeName = this.frameName;
 
         if (!iframe) {
-            throw new Error('GameWindow.loadFrame: no frame found.');
+            throw new Error('GameWindow.loadFrame: no frame found');
         }
 
         if (!iframeName) {
-            throw new Error('GameWindow.loadFrame: frame has no name.');
+            throw new Error('GameWindow.loadFrame: frame has no name');
         }
 
         this.setStateLevel('LOADING');
@@ -2135,6 +2144,9 @@
             }
         }
 
+        // Remove on-the-fly style element reference.
+        that.styleElement = null;
+        
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         afterScripts = function() {
@@ -3989,6 +4001,39 @@
     };
 
     /**
+     * ### GameWindow.getScreen
+     *
+     * Add a css rule to the page
+     *
+     * @param {string} rule The css rule
+     * @param {boolean} clear Optional. TRUE to clear all previous rules
+     *   added with this method to the page
+     * 
+     * @return {Element} The HTML style element where the rules were added
+     *
+     * @see handleFrameLoad
+     */
+    GameWindow.prototype.cssRule = function(rule, clear) {
+        var root;        
+        if ('string' !== typeof rule) {
+            throw new TypeError('Game.execStep: style property must be ' +
+                                'string. Found: ' + rule);
+        }       
+        if (!this.styleElement) {
+            root = W.getFrameDocument() || window.document;
+            this.styleElement = W.append('style', root.head, {
+                type: 'text/css',
+                id: 'ng_style'
+            });
+        }
+        else if (clear) {
+            this.styleElement.innerHTML = '';
+        }
+        this.styleElement.innerHTML += rule;
+        return this.styleElement;
+    };
+
+    /**
      * ### GameWindow.write
      *
      * Appends content inside a root element
@@ -4462,7 +4507,7 @@
      *
      * Gets and toggles the visibility of an HTML element
      *
-     * Sets the style of the display to '' or 'none'  and adjust 
+     * Sets the style of the display to '' or 'none'  and adjust
      * the frame height as necessary.
      *
      * @param {string|HTMLElement} idOrObj The id of or the HTML element itself
