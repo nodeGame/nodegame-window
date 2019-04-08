@@ -415,7 +415,7 @@
          * @see GameWindow.cssRule
          */
         this.styleElement = null;
- 
+
         /**
          * ### GameWindow.isIE
          *
@@ -2146,7 +2146,7 @@
 
         // Remove on-the-fly style element reference.
         that.styleElement = null;
-        
+
         // (Re-)Inject libraries and reload scripts:
         removeLibraries(iframe);
         afterScripts = function() {
@@ -4001,24 +4001,24 @@
     };
 
     /**
-     * ### GameWindow.getScreen
+     * ### GameWindow.cssRule
      *
      * Add a css rule to the page
      *
      * @param {string} rule The css rule
      * @param {boolean} clear Optional. TRUE to clear all previous rules
      *   added with this method to the page
-     * 
+     *
      * @return {Element} The HTML style element where the rules were added
      *
      * @see handleFrameLoad
      */
     GameWindow.prototype.cssRule = function(rule, clear) {
-        var root;        
+        var root;
         if ('string' !== typeof rule) {
             throw new TypeError('Game.execStep: style property must be ' +
                                 'string. Found: ' + rule);
-        }       
+        }
         if (!this.styleElement) {
             root = W.getFrameDocument() || window.document;
             this.styleElement = W.append('style', root.head, {
