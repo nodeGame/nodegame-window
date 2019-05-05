@@ -1,5 +1,9 @@
 # nodegame-window change log
 
+## 5.2.1
+- Fixed bug in W.adjustFrameHeight occurring when server is slow to send the
+page.
+
 ## 5.2.0
 - `W.cssRule` adds a quick css rule to the page (a style tag is added, and referenced at W.styleElement).
 
