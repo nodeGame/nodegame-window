@@ -1941,7 +1941,7 @@
      */
     GameWindow.prototype.adjustFrameHeight = (function() {
         var nextTimeout, adjustIt;
-        
+
         adjustIt = function(userMinHeight) {
             var iframe, minHeight, contentHeight;
 
@@ -5483,6 +5483,7 @@
         TD.appendChild(content);
         if (cell.className) TD.className = cell.className;
         if (cell.id) TD.id = cell.id;
+        if (cell.colspan) TD.setAttribute('colSpan', cell.colspan);
         cell.HTMLElement = TD;
         return TD;
     };
@@ -5947,7 +5948,7 @@
         }
 
         db.each(function(el) {
-            W.addClass(el, className);
+            W.addClass(el, className, true);
             if (el.HTMLElement) el.HTMLElement.className = el.className;
         });
 
@@ -6146,6 +6147,13 @@
          * Reference to the TD/TH element, if built already
          */
         this.HTMLElement = cell.HTMLElement || null;
+
+        /**
+         * ### Cell.colspan
+         *
+         * The colspan property, only if truthy
+         */
+        if (cell.colspan) this.colspan = cell.colspan;
     }
 
 })(
