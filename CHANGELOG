@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 5.3.0
+- Table accepts cells with a colpan attribute.
+
 ## 5.2.1
 - Fixed bug in W.adjustFrameHeight occurring when server is slow to send the
 page.
