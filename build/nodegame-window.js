@@ -478,7 +478,7 @@
     GameWindow.prototype.init = function(options) {
         var stageLevels;
         var stageLevel;
-
+       
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -1955,20 +1955,29 @@
                 W.adjustFrameHeight(userMinHeight, 120);
                 return;
             }
-            // Try to find out how tall the frame should be.
-            minHeight = window.innerHeight || window.clientHeight;
 
-            contentHeight = iframe.contentWindow.document.body.offsetHeight;
-            // Rule of thumb.
-            contentHeight += 60;
+            
+            if (W.conf.adjustFrameHeight === false) {
+                minHeight = '100vh';
+            }
+            else {
+                
+                // Try to find out how tall the frame should be.
+                minHeight = window.innerHeight || window.clientHeight;
 
-            if (W.headerPosition === "top") contentHeight += W.headerOffset;
+                contentHeight = iframe.contentWindow.document.body.offsetHeight;
+                // Rule of thumb.
+                contentHeight += 60;
 
-            if (minHeight < contentHeight) minHeight = contentHeight;
-            if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+                if (W.headerPosition === "top") contentHeight += W.headerOffset;
+
+                if (minHeight < contentHeight) minHeight = contentHeight;
+                if (minHeight < (userMinHeight || 0)) minHeight = userMinHeight;
+                minHeight += 'px';
+            }
 
             // Adjust min-height based on content.
-            iframe.style['min-height'] = minHeight + 'px';
+            iframe.style['min-height'] = minHeight;
         };
 
         return function(userMinHeight, delay) {
