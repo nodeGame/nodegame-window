@@ -478,7 +478,7 @@
     GameWindow.prototype.init = function(options) {
         var stageLevels;
         var stageLevel;
-       
+
         this.setStateLevel('INITIALIZING');
         options = options || {};
         this.conf = J.merge(this.conf, options);
@@ -1956,12 +1956,12 @@
                 return;
             }
 
-            
+
             if (W.conf.adjustFrameHeight === false) {
                 minHeight = '100vh';
             }
             else {
-                
+
                 // Try to find out how tall the frame should be.
                 minHeight = window.innerHeight || window.clientHeight;
 

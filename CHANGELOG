@@ -1,5 +1,9 @@
 # nodegame-window change log
 
+## 5.4.0
+- Auto adjusting of frame height can be disabled setting the conf option
+adjustFrameHeight to false. In this case, it is set to '100vh' (full screen).
+
 ## 5.3.0
 - Table accepts cells with a colpan attribute.
 
