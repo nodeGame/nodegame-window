@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 6.0.0
+- Auto-scroll up when loading a new frame.
+
 ## 5.4.0
 - Auto adjusting of frame height can be disabled setting the conf option
 adjustFrameHeight to false. In this case, it is set to '100vh' (full screen).
