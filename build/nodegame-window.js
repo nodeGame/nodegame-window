@@ -871,8 +871,8 @@
      *
      * @emit INFOPANEL_GENERATED
      */
-    GameWindow.prototype.generateInfoPanel = function(root, options, force) {
-        var infoPanelDiv;
+    GameWindow.prototype.generateInfoPanel = function(options, force) {
+        var infoPanelDiv, root;
 
         if (this.infoPanel) {
             if (!force) {
@@ -1562,6 +1562,7 @@
         var that;
         var loadCache;
         var storeCacheNow, storeCacheLater;
+        var scrollUp;
         var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
@@ -1645,6 +1646,8 @@
             }
         }
 
+        // Parsing options.
+
         if ('undefined' !== typeof opts.autoParse) {
             if ('object' !== typeof opts.autoParse) {
                 throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
@@ -1671,6 +1674,10 @@
             }
             autoParse = opts.autoParse;
         }
+
+        // Scroll Up.
+
+        scrollUp = 'undefined' === typeof opts.scrollUp ? true : opts.scrollUp;
 
         // Store unprocessed uri parameter.
         this.unprocessedUri = uri;
@@ -1742,7 +1749,8 @@
                                     that.updateLoadFrameState(func,
                                                               autoParse,
                                                               autoParseMod,
-                                                              autoParsePrefix);
+                                                              autoParsePrefix,
+                                                              scrollUp);
                                 });
             });
         }
@@ -1763,7 +1771,8 @@
                                     that.updateLoadFrameState(func,
                                                               autoParse,
                                                               autoParseMod,
-                                                              autoParsePrefix);
+                                                              autoParsePrefix,
+                                                              scrollUp);
                                 });
             }
         }
@@ -1814,6 +1823,8 @@
      * @param {string} autoParseMod Optional. Modifier for search and replace
      * @param {string} autoParsePrefix Optional. Custom prefix to add to the
      *    keys of the elements in autoParse object
+     * @param {boolean} scrollUp Optional. If TRUE, scrolls the page to the,
+     *    top (if window.scrollTo is defined). Default: FALSE.
      *
      * @see GameWindow.searchReplace
      * @see updateAreLoading
@@ -1823,7 +1834,8 @@
      */
     GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
                                                          autoParseMod,
-                                                         autoParsePrefix) {
+                                                         autoParsePrefix,
+                                                         scrollUp) {
 
         var loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
@@ -1832,6 +1844,7 @@
         if (autoParse) {
             this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
         }
+        if (scrollUp && window.scrollTo) window.scrollTo(0,0);
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
