@@ -1,6 +1,6 @@
 # nodegame-window change log
 
-## 6.0.2 ## current
+## 6.0.2
 - Fixed auto scroll-up default.
 - Fixed undefined var root in generateInfoPanel.
 
