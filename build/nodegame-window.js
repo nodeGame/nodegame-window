@@ -2429,8 +2429,10 @@
 
         var doc, imgs, len, counter, increment;
         doc = W.getFrameDocument();
-        imgs = doc.images;
-        len = imgs.length;
+        if (doc) {
+            imgs = doc.images;
+            len = imgs.length;
+        }
 
         // If there are no images, we wait a fixed 120 milliseconds.
         if (!len) {
