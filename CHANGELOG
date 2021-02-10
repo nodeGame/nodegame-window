@@ -1,5 +1,9 @@
 # nodegame-window change log
 
+## 6.1.0
+- If images are on page, it calls W.adjustFrameHeight after all images are
+loaded.
+
 ## 6.0.2
 - Fixed auto scroll-up default.
 - Fixed undefined var root in generateInfoPanel.
