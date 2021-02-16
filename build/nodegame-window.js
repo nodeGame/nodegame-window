@@ -3742,6 +3742,10 @@
         this.isVisible = true;
         // Must be at the end.
         W.adjustHeaderOffset(true);
+        // Scroll into view.
+        if ('function' === typeof this.infoPanelDiv.scrollIntoView) {
+            this.infoPanelDiv.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     /**
