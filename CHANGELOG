@@ -1,5 +1,8 @@
 # nodegame-window change log
 
+## 6.2.0
+- InfoPanel scrolls into view when opened.
+
 ## 6.1.1
 - Fixed no doc in previous update.
 
