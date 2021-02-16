@@ -871,8 +871,8 @@
      *
      * @emit INFOPANEL_GENERATED
      */
-    GameWindow.prototype.generateInfoPanel = function(options, force) {
-        var infoPanelDiv, root;
+    GameWindow.prototype.generateInfoPanel = function(opts, force) {
+        var infoPanelDiv, root, btn;
 
         if (this.infoPanel) {
             if (!force) {
@@ -884,12 +884,12 @@
                 this.infoPanel = null;
             }
         }
-        options = options || {};
+        opts = opts || {};
 
-        this.infoPanel = new node.InfoPanel(options);
+        this.infoPanel = new node.InfoPanel(opts);
         infoPanelDiv = this.infoPanel.infoPanelDiv;
 
-        root = options.root;
+        root = opts.root;
         if (root) {
             if (!J.isElement(root)) {
                 throw new Error('GameWindow.generateInfoPanel: root must be ' +
@@ -905,6 +905,36 @@
         }
         else {
             document.body.appendChild(infoPanelDiv);
+        }
+
+        // Adds Toggle Button if not
+        if (opts.btn !== false) {
+            root = null;
+            if (!opts.btnRoot) {
+                if (this.headerElement) root = this.headerElement;
+            }
+            else {
+                if ('string' === typeof opts.btnRoot) {
+                    root = W.gid(opts.btnRoot);
+                }
+                else {
+                    root = opts.btnRoot;
+                }
+                if (!J.isElement(root)) {
+                    throw new Error('GameWindow.generateInfoPanel: btnRoot ' +
+                                    'did not resolve to a valid HTMLElement: ' +
+                                    opts.btnRoot);
+                }
+            }
+            if (root) {
+                btn = W.infoPanel.createToggleButton(opts.btnLabel);
+                root.appendChild(btn);
+            }
+        }
+
+        // Set inner HTML if specified.
+        if (opts.innerHTML) {
+            W.infoPanel.infoPanelDiv.innerHTML = opts.innerHTML;
         }
 
         // Emit event.
@@ -3546,6 +3576,15 @@
         this._buttons = [];
 
         /**
+        * ### InfoPanel._buttons
+        *
+        * Reference to the last created toggle button
+        *
+        * @see InfoPanel.createToggleButton
+        */
+        this.toggleBtn = null;
+
+        /**
          * ### InfoPanel.className
          *
          * Class name of info panel
@@ -3772,32 +3811,37 @@
      * Creates an HTML button with a listener to toggle the InfoPanel
      *
      * Adds the button to the internal collection `_buttons`. All buttons
-     * are destroyed if the Info Panel is destroyed.
+     * are destroyed if the Info Panel is destroyed. Stores a reference to the
+     * last created button under `toggleBtn`.
+     *
+     * @param {string} label Optional. A text to be displayed on the button.
+     *    Default: 'Info'.
      *
      * @return {HTMLElement} button A button that toggles info panel
      *
      * @see InfoPanel._buttons
+     * @see InfoPanel.toggleBtn
      * @see InfoPanel.toggle
      */
-    InfoPanel.prototype.createToggleButton = function(buttonLabel) {
+    InfoPanel.prototype.createToggleButton = function(label) {
         var that, button;
 
-        buttonLabel = buttonLabel || 'Toggle Info Panel';
-        if ('string' !== typeof buttonLabel || buttonLabel.trim() === '') {
-            throw new Error('InfoPanel.createToggleButton: buttonLabel ' +
+        label = label || 'Info';
+        if ('string' !== typeof label || label.trim() === '') {
+            throw new Error('InfoPanel.createToggleButton: label ' +
                             'must be undefined or a non-empty string. Found: ' +
-                            buttonLabel);
+                            label);
         }
         button = document.createElement('button');
         button.className = 'btn btn-lg btn-warning';
-        button.innerHTML = buttonLabel ;
+        button.innerHTML = label ;
 
         that = this;
-        button.onclick = function() {
-            that.toggle();
-        };
+        button.onclick = function() { that.toggle(); };
 
+        // Store references.
         this._buttons.push(button);
+        this.toggleBtn = button;
 
         return button;
     };
