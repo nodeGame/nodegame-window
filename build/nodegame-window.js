@@ -1,6 +1,6 @@
 /**
  * # GameWindow
- * Copyright(c) 2020 Stefano Balietti <ste@nodegame.org>
+ * Copyright(c) 2021 Stefano Balietti <ste@nodegame.org>
  * MIT Licensed
  *
  * API to interface nodeGame with the browser window
@@ -853,17 +853,16 @@
      *
      * Appends a configurable div element at to "top" of the page
      *
-     * @param {Element} root Optional. The HTML element to which the info
-     *   panel will be appended. Default:
+     * @param {object} opts Optional. Configuration options: TODO
      *
-     *   - above the main frame, or
-     *   - below the header, or
-     *   - inside _documents.body_.
+     *    - toggleBtn
+     *    - toggleBtnLabel
+     *    - toggleBtnRoot:
+     *    - force: destroys current Info Panel
      *
-     * @param {string} frameName Optional. The name of the iframe. Default:
-     *   'ng_mainframe'
      * @param {boolean} force Optional. Will create the frame even if an
-     *   existing one is found. Default: FALSE
+     *   existing one is found. Deprecated, use force flag in options.
+     *   Default: FALSE
      *
      * @return {InfoPanel} A reference to the InfoPanel object
      *
@@ -873,20 +872,32 @@
      */
     GameWindow.prototype.generateInfoPanel = function(opts, force) {
         var infoPanelDiv, root, btn;
-
-        if (this.infoPanel) {
-            if (!force) {
-                throw new Error('GameWindow.generateInfoPanel: info panel is ' +
-                                'already existing. Use force to regenerate.');
-            }
-            else {
-                this.infoPanel.destroy();
-                this.infoPanel = null;
-            }
-        }
         opts = opts || {};
 
-        this.infoPanel = new node.InfoPanel(opts);
+        // Backward compatible.
+        if ('undefined' === typeof force) force = opts.force;
+
+        if (force && this.infoPanel) {
+            this.infoPanel.destroy();
+            this.infoPanel = null;
+        }
+
+        if (this.infoPanel) {
+            if (this.infoPanel.toggleBtn) {
+                if ('undefined' === typeof opts.toggleBtn) {
+                    opts.toggleBtn = false;
+                }
+            }
+            // if (!force) {
+            //     throw new Error('GameWindow.generateInfoPanel: info panel is ' +
+            //                     'already existing. Use force to regenerate.');
+            // }
+
+        }
+        else {
+            this.infoPanel = new node.InfoPanel(opts);
+        }
+
         infoPanelDiv = this.infoPanel.infoPanelDiv;
 
         root = opts.root;
@@ -907,27 +918,27 @@
             document.body.appendChild(infoPanelDiv);
         }
 
-        // Adds Toggle Button if not
-        if (opts.btn !== false) {
+        // Adds Toggle Button if not false.
+        if (opts.toggleBtn !== false) {
             root = null;
-            if (!opts.btnRoot) {
+            if (!opts.toggleBtnRoot) {
                 if (this.headerElement) root = this.headerElement;
             }
             else {
-                if ('string' === typeof opts.btnRoot) {
-                    root = W.gid(opts.btnRoot);
+                if ('string' === typeof opts.toggleBtnRoot) {
+                    root = W.gid(opts.toggleBtnRoot);
                 }
                 else {
-                    root = opts.btnRoot;
+                    root = opts.toggleBtnRoot;
                 }
                 if (!J.isElement(root)) {
-                    throw new Error('GameWindow.generateInfoPanel: btnRoot ' +
-                                    'did not resolve to a valid HTMLElement: ' +
-                                    opts.btnRoot);
+                    throw new Error('GameWindow.generateInfoPanel: ' +
+                                    'toggleBtnRoot did not resolve to a ' +
+                                    'valid HTMLElement: ' + opts.toggleBtnRoot);
                 }
             }
             if (root) {
-                btn = W.infoPanel.createToggleButton(opts.btnLabel);
+                btn = W.infoPanel.createToggleBtn(opts.toggleBtnLabel);
                 root.appendChild(btn);
             }
         }
@@ -3823,6 +3834,7 @@
      * @see InfoPanel.toggleBtn
      * @see InfoPanel.toggle
      */
+    InfoPanel.prototype.createToggleBtn = 
     InfoPanel.prototype.createToggleButton = function(label) {
         var that, button;
 
