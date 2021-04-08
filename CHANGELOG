@@ -2,6 +2,8 @@
 
 ## 6.2.0
 - InfoPanel scrolls into view when opened.
+- W.createInfoPanel creates toggle button by default.
+- InfoPanel.createToggleBtn alias for InfoPanel.createToggleButton.
 
 ## 6.1.1
 - Fixed no doc in previous update.
