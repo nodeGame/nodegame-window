@@ -1766,6 +1766,9 @@
         // Keep track of nested call to loadFrame.
         updateAreLoading(this, 1);
 
+        // Hide iframe content while loading.
+        iframe.style.visibility = 'hidden';
+
         // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
             onLoad(iframe, function() {
@@ -2950,7 +2953,7 @@
 
 /**
  * # listeners
- * Copyright(c) 2015 Stefano Balietti
+ * Copyright(c) 2021 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow listeners
@@ -2961,22 +2964,22 @@
 
     "use strict";
 
-    var J = node.JSUS;
+    // var J = node.JSUS;
 
-    function getElement(idOrObj, prefix) {
-        var el;
-        if ('string' === typeof idOrObj) {
-            el = W.getElementById(idOrObj);
-        }
-        else if (J.isElement(idOrObj)) {
-            el = idOrObj;
-        }
-        else {
-            throw new TypeError(prefix + ': idOrObj must be string ' +
-                                ' or HTML Element.');
-        }
-        return el;
-    }
+    // function getElement(idOrObj, prefix) {
+    //     var el;
+    //     if ('string' === typeof idOrObj) {
+    //         el = W.getElementById(idOrObj);
+    //     }
+    //     else if (J.isElement(idOrObj)) {
+    //         el = idOrObj;
+    //     }
+    //     else {
+    //         throw new TypeError(prefix + ': idOrObj must be string ' +
+    //                             ' or HTML Element.');
+    //     }
+    //     return el;
+    // }
 
     var GameWindow = node.GameWindow;
 
