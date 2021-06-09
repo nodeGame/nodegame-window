@@ -1767,7 +1767,11 @@
         updateAreLoading(this, 1);
 
         // Hide iframe content while loading.
-        iframe.style.visibility = 'hidden';
+        // This way if the page is manipulated in the step callback,
+        // the user still sees it appearing all at once.
+        // The iframe visibility is reset by nodegame-client listener
+        // on LOADED (avoiding registering two listeners this way.)
+        // iframe.style.visibility = 'hidden';
 
         // Add the onLoad event listener:
         if (!loadCache || !frameReady) {
