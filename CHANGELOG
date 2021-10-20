@@ -1,5 +1,11 @@
 # nodegame-window change log
 
+## 7.0.0
+- Improved error messages for setInnerHTML
+- Frame loading waits for the callback to be executed.
+- WaitScreen texts are all paramterers (thanks jjensenius3).
+
+
 ## 6.2.0
 - InfoPanel scrolls into view when opened.
 - W.createInfoPanel creates toggle button by default.
