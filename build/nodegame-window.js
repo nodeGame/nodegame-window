@@ -4337,24 +4337,25 @@
      *   and a method stop, that clears the interval
      */
     GameWindow.prototype.getLoadingDots = function(len, id) {
-        var spanDots, i, limit, intervalId;
+        var spanDots, counter, intervalId;
         if (len & len < 0) {
             throw new Error('GameWindow.getLoadingDots: len cannot be < 0. ' +
                             'Found: ' + len);
         }
-        len = len || 5;
         spanDots = document.createElement('span');
         spanDots.id = id || 'span_dots';
-        limit = '';
-        for (i = 0; i < len; i++) {
-            limit = limit + '.';
-        }
         // Refreshing the dots...
+        counter = 0;
+        len = len || 5;
+        // So the height does not change.
+        spanDots.innerHTML = '&nbsp;';
         intervalId = setInterval(function() {
-            if (spanDots.innerHTML !== limit) {
+            if (counter < len) {
+                counter++;
                 spanDots.innerHTML = spanDots.innerHTML + '.';
             }
             else {
+                counter = 0;
                 spanDots.innerHTML = '.';
             }
         }, 1000);
@@ -4559,13 +4560,15 @@
         // Only process strings or numbers.
         if ('string' !== typeof search && 'number' !== typeof search) {
             throw new TypeError('GameWindow.setInnerHTML: search must be ' +
-                                'string or number. Found: ' + search);
+                                'string or number. Found: ' + search +
+                                " (replace = " + replace + ")");
         }
 
         // Only process strings or numbers.
         if ('string' !== typeof replace && 'number' !== typeof replace) {
             throw new TypeError('GameWindow.setInnerHTML: replace must be ' +
-                                'string or number. Found: ' + replace);
+                                'string or number. Found: ' + replace +
+                                " (search = " + search + ")");
         }
 
         if ('undefined' === typeof mod) {
@@ -4574,12 +4577,14 @@
         else if ('string' === typeof mod) {
             if (mod !== 'g' && mod !== 'id' && mod !== 'className') {
                 throw new Error('GameWindow.setInnerHTML: invalid ' +
-                                'mod value: ' + mod);
+                                'mod value: ' + mod  +
+                                " (search = " + search + ")");
             }
         }
         else {
             throw new TypeError('GameWindow.setInnerHTML: mod must be ' +
-                                'string or undefined. Found: ' + mod);
+                                'string or undefined. Found: ' + mod  +
+                                " (search = " + search + ")");
         }
 
         if (mod === 'id' || mod === 'g') {
