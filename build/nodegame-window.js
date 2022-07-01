@@ -4116,7 +4116,7 @@
 
 /**
  * # extra
- * Copyright(c) 2019 Stefano Balietti
+ * Copyright(c) 2022 Stefano Balietti
  * MIT Licensed
  *
  * GameWindow extras
@@ -4540,8 +4540,13 @@
 
     };
 
+    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+        // console.log('***deprecated: use W.html instead of W.setInnerHTML');
+        this.html(search, replace, mod);
+    };
+
     /**
-     * ### GameWindow.setInnerHTML
+     * ### GameWindow.html
      *
      * Replaces the innerHTML of the element with matching id or class name
      *
@@ -4554,7 +4559,7 @@
      *    - 'className': replaces all elements with same class name
      *    - 'g': replaces globally, both by id and className
      */
-    GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
+    GameWindow.prototype.html = function(search, replace, mod) {
         var el, i, len;
 
         // Only process strings or numbers.
