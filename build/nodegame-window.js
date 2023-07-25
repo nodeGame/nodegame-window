@@ -2968,23 +2968,6 @@
 
     "use strict";
 
-    // var J = node.JSUS;
-
-    // function getElement(idOrObj, prefix) {
-    //     var el;
-    //     if ('string' === typeof idOrObj) {
-    //         el = W.getElementById(idOrObj);
-    //     }
-    //     else if (J.isElement(idOrObj)) {
-    //         el = idOrObj;
-    //     }
-    //     else {
-    //         throw new TypeError(prefix + ': idOrObj must be string ' +
-    //                             ' or HTML Element.');
-    //     }
-    //     return el;
-    // }
-
     var GameWindow = node.GameWindow;
 
     /**
@@ -3008,37 +2991,6 @@
         node.on('NODEGAME_GAME_CREATED', function() {
             W.init(node.conf.window);
         });
-
-//         node.on('HIDE', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.HIDE is deprecated. Use ' +
-//                         'GameWindow.hide() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.HIDE');
-//             if (el) el.style.display = 'none';
-//         });
-//
-//         node.on('SHOW', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.SHOW is deprecated. Use ' +
-//                         'GameWindow.show() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.SHOW');
-//             if (el) el.style.display = '';
-//         });
-//
-//         node.on('TOGGLE', function(idOrObj) {
-//             var el;
-//             console.log('***GameWindow.on.TOGGLE is deprecated. Use ' +
-//                         'GameWindow.toggle() instead.***');
-//             el = getElement(idOrObj, 'GameWindow.on.TOGGLE');
-//             if (el) {
-//                 if (el.style.display === 'none') {
-//                     el.style.display = '';
-//                 }
-//                 else {
-//                     el.style.display = 'none';
-//                 }
-//             }
-//         });
 
         // Disable all the input forms found within a given id element.
         node.on('INPUT_DISABLE', function(id) {
@@ -3179,7 +3131,9 @@
     }
 
     function event_PAUSED(text) {
-        text = text || W.waitScreen.defaultTexts.paused;
+        // Ignores non-string parameters.
+        text = 'string' === typeof text ?
+            text : W.waitScreen.defaultTexts.paused;
         if (W.isScreenLocked()) {
             W.waitScreen.beforePauseInnerHTML =
                 W.waitScreen.contentDiv.innerHTML;
@@ -4541,7 +4495,6 @@
     };
 
     GameWindow.prototype.setInnerHTML = function(search, replace, mod) {
-        // console.log('***deprecated: use W.html instead of W.setInnerHTML');
         this.html(search, replace, mod);
     };
 
