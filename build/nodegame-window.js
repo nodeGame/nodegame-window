@@ -4093,10 +4093,11 @@
      *
      * Returns the "screen" of the game
      *
-     * i.e. the innermost element inside which to display content
+     * i.e., the innermost element inside which to display content
      *
      * In the following order the screen can be:
      *
+     * - the element with id "container" (presumably inside the iframe)
      * - the body element of the iframe
      * - the document element of the iframe
      * - the body element of the document
@@ -4106,9 +4107,12 @@
      */
     GameWindow.prototype.getScreen = function() {
         var el;
-        el = this.getFrameDocument();
-        if (el) el = el.body || el;
-        else el = document.body || document.lastElementChild;
+        el = this.gid('container');
+        if (!el) {
+            el = this.getFrameDocument();
+            if (el) el = el.body || el;
+            else el = document.body || document.lastElementChild;
+        }
         return el;
     };
 
@@ -4451,7 +4455,7 @@
      */
     GameWindow.prototype.searchReplace = function() {
         var elements, mod, prefix;
-        var name, len, i;
+        var name, len, i, el, rep;
 
         if (arguments.length === 2) {
             mod = 'g';
@@ -4478,16 +4482,31 @@
         if (J.isArray(elements)) {
             i = -1, len = elements.length;
             for ( ; ++i < len ; ) {
-                this.setInnerHTML(prefix + elements[i].search,
+                el = elements[i].search;
+                if ('string' !== typeof el && 'number' !== typeof el) {
+                    continue;
+                }
+                rep = elements[i].replace;
+                if ('string' !== typeof rep && 'number' !== typeof rep) {
+                    continue;
+                }
+
+                this.setInnerHTML(prefix + el,
                                   elements[i].replace,
                                   elements[i].mod || mod);
             }
 
         }
-        else if ('object' !== typeof elements) {
+        else if ('object' === typeof elements) {
             for (name in elements) {
                 if (elements.hasOwnProperty(name)) {
-                    this.setInnerHTML(prefix + name, elements[name], mod);
+                    el = elements[name];
+                    if ('string' !== typeof el && 'number' !== typeof el) {
+                        node.warn('W.searchReplace: replace for key ' + name +
+                                  ' is invalid. Found: ' + el);
+                        continue;
+                    }
+                    this.setInnerHTML(prefix + name, el, mod);
                 }
             }
         }
