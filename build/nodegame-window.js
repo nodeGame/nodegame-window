@@ -1601,7 +1601,6 @@
         var loadCache;
         var storeCacheNow, storeCacheLater;
         var scrollUp;
-        var autoParse, autoParsePrefix, autoParseMod;
         var iframe, iframeName, iframeDocument, iframeWindow;
         var frameDocumentElement, frameReady;
         var lastURI;
@@ -1684,35 +1683,6 @@
             }
         }
 
-        // Parsing options.
-
-        if ('undefined' !== typeof opts.autoParse) {
-            if ('object' !== typeof opts.autoParse) {
-                throw new TypeError('GameWindow.loadFrame: opts.autoParse ' +
-                                    'must be object or undefined. Found: ' +
-                                    opts.autoParse);
-            }
-            if ('undefined' !== typeof opts.autoParsePrefix) {
-                if ('string' !== typeof opts.autoParsePrefix) {
-                    throw new TypeError('GameWindow.loadFrame: opts.' +
-                                        'autoParsePrefix must be string ' +
-                                        'or undefined. Found: ' +
-                                        opts.autoParsePrefix);
-                }
-                autoParsePrefix = opts.autoParsePrefix;
-            }
-            if ('undefined' !== typeof opts.autoParseMod) {
-                if ('string' !== typeof opts.autoParseMod) {
-                    throw new TypeError('GameWindow.loadFrame: opts.' +
-                                        'autoParseMod must be string ' +
-                                        'or undefined. Found: ' +
-                                        opts.autoParseMod);
-                }
-                autoParseMod = opts.autoParseMod;
-            }
-            autoParse = opts.autoParse;
-        }
-
         // Scroll Up.
 
         scrollUp = 'undefined' === typeof opts.scrollUp ? true : opts.scrollUp;
@@ -1789,13 +1759,9 @@
                 handleFrameLoad(that, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback, autoParses,
+                                    // Executes callback, css, replace, html,
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func,
-                                                              autoParse,
-                                                              autoParseMod,
-                                                              autoParsePrefix,
-                                                              scrollUp);
+                                    that.updateLoadFrameState(func, scrollUp);
                                 });
             });
         }
@@ -1811,13 +1777,9 @@
                 handleFrameLoad(this, uri, iframe, iframeName, loadCache,
                                 storeCacheNow, function() {
 
-                                    // Executes callback
+                                    // Executes callback, css, replace, html,
                                     // and updates GameWindow state.
-                                    that.updateLoadFrameState(func,
-                                                              autoParse,
-                                                              autoParseMod,
-                                                              autoParsePrefix,
-                                                              scrollUp);
+                                    that.updateLoadFrameState(func, scrollUp);
                                 });
             }
         }
@@ -1864,11 +1826,6 @@
      * - set the window state as loaded (eventually)
      *
      * @param {function} func Optional. A callback function
-     * @param {object} autoParse Optional. An object containing elements
-     *    to replace in the HTML DOM.
-     * @param {string} autoParseMod Optional. Modifier for search and replace
-     * @param {string} autoParsePrefix Optional. Custom prefix to add to the
-     *    keys of the elements in autoParse object
      * @param {boolean} scrollUp Optional. If TRUE, scrolls the page to the,
      *    top (if window.scrollTo is defined). Default: FALSE.
      *
@@ -1878,18 +1835,12 @@
      * @emit FRAME_LOADED
      * @emit LOADED
      */
-    GameWindow.prototype.updateLoadFrameState = function(func, autoParse,
-                                                         autoParseMod,
-                                                         autoParsePrefix,
-                                                         scrollUp) {
+    GameWindow.prototype.updateLoadFrameState = function(func, scrollUp) {
 
-        var css, html, loaded, stageLevel;
+        var css, html, replace, loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
-        if (func) func.call(node.game);
-        if (autoParse) {
-            this.searchReplace(autoParse, autoParseMod, autoParsePrefix);
-        }
+        if (func) func.call(node.game);        
         if (scrollUp && window.scrollTo) window.scrollTo(0,0);
 
         css = node.game.getProperty('css');
@@ -1897,6 +1848,9 @@
 
         html = node.game.getProperty('html');
         if (html) W.write(html);
+
+        replace = node.game.getProperty('replace');
+        if (replace) W.searchReplace(replace, 'g', '');
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
