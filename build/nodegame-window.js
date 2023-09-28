@@ -1883,7 +1883,7 @@
                                                          autoParsePrefix,
                                                          scrollUp) {
 
-        var css, loaded, stageLevel;
+        var css, html, loaded, stageLevel;
         loaded = updateAreLoading(this, -1);
         if (loaded) this.setStateLevel('LOADED');
         if (func) func.call(node.game);
@@ -1894,6 +1894,9 @@
 
         css = node.game.getProperty('css');
         if (css) W.cssRule(css);
+
+        html = node.game.getProperty('html');
+        if (html) W.write(html);
 
         // ng event emitter is not used.
         node.events.ee.game.emit('FRAME_LOADED');
@@ -4201,7 +4204,7 @@
      */
     GameWindow.prototype.write = function(text, root) {
         root = getDefaultRoot(root, 'write');
-        return DOM.write(root, text);
+        return DOM.write2(root, text);
     };
 
     /**
@@ -4223,7 +4226,7 @@
      */
     GameWindow.prototype.writeln = function(text, root, br) {
         root = getDefaultRoot(root, 'writeln');
-        return DOM.writeln(root, text, br);
+        return DOM.writeln2(root, text, br);
     };
 
     /**
@@ -4820,7 +4823,7 @@
         if (!root) root = W.getScreen();
         else root = getElement(root);
         if (root) return root;
-        if (thorwAs) throw new Error(G + throwAs + ': could not find root');
+        if (throwAs) throw new Error(G + throwAs + ': could not find root');
     }
 
 })(
